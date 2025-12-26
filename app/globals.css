@@ -68,3 +68,13 @@ body {
 .prose blockquote {
   @apply border-l-4 border-zinc-300 dark:border-zinc-700 pl-4 italic my-4;
 }
+
+/* Hide scrollbar for horizontal scroll */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

@@ -16,15 +16,15 @@ export default function Header() {
           />
         </div>
         <div className="flex-1">
-          <h1 className="text-2xl font-semibold">Art Arcega</h1>
+          <h1 className="text-2xl font-semibold">artemiui</h1>
           <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
-            UP Diliman
+            Art Arcega
           </p>
         </div>
       </div>
       <nav className="flex gap-6 text-sm">
         <Link
-          href="instagram.com/virtualsarili"
+          href="https://instagram.com/virtualsarili"
           target="_blank"
           rel="noopener noreferrer"
           className="text-zinc-600 dark:text-zinc-400 hover:text-foreground transition-colors"
@@ -37,7 +37,7 @@ export default function Header() {
           rel="noopener noreferrer"
           className="text-zinc-600 dark:text-zinc-400 hover:text-foreground transition-colors"
         >
-          GitHub
+          LinkedIn
         </Link>
         <Link
           href="https://github.com/artemiui"
@@ -45,7 +45,7 @@ export default function Header() {
           rel="noopener noreferrer"
           className="text-zinc-600 dark:text-zinc-400 hover:text-foreground transition-colors"
         >
-          LinkedIn
+          GitHub
         </Link>
         <Link
           href="https://medium.com/@artemioarcega"
