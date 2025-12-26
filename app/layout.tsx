@@ -12,8 +12,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio & Blog",
-  description: "A digital garden for projects, essays, and hobbies",
+  title: "artemiui",
+  description: "a collection of ideas and pixels",
 };
 
 export default function RootLayout({
