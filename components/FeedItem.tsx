@@ -30,7 +30,7 @@ type FeedItemProps = {
 
 export default function FeedItem({ item, index }: FeedItemProps) {
   const isExternal = !!item.url;
-  const href = isExternal ? item.url : `/blog/${item.slug}`;
+  const href = isExternal ? item.url : item.slug ? `/blog/${item.slug}` : "#";
 
   const CategoryIcon = categoryIcons[item.category];
 
@@ -72,6 +72,10 @@ export default function FeedItem({ item, index }: FeedItemProps) {
     </motion.div>
   );
 
+  if (!href || href === "#") {
+    return <div className="block cursor-default">{content}</div>;
+  }
+
   if (isExternal) {
     return (
       <a
@@ -87,4 +91,3 @@ export default function FeedItem({ item, index }: FeedItemProps) {
 
   return <Link href={href}>{content}</Link>;
 }
-
