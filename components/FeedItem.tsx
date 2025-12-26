@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
+import { categoryIcons } from "@/lib/categoryIcons";
 
 export type FeedItemType = {
   title: string;
@@ -10,7 +11,17 @@ export type FeedItemType = {
   slug?: string;
   url?: string;
   category: "Knowledge" | "Essays" | "Hobby" | "Design";
+  description?: string;
 };
+
+// Helper function to truncate description to 30 words
+function truncateDescription(text: string, maxWords: number = 30): string {
+  const words = text.trim().split(/\s+/);
+  if (words.length <= maxWords) {
+    return text;
+  }
+  return words.slice(0, maxWords).join(" ") + "...";
+}
 
 type FeedItemProps = {
   item: FeedItemType;
@@ -20,6 +31,8 @@ type FeedItemProps = {
 export default function FeedItem({ item, index }: FeedItemProps) {
   const isExternal = !!item.url;
   const href = isExternal ? item.url : `/blog/${item.slug}`;
+
+  const CategoryIcon = categoryIcons[item.category];
 
   const content = (
     <motion.div
@@ -37,15 +50,25 @@ export default function FeedItem({ item, index }: FeedItemProps) {
             <ExternalLink className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0" />
           )}
         </div>
-        <p className="text-xs text-zinc-500 dark:text-zinc-500">{item.date}</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-500 mb-1">{item.date}</p>
+        {item.description && (
+          <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            {truncateDescription(item.description)}
+          </p>
+        )}
       </div>
-      <motion.div
-        initial={{ opacity: 0, x: -10 }}
-        whileHover={{ opacity: 1, x: 0 }}
-        className="text-zinc-400 dark:text-zinc-600 text-sm"
-      >
-        →
-      </motion.div>
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <motion.div
+          initial={{ opacity: 0, x: -10 }}
+          whileHover={{ opacity: 1, x: 0 }}
+          className="text-zinc-400 dark:text-zinc-600 text-sm"
+        >
+          →
+        </motion.div>
+        {CategoryIcon && (
+          <CategoryIcon className="w-4 h-4 text-zinc-400 dark:text-zinc-500 flex-shrink-0" />
+        )}
+      </div>
     </motion.div>
   );
 

@@ -1,7 +1,7 @@
 "use client";
 
-import { BookOpen, FileText, Heart, Palette } from "lucide-react";
 import { motion } from "framer-motion";
+import { categoryIcons } from "@/lib/categoryIcons";
 
 export type Category = "All" | "Knowledge" | "Essays" | "Hobby" | "Design";
 
@@ -10,12 +10,9 @@ type FeedFilterProps = {
   onCategoryChange: (category: Category) => void;
 };
 
-const categoryIcons = {
+const filterCategoryIcons = {
   All: null,
-  Knowledge: BookOpen,
-  Essays: FileText,
-  Hobby: Heart,
-  Design: Palette,
+  ...categoryIcons,
 };
 
 const categories: Category[] = ["All", "Knowledge", "Essays", "Hobby", "Design"];
@@ -27,7 +24,7 @@ export default function FeedFilter({
   return (
     <div className="flex gap-6 mb-8 pb-4 border-b border-zinc-200 dark:border-zinc-800">
       {categories.map((category) => {
-        const Icon = categoryIcons[category];
+        const Icon = filterCategoryIcons[category];
         return (
           <button
             key={category}

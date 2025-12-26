@@ -4,6 +4,8 @@ import { ArrowLeft } from "lucide-react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { getPostBySlug, getPostSlugs } from "@/lib/mdx";
 import TableOfContents from "@/components/TableOfContents";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -51,7 +53,15 @@ export default async function BlogPost({ params }: Props) {
             </div>
           </header>
 
-          <MDXRemote source={post.content} />
+          <MDXRemote 
+            source={post.content}
+            options={{
+              mdxOptions: {
+                remarkPlugins: [remarkMath],
+                rehypePlugins: [rehypeKatex],
+              },
+            }}
+          />
         </div>
 
         <aside className="hidden lg:block w-48 flex-shrink-0">
