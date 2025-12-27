@@ -193,9 +193,7 @@ export default function RecommendationsPage() {
       {/* Books Section */}
       {books.length > 0 && (
         <section className="space-y-6">
-          <h2 className="text-xl font-mono font-semibold mb-6">To Read
-            <img src="/read.png" alt="read" className="inline-block h-[1em] w-[1em] align-baseline mx-2"/>
-          </h2> 
+          <h2 className="text-xl font-mono font-semibold mb-6">To Read</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {books.map((book, index) => (
               <motion.div
@@ -246,9 +244,7 @@ export default function RecommendationsPage() {
       {/* YouTube Videos Section */}
       {youtubeVideos.length > 0 && (
         <section className="space-y-6">
-          <h2 className="text-xl font-mono font-semibold mb-6">To Watch
-              <img src="/watch.png" alt="watch" className="inline-block h-[1em] w-[1em] align-baseline mx-2"/>
-          </h2>
+          <h2 className="text-xl font-mono font-semibold mb-6">To Watch</h2>
           <div className="space-y-6">
             {youtubeVideos.map((video, index) => {
               const thumbnail = getYouTubeThumbnail(video.url);
@@ -301,8 +297,7 @@ export default function RecommendationsPage() {
       {/* Games Section */}
       {games.length > 0 && (
         <section className="space-y-6">
-          <h2 className="text-xl text-yellow-600 font-mono font-semibold mb-6">To Play <img src="/games.png" alt="games" className="inline-block h-[1em] w-[1em] align-baseline mx-0"/>
-            </h2>
+          <h2 className="text-xl font-mono font-semibold mb-6">To Play</h2>
           <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {games.map((game, index) => (
               <motion.div
@@ -353,9 +348,7 @@ export default function RecommendationsPage() {
       {/* Music Section */}
       {musicAlbums.length > 0 && (
         <section className="space-y-6">
-          <h2 className="text-xl font-mono font-semibold mb-6">To Listen
-            <img src="/music.png" alt="music" className="inline-block h-[1em] w-[1em] align-baseline mx-1.5"/>
-          </h2>
+          <h2 className="text-xl font-mono font-semibold mb-6">To Listen</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {musicAlbums.map((album, index) => (
               <motion.a
