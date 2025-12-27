@@ -78,7 +78,6 @@ export default function AboutOverlay({ isOpen, onClose }: AboutOverlayProps) {
                   <p>
                     Mi chiamo Artemio, puoi chiamarmi Art. I made this blog as a means of knowledge sharing. Currently an undergraduate philosophy student at UP Diliman. Teaching myself lots of things for fun. 
                   </p>
-                  
                   <p>
                     Expect topics from data science, computer vision, politics, fintech, philosophy, language-learning, video games, film, and waaaayyy more.
                     The thing is: to never limit yourself with what you can learn. We are born curious. Cater to it.
