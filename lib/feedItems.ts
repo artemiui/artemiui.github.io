@@ -9,6 +9,12 @@ const externalLinks: Omit<FeedItemType, "category">[] = [
     url: "https://nlp.lab.uic.edu/wp-content/uploads/sites/314/2023/06/Randolph_CRF2.pdf",
     description: "An interesting paper on modeling piano fingering using CRF. Initial thoughts of innovation given features is that we can optimize for teaching piano finger arrangement much easier. Also, accessibility.",
   },
+  {
+    title: "The Most Beautiful Line in a Video Game",
+    date: "2025-5-05",
+    url: "https://www.youtube.com/watch?v=UKU4YYOHdk0",
+    description: "A video I made earlier this year on UNDERTALE's iconic line that despite everything, it's still you.",
+  },
 ];
 
 export async function getFeedItems(): Promise<FeedItemType[]> {
