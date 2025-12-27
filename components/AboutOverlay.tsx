@@ -76,8 +76,7 @@ export default function AboutOverlay({ isOpen, onClose }: AboutOverlayProps) {
                 
                 <div className="space-y-4 text-zinc-700 dark:text-zinc-300 leading-7">
                   <p>
-                    I made this blog as a means of knowledge sharing. As an autodidact and a naturally curious person,
-                    avenues like this allow me to express myself freely.
+                    Mi chiamo Artemio, puoi chiamarmi Art. I made this blog as a means of knowledge sharing. Currently an undergraduate philosophy student at UP Diliman. Teaching myself lots of things for fun. 
                   </p>
                   
                   <p>
