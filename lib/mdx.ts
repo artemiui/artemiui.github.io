@@ -7,7 +7,7 @@ const postsDirectory = path.join(process.cwd(), "content", "posts");
 export type PostFrontmatter = {
   title: string;
   date: string;
-  category: "Knowledge" | "Essays" | "Hobby" | "Design";
+  category: "Knowledge" | "Media" | "Hobby" | "Design";
   description?: string;
 };
 

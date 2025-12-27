@@ -7,11 +7,11 @@ import { categoryIcons } from "@/lib/categoryIcons";
 
 export type FeedItemType = {
   title: string;
+  description?: string; 
   date: string;
   slug?: string;
   url?: string;
-  category: "Knowledge" | "Essays" | "Hobby" | "Design";
-  description?: string;
+  category: "Knowledge" | "Media" | "Hobby" | "Design";
 };
 
 // Helper function to truncate description to 30 words
@@ -43,19 +43,19 @@ export default function FeedItem({ item, index }: FeedItemProps) {
     >
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
-          <h3 className="font-medium text-foreground group-hover:opacity-70 transition-opacity">
+          <h3 className="font-medium font-mono text-foreground group-hover:opacity-70 transition-opacity">
             {item.title}
           </h3>
           {isExternal && (
             <ExternalLink className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0" />
           )}
         </div>
-        <p className="text-xs text-zinc-500 dark:text-zinc-500 mb-1">{item.date}</p>
         {item.description && (
-          <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+          <p className="text-xs font-mono text-zinc-600 dark:text-zinc-400 leading-relaxed">
             {truncateDescription(item.description)}
           </p>
         )}
+        <p className="text-xs font-mono text-zinc-500 dark:text-zinc-500 mb-1">{item.date}</p>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
         <motion.div

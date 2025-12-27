@@ -2,11 +2,12 @@ import { getAllPosts } from "./mdx";
 import { FeedItemType } from "@/components/FeedItem";
 
 // External links that don't have MDX files
-const externalLinks: Omit<FeedItemType, "category" | "description">[] = [
+const externalLinks: Omit<FeedItemType, "category">[] = [
   {
     title: "A Computational Model of Piano Finger Technique",
     date: "2023-12-15",
     url: "https://nlp.lab.uic.edu/wp-content/uploads/sites/314/2023/06/Randolph_CRF2.pdf",
+    description: "An interesting paper on modeling piano fingering using CRF. Initial thoughts of innovation given features is that we can optimize for teaching piano finger arrangement much easier. Also, accessibility.",
   },
 ];
 

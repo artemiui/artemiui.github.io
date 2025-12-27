@@ -1,9 +1,9 @@
-import { BookOpen, FileText, Heart, Palette, LucideIcon } from "lucide-react";
+import { BookOpen, Film, Heart, Palette, LucideIcon } from "lucide-react";
 import { Category } from "@/components/FeedFilter";
 
 export const categoryIcons: Record<Exclude<Category, "All">, LucideIcon> = {
   Knowledge: BookOpen,
-  Essays: FileText,
+  Media: Film,
   Hobby: Heart,
   Design: Palette,
 };

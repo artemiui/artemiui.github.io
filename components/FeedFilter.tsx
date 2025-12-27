@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { categoryIcons } from "@/lib/categoryIcons";
 
-export type Category = "All" | "Knowledge" | "Essays" | "Hobby" | "Design";
+export type Category = "All" | "Knowledge" | "Media" | "Hobby" | "Design";
 
 type FeedFilterProps = {
   activeCategory: Category;
@@ -15,7 +15,7 @@ const filterCategoryIcons = {
   ...categoryIcons,
 };
 
-const categories: Category[] = ["All", "Knowledge", "Essays", "Hobby", "Design"];
+const categories: Category[] = ["All", "Knowledge", "Media", "Hobby", "Design"];
 
 export default function FeedFilter({
   activeCategory,

@@ -4,7 +4,9 @@ import { ArrowLeft } from "lucide-react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { getPostBySlug, getPostSlugs } from "@/lib/mdx";
 import TableOfContents from "@/components/TableOfContents";
+import AudioPlayer from "@/components/AudioPlayer";
 import remarkMath from "remark-math";
+
 import rehypeKatex from "rehype-katex";
 
 type Props = {
@@ -55,6 +57,9 @@ export default async function BlogPost({ params }: Props) {
 
           <MDXRemote 
             source={post.content}
+            components={{
+              AudioPlayer,
+            }}
             options={{
               mdxOptions: {
                 remarkPlugins: [remarkMath],
