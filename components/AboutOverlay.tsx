@@ -55,6 +55,7 @@ const saveFiles: SaveFile[] = [
 
 export default function AboutOverlay({ isOpen, onClose }: AboutOverlayProps) {
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [hoveredFile, setHoveredFile] = useState<string | null>(null);
 
   // Prevent body scroll when overlay is open
   useEffect(() => {
@@ -119,55 +120,45 @@ export default function AboutOverlay({ isOpen, onClose }: AboutOverlayProps) {
               {/* Save Files Menu */}
               <div className="mb-8">
                 <h3 className="text-lg font-mono font-semibold mb-4 text-center">Load Game</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  {saveFiles.map((file) => {
-                    const Icon = file.icon;
-                    return (
-                      <motion.div
-                        key={file.id}
-                        className="bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-lg p-4 cursor-pointer transition-all hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-500"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => setSelectedFile(selectedFile === file.id ? null : file.id)}
+                <div className="grid grid-cols-2 gap-0.5">
+                  {saveFiles.map((file) => (
+                    <div
+                      key={file.id}
+                      className="relative w-64 h-20 cursor-pointer transition-all duration-200 filter drop-shadow-lg"
+                      style={{
+                        backgroundImage: `url(${hoveredFile === file.id ? '/selected_about.svg' : '/unselected.svg'})`,
+                        backgroundSize: 'contain',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'center',
+                      }}
+                      onMouseEnter={() => setHoveredFile(file.id)}
+                      onMouseLeave={() => setHoveredFile(null)}
+                      onClick={() => setSelectedFile(selectedFile === file.id ? null : file.id)}
+                    >
+                      {/* Icon placeholder in left square */}
+                      <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-16 h-16 bg-gray-500/50 rounded flex items-center justify-center text-sm">
+                        Icon
+                      </div>
+                      {/* Text in right rectangle, vertically centered */}
+                      <div
+                        className="absolute left-20 top-1/2 transform -translate-y-1/2 text-center font-mono text-base font-semibold"
+                        style={{ fontFamily: "'NDS12', monospace" }}
                       >
-                        <div className="flex items-center gap-3">
-                          {/* Sprite placeholder */}
-                          <div className="w-12 h-12 bg-zinc-200 dark:bg-zinc-700 rounded flex items-center justify-center">
-                            <Icon className="w-6 h-6 text-zinc-600 dark:text-zinc-400" />
-                          </div>
-                          {/* Player info */}
-                          <div className="flex-1">
-                            <div className="font-mono text-sm font-semibold">{file.playerName}</div>
-                            <div className="text-xs text-zinc-500 dark:text-zinc-400">{file.timePlayed}</div>
-                          </div>
-                        </div>
-                        {/* Skills/Badges */}
-                        <div className="mt-3 flex flex-wrap gap-1">
-                          {file.skills.map((skill) => (
-                            <span
-                              key={skill}
-                              className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 text-xs rounded font-mono"
-                            >
-                              {skill}
-                            </span>
-                          ))}
-                        </div>
-                        {/* Details on click */}
-                        {selectedFile === file.id && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-700"
-                          >
-                            <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                              {file.title} details coming soon...
-                            </p>
-                          </motion.div>
-                        )}
-                      </motion.div>
-                    );
-                  })}
+                        {file.title}
+                      </div>
+                      {/* Details on click */}
+                      {selectedFile === file.id && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-2 rounded-b"
+                        >
+                          <p>{file.title} details coming soon...</p>
+                        </motion.div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -178,10 +169,6 @@ export default function AboutOverlay({ isOpen, onClose }: AboutOverlayProps) {
                 <div className="space-y-4 text-zinc-700 dark:text-zinc-300 leading-7">
                   <p>
                     Mi chiamo Artemio, puoi chiamarmi Art. I made this blog as a means of knowledge sharing. Currently an undergraduate philosophy student at UP Diliman. Teaching myself lots of things for fun. 
-                  </p>
-                  <p>
-                    Expect topics from data science, computer vision, politics, fintech, philosophy, language-learning, video games, film, and waaaayyy more.
-                    The thing is: to never limit yourself with what you can learn. We are born curious. Cater to it.
                   </p>
                 </div>
               </div>

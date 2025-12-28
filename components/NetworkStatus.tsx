@@ -1,13 +1,25 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 type NetworkStatusProps = {
   lastUpdatedDate: string; // ISO date string
 };
 
 export default function NetworkStatus({ lastUpdatedDate }: NetworkStatusProps) {
-  const { bars, tooltipText } = useMemo(() => {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    };
+    checkDarkMode();
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
+  const { bars } = useMemo(() => {
     const now = new Date();
     const lastUpdate = new Date(lastUpdatedDate);
     const daysSince = Math.floor((now.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24));
@@ -25,36 +37,22 @@ export default function NetworkStatus({ lastUpdatedDate }: NetworkStatusProps) {
       bars = 1; // Still show 1 bar even if older
     }
 
-    const formattedDate = lastUpdate.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-
-    return {
-      bars,
-      tooltipText: `Connection Strength: ${formattedDate}`
-    };
+    return { bars };
   }, [lastUpdatedDate]);
 
+  const svgName = bars === 4 ? 'full' : bars.toString();
+  const src = `/networkstatus_${svgName}${isDark ? '_dark' : ''}.svg`;
+
   return (
-    <div
-      className="flex items-end gap-0.5"
-      title={tooltipText}
-    >
-      {[1, 2, 3, 4].map((bar) => (
-        <div
-          key={bar}
-          className={`w-1 bg-current transition-colors ${
-            bar <= bars
-              ? 'text-green-500 dark:text-green-400'
-              : 'text-zinc-300 dark:text-zinc-600'
-          }`}
-          style={{
-            height: `${bar * 2}px`, // Stair step: 2px, 4px, 6px, 8px
-          }}
-        />
-      ))}
-    </div>
+    <img
+      src={src}
+      alt={`Signal strength: ${bars} bars`}
+      title={`Connection Strength: ${new Date(lastUpdatedDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      })}`}
+      className="w-4 h-4"
+    />
   );
 }
