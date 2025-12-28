@@ -1,0 +1,127 @@
+---
+title: my university/autodidact study system
+date: 2025-12-29
+category: Knowledge
+description: my study and note-taking system as a lazy u.p. student and as an autodidact
+---
+
+# A Briefer
+---
+There are some things I have to get out of the way first: I utilize AI for my study process now. If you came into this thinking it wouldn't, it probably wouldn't be as efficient. Either way, it would still work fundamentally. Just not so lazily as I'd prefer.
+
+I used to notetake with Notion, but I felt that it was way too slow to actually get things done. If you haven't noticed, slow loading times would likely lead to you waiting while on your phone. Oops, you're already dead.
+
+# Prerequisites
+--- 
+## **Obsidian**
+![obsidian view](https://media.discordapp.net/attachments/1454778907659337778/1454854239213064397/image.png?ex=69529a18&is=69514898&hm=ee36d8313d96eb9bc920b7e485871273b98b6488467f3d25ff2420add86f32cb&=&format=webp&quality=lossless&width=1616&height=864)
+
+Honestly, it doesn't strictly have to be Obsidian. However, the organization within this app is astonishingly more comprehensive than other notetaking apps from experience. If you're working from an iPad, this is available too. You have the option to parse your written notes, if you'd want, and paste them here as well. The only caveat is, which I'm not going to disregard, is that it's not free. What I personally do is utilize **git** version control, but I'm sure that's not available for everyone per se.
+
+Obsidian is pretty much your notes app on steroids. It can embed things, you can write LaTeX, you can make diagrams fairly easily. You can also read PDFs here natively. Here's a list of some plugins, functionalities, and their uses for your study process:
+
+![canvas demo](https://media.discordapp.net/attachments/1454778907659337778/1454865606560977051/image.png?ex=6952a4ae&is=6951532e&hm=28992e3c0bd1bdbabad74adb89a28dc36e5bf150006835ab03ce06bcddd1974b&=&format=webp&quality=lossless&width=1376&height=890)
+
+- **Canvas:** This is by-far the best diagram creation app I've come across. The graph view, to me, is simply a decorative component of Obsidian that does help draw connections, but doesn't really serve a purpose until you've written the full scope of your lesson. In contrast, Canvas allows you to embed things from YouTube videos, notes from your vault, images, and also lets you label connections.
+
+- **Bases:** I personally use bases from media-tracking, this could range from books, anime, movies, shows, and so on. It's a very general database app that allows you to filter out certain notes by their properties and types, rather than having to create a folder for each idea and being lost in a maze of clicks.
+	- A tip: never have too many folders. Like with Google Keep and Apple Notes, the messier it gets, it typically gets more efficient to have your notes as accessible as possible.
+
+- **ReadItLater (Desktop Exclusive):** helps you save links from your clipboard. Think of when you encounter a YouTube video that explains a video really well. Instead of copying it to a bare notes page, a single click does the trick and is saved as a Markdown file with an embedding already.
+
+**If you don't have obsidian,** I'd much better recommend the Apple Notes app and the Google Keep app if you want a system similar to mine. Handwritten notes is best, to me, with mathematics if I don't have access to something like LaTeX. But with raw ideas, having to efficiently summarize and use my brain while a professor is providing a lecture on a document just seems impossible to me. A quick note helps alleviate this much more. When writing in a document, I have this subconscious pressure of wanting to make it look nice.
+## **Anki**
+![anki demo](https://media.discordapp.net/attachments/1454778907659337778/1454853953841008804/image.png?ex=695299d4&is=69514854&hm=0a377444c6a1c2c135d9873818bc03d5e4aa326d2dfb116681fe0238e335f885&=&format=webp&quality=lossless&width=1815&height=864)
+- Anki is the most versatile and diverse flashcard app available. It's a bit confusing to navigate, but it's actually pretty simple. The pipeline I'd recommend would be to:
+	1. Understand that Anki is for built for the Spaced Repetition System (SRS). 
+	2. Have a cloud sync. You may refer to the documentation [here](https://docs.ankiweb.net/syncing.html)
+	3. You don't have to write everything yourself on Anki. You have three options here:
+		- Find or share existing decks aligned with your area of interest.
+		- Optimize an AI prompt to generate flashcards for you (we can also do this with material that you personally provide through NotebookLM).
+		- Write your flashcards manually for initial knowledge building.
+	4. Anki is extremely customizable. There are tons of extensions available that make it so much more user-friendly than it initially is out-of-the-box. 
+- Some add-ons I'd personally recommend:
+	- [to show off that you're diligent](https://ankiweb.net/shared/info/933207442)
+	- [to change your anki wallpaper](https://ankiweb.net/shared/info/1210908941)
+	- [to see how consistent you've been](https://ankiweb.net/shared/info/1771074083)
+
+## **Google Suite**
+*this is where things are up to personal preference but there's a system in play here*
+- **Calendar:** For planning, duh. Tasks also but I consider it a part of GCalendar. 
+- **Mail:** For email duh.
+- **Docs:** For writing your essays to be submitted to professors, duh. Also, I rewrite entire lessons on reviewers on here with AI aid. Printing Markdown files isn't the most efficient at all. **For formatting**, I'd recommend: **[Patrisha Dictado's notetaking template](https://www.youtube.com/watch?v=y8rF-gIb6QE)** (shout out fellow iskolar ng bayan matsalab)
+- **Sheets/Excel:** This is a bit more specific. I use sheets for tracking my tasks-tasks. Google Tasks really doesn't cut it for me in terms of feature availability. So I just make my own trackers through sheets. Cloud-saving is much more convenient on sheets as tracking feels much better on-the-go. I track things from my expenditure, grades, to my tasks.
+## **AI Suite**
+### **ChatGPT**
+- **Utility:** Discussion, Study & Learn feature. These are actually quite great for quizzing yourself on a chat-basis. If you're like me and have essays for final exams, you can ask it to provide objective questions which you will then answer as concisely, yet as comprehensively correct as possible.
+- A typical prompt would look like:
+```
+	Create Anki flashcards.
+
+Topic: [TOPIC]
+
+Generate exactly [N] problem–solution cards.
+
+Format (STRICT):
+- Output CSV only
+- 2 columns: Front, Back
+- Wrap all math in LaTeX \( … \)
+- Use <br> for line breaks
+- Bold labels: <b>Final Answer:</b>, <b>Steps:</b>
+- Quote each field for CSV safety
+
+Content:
+- Front: clear question/problem
+- Back: Final Answer + step-by-step solution
+- Exam-level where appropriate
+- No filler, no duplicates
+
+Anki settings assumed:
+Basic note, comma separator, HTML + MathJax enabled
+
+Output ONLY the CSV.
+	
+```
+
+- One more thing I'd like to add is that for most of these programs, you can also prompt for a "Mermaid" diagram. Mermaid is basically a language specifically for building diagrams comprehensively rather than having the LLM output some weird text-based diagram that often is too simple. 
+### **Gemini**
+- Similarly, Gemini serves the same functions. However, I use it more to navigate, add, and manage my Google Suite. For example, I can prompt Gemini to set events up on my calendar through voice, ask for help when fixing sheets, and, well, that's basically it. But there's a lot more you can do with it that I've actually yet to explore. Other than that, I pretty much use it for the same purposes as ChatGPT.
+- Deep Research, however, a feature of Gemini, is its most shiny feature. When studying a topic, I'd typically ask a deep research query to comprehensively understand a topic at hand. Albeit, learn to prompt it to not use fluff. This is also the reason I'd recommend **Perplexity.**
+### **NotebookLM**
+
+![notebooklm ss](https://media.discordapp.net/attachments/1454778907659337778/1454864090601095300/image.png?ex=6952a345&is=695151c5&hm=6c01bc39bcd93084935eacf82d224dad99d916030c828180145e56032162782d&=&format=webp&quality=lossless&width=1376&height=929)
+
+- NotebookLM is built on Gemini. It's the best LLM-based tool available for studying, in my very humble opinion. Features include: 
+	- **Context management:** significantly more files can be uploaded here and you can also add additional context files through the deep research function. On average, deep research queries would produce over 10 distinct and useful context files for your specific topic.
+	- **Behavioral tweaking:** like with Gemini and other LLMs, you can also exclusively tweak NotebookLM for each of the notebooks. Notebooks act like projects on ChatGPT and they actually came before (in the free plan, at least).
+	- **Podcast generation:** helps with active listening, although be careful not to feed too much information and be sure to select your context files properly.
+	- To add: flashcards, quizzes, reports, powerpoints, diagrams. These are all pretty self-explanatory.
+
+### ***Claude, DeepSeek (Optional for Developers)***
+- Developers would already know why these two are on here. However, if you're someone like an engineering student, mathematics, or statistics student, have no experience with programming, and can't find a video for a topic you're trying to understand, building a visualization or a program to explain it for you would help tenfold. I've benefitted from cross-checking an verifying some visualizations to build up my own understanding of data science, machine learning, and statistics while studying on my own.
+- I've also prompted Claude for a truth-table game which, probably non-coincidentally, got me a 1.00 on my final PHILO10 exam.
+
+# Methodology
+---
+**So what's the process here?**
+To put it simply, the pipeline goes something like this.
+
+| Reading                                                                                                                                                                                                                                                                                            | Lecture                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Revising/Reviewing                                                                                                                                                                                                                                                                                                   |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| You receive a reading, you prompt for a summarization, and you read as much pages as you can. As you read your assigned readings, take notes of the key ideas.                                                                                                                                     | While in a lecture, be attentive. **Do not write everything down**. Be methodic and calculated with your notes. Don't overthink concepts, absorb and then digest.                                                                                                                                                                                                                                                                                                                                                       | This is where some techniques come into play. **When reviewing here are a few things to do:**                                                                                                                                                                                                                        |
+| Key ideas are put into knowledge blocks within your notes app, which could then be converted to Anki cards.<br>**For abstract, philosophical concepts:** be deductive. Explain a topic at hand comprehensively<br>**For mathematical, analytical concepts:** be inductive. Practice makes perfect. | **Sit with your notes** after your class, or if you don't have time, while in your commute or after you get home. Maybe even during a bathroom break or while eating if it's easily accessible to you. If it's memorizable, don't just memorize it (However it's important that you do for certain ideas as well). It's important to have an intuitive understanding.<br><br>It's important that you don't see what you're studying just as something for class, but as something to fill your perpetual knowledge gap. | **Review your flashcards**, **do your practice quizzes**, **do blurting**, **talk to someone about what you're learning**, it's also important that that someone acknowledges what you learn and tries to ask you questions because if they're uninterested, you will lose interest in what you're studying as well. |
+|                                                                                                                                                                                                                                                                                                    | Reassess. From your knowledge blocks, write then a comprehensive explanation or a reviewer on Docs.                                                                                                                                                                                                                                                                                                                                                                                                                     |                                                                                                                                                                                                                                                                                                                      |
+|                                                                                                                                                                                                                                                                                                    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                                                                                                                                                                                                                                      |
+# Key Takeaways
+Honestly, you don't have to be the super-best at this to be effective. You don't have to be that diligent either, although that's ideal. If you want to be as lazy as me, think of the opportunity cost. It would take a lot more energy to fuss around with bad grades when you could've easily done better.
+- u can be a lazy bum playing video games all day and still get 1.00s btw. 
+
+# therefore, to inspire u with tuff love, if u're failing while having everything at ur disposal, it's a skill issue.
+*not invalidating those struggling with their own personal issues, working, or whatever. i know what it's like and i've been there. but when you're just lazy, honestly, it's a skill issue lil bro.*
+
+# some honorable mentions
+1. zotero - citation tracker and manager super cool
+2. rstudio - if u do stats
+3. wolfram mathematica - if ure a fellow isko this is free and u can do so much on this language
+4. notepad++ - amazing text editor for the non-techy people
+5. figma - if u want cool looking diagrams more professional looking than on canva
