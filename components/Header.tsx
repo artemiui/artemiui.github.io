@@ -21,7 +21,7 @@ export default function Header() {
   }, []);
 
   // TODO: Replace with actual last modified date from CMS or build info
-  const lastSavedDate = "im too lazy to write something that updates this according to git so";
+  const lastSavedDate = "2025-12-28";
 
   return (
     <>
@@ -66,9 +66,7 @@ export default function Header() {
             Recommendations
           </Link>
           <Link
-            href="https://instagram.com/virtualsarili"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/graphics"
             className="text-zinc-600 dark:text-zinc-400 hover:text-foreground transition-colors"
           >
             Graphics

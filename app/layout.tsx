@@ -7,6 +7,7 @@ import IdleScreensaver from "@/components/IdleScreensaver";
 import ThemeToggle from "@/components/ThemeToggle";
 import IntroWrapper from "@/components/IntroWrapper";
 import "katex/dist/katex.min.css";
+import GlobalRouteBackground from "@/components/GlobalRouteBackground";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -27,6 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="antialiased bg-background text-foreground">
+        <GlobalRouteBackground />
         <IntroWrapper>
           <div className="fixed bottom-4 right-4 z-50">
             <ThemeToggle />

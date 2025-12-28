@@ -14,7 +14,7 @@ interface EmberParticle {
 }
 
 export default function IdleScreensaver() {
-  const { isIdle, resetTimer } = useIdleTimer(5000);
+  const { isIdle, resetTimer } = useIdleTimer(15000);
   const [visible, setVisible] = useState(false);
   const [fadeIn, setFadeIn] = useState(false);
 
