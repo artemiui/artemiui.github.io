@@ -8,9 +8,45 @@ import AudioPlayer from "@/components/AudioPlayer";
 import remarkMath from "remark-math";
 
 import rehypeKatex from "rehype-katex";
+import rehypeSanitize from "rehype-sanitize";
+import { defaultSchema } from "hast-util-sanitize";
 
 type Props = {
   params: Promise<{ slug: string }>;
+};
+
+const baseTagNames = defaultSchema?.tagNames ?? [];
+const baseAttributes = defaultSchema?.attributes ?? {} as Record<string, any>;
+
+const katexSanitizeOptions = {
+  ...(defaultSchema ?? {}),
+  tagNames: [
+    ...baseTagNames,
+    'span','div',
+    'math','semantics','mrow','mi','mn','mo','mfrac','msup','msub','mtext','annotation','mspace','msqrt','mtable','mtr','mtd'
+  ],
+  attributes: {
+    ...baseAttributes,
+    span: ['className','aria-hidden'],
+    div: ['className'],
+    math: ['className'],
+    semantics: ['className'],
+    mrow: ['className'],
+    mi: ['className'],
+    mn: ['className'],
+    mo: ['className'],
+    mfrac: ['className'],
+    msup: ['className'],
+    msub: ['className'],
+    mtext: ['className'],
+    annotation: ['className'],
+    mspace: ['className'],
+    msqrt: ['className'],
+    mtable: ['className'],
+    mtr: ['className'],
+    mtd: ['className'],
+    '*': [...(baseAttributes['*'] ?? []), 'className', 'aria-hidden']
+  }
 };
 
 export async function generateStaticParams() {
@@ -63,7 +99,10 @@ export default async function BlogPost({ params }: Props) {
             options={{
               mdxOptions: {
                 remarkPlugins: [remarkMath],
-                rehypePlugins: [rehypeKatex],
+                rehypePlugins: [
+                  rehypeKatex,
+                  [rehypeSanitize, katexSanitizeOptions],
+                ],
               },
             }}
           />
