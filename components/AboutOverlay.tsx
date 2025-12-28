@@ -1,15 +1,61 @@
 "use client";
 
-import { X } from "lucide-react";
+import { X, GraduationCap, Heart, Gamepad2, Briefcase } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type AboutOverlayProps = {
   isOpen: boolean;
   onClose: () => void;
 };
 
+type SaveFile = {
+  id: string;
+  title: string;
+  playerName: string;
+  timePlayed: string;
+  skills: string[];
+  icon: React.ComponentType<{ className?: string }>;
+};
+
+const saveFiles: SaveFile[] = [
+  {
+    id: "education",
+    title: "Education",
+    playerName: "Artemio",
+    timePlayed: "4 Years",
+    skills: ["Philosophy", "Computer Science", "Mathematics"],
+    icon: GraduationCap,
+  },
+  {
+    id: "interests",
+    title: "Interests",
+    playerName: "Art",
+    timePlayed: "∞ Years",
+    skills: ["Data Science", "AI", "Film", "Music"],
+    icon: Heart,
+  },
+  {
+    id: "hobbies",
+    title: "Hobbies",
+    playerName: "Artemio",
+    timePlayed: "Countless Hours",
+    skills: ["Gaming", "Reading", "Piano", "Language Learning"],
+    icon: Gamepad2,
+  },
+  {
+    id: "projects",
+    title: "Projects",
+    playerName: "Art",
+    timePlayed: "2 Years",
+    skills: ["Web Dev", "ML", "Open Source", "Writing"],
+    icon: Briefcase,
+  },
+];
+
 export default function AboutOverlay({ isOpen, onClose }: AboutOverlayProps) {
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+
   // Prevent body scroll when overlay is open
   useEffect(() => {
     if (isOpen) {
@@ -69,6 +115,61 @@ export default function AboutOverlay({ isOpen, onClose }: AboutOverlayProps) {
               >
                 <X className="w-5 h-5 text-zinc-600 dark:text-zinc-400" />
               </button>
+
+              {/* Save Files Menu */}
+              <div className="mb-8">
+                <h3 className="text-lg font-mono font-semibold mb-4 text-center">Load Game</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  {saveFiles.map((file) => {
+                    const Icon = file.icon;
+                    return (
+                      <motion.div
+                        key={file.id}
+                        className="bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-lg p-4 cursor-pointer transition-all hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-500"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setSelectedFile(selectedFile === file.id ? null : file.id)}
+                      >
+                        <div className="flex items-center gap-3">
+                          {/* Sprite placeholder */}
+                          <div className="w-12 h-12 bg-zinc-200 dark:bg-zinc-700 rounded flex items-center justify-center">
+                            <Icon className="w-6 h-6 text-zinc-600 dark:text-zinc-400" />
+                          </div>
+                          {/* Player info */}
+                          <div className="flex-1">
+                            <div className="font-mono text-sm font-semibold">{file.playerName}</div>
+                            <div className="text-xs text-zinc-500 dark:text-zinc-400">{file.timePlayed}</div>
+                          </div>
+                        </div>
+                        {/* Skills/Badges */}
+                        <div className="mt-3 flex flex-wrap gap-1">
+                          {file.skills.map((skill) => (
+                            <span
+                              key={skill}
+                              className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 text-xs rounded font-mono"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                        {/* Details on click */}
+                        {selectedFile === file.id && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-700"
+                          >
+                            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                              {file.title} details coming soon...
+                            </p>
+                          </motion.div>
+                        )}
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </div>
 
               {/* About content */}
               <div className="space-y-6">

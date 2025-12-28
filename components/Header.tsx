@@ -2,15 +2,38 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AboutOverlay from "./AboutOverlay";
+import NetworkStatus from "./NetworkStatus";
 
 export default function Header() {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [currentTime, setCurrentTime] = useState("");
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setCurrentTime(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // TODO: Replace with actual last modified date from CMS or build info
+  const lastSavedDate = "2025-12-28";
 
   return (
     <>
       <header className="flex flex-col gap-4">
+        {/* System Time and Network Status */}
+        <div className="flex justify-between items-center text-xs font-mono text-zinc-500 dark:text-zinc-400">
+          <span>{currentTime}</span>
+          <NetworkStatus lastUpdatedDate={lastSavedDate} />
+        </div>
+
+        <div className="flex items-center gap-4">
+          </div>
         <div className="flex items-center gap-4">
           <div className="w-[100px] h-[100px] rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0 overflow-hidden">
             <Image

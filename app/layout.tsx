@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import IdleScreensaver from "@/components/IdleScreensaver";
 import "katex/dist/katex.min.css";
 
 const inter = Inter({
@@ -31,6 +32,7 @@ export default function RootLayout({
           </div>
           <Footer />
         </div>
+        <IdleScreensaver />
       </body>
     </html>
   );
