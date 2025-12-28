@@ -21,7 +21,7 @@ export default function Header() {
   }, []);
 
   // TODO: Replace with actual last modified date from CMS or build info
-  const lastSavedDate = "2025-12-28";
+  const lastSavedDate = "im too lazy to write something that updates this according to git so";
 
   return (
     <>
@@ -52,7 +52,7 @@ export default function Header() {
             </p>
           </div>
         </div>
-        <nav className="flex gap-6 text-sm font-mono">
+        <nav className="w-full flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-4 md:gap-6 text-xs sm:text-sm font-mono">
           <button
             onClick={() => setIsAboutOpen(true)}
             className="text-zinc-600 dark:text-zinc-400 hover:text-foreground transition-colors"

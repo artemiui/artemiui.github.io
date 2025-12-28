@@ -120,7 +120,7 @@ export default function AboutOverlay({ isOpen, onClose }: AboutOverlayProps) {
               {/* Save Files Menu */}
               <div className="mb-8">
                 <h3 className="text-lg font-mono font-semibold mb-4 text-center">Load Game</h3>
-                <div className="grid grid-cols-2 gap-0.5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-0.5">
                   {saveFiles.map((file) => (
                     <div
                       key={file.id}

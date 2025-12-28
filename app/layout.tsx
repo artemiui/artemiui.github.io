@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import IdleScreensaver from "@/components/IdleScreensaver";
 import ThemeToggle from "@/components/ThemeToggle";
+import IntroWrapper from "@/components/IntroWrapper";
 import "katex/dist/katex.min.css";
 
 const inter = Inter({
@@ -26,17 +27,19 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="antialiased bg-background text-foreground">
-        <div className="fixed bottom-4 right-4 z-50">
-          <ThemeToggle />
-        </div>
-        <div className="min-h-screen flex flex-col">
-          <div className="flex-1 w-full max-w-[768px] mx-auto px-6 py-12">
-            <Header />
-            <main className="mt-6">{children}</main>
+        <IntroWrapper>
+          <div className="fixed bottom-4 right-4 z-50">
+            <ThemeToggle />
           </div>
-          <Footer />
-        </div>
-        <IdleScreensaver />
+          <div className="min-h-screen flex flex-col">
+            <div className="flex-1 w-full max-w-[768px] mx-auto px-6 py-12">
+              <Header />
+              <main className="mt-6">{children}</main>
+            </div>
+            <Footer />
+          </div>
+          <IdleScreensaver />
+        </IntroWrapper>
       </body>
     </html>
   );
