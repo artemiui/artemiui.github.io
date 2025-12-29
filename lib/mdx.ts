@@ -54,3 +54,19 @@ export async function getAllPosts(): Promise<Post[]> {
   return posts.filter((post): post is Post => post !== null);
 }
 
+export function generateMdHeadingId(index: number, text: string): string {
+  const safe = text
+    .toLowerCase()
+    .replace(/[<>]/g, (c) => (c === "<" ? "&lt;" : "&gt;"))
+    .replace(/\s+/g, "-");
+  return `heading-${index}-${safe}`;
+}
+
+export function sanitizeHeadingLabelDisplay(input: string): string {
+  try {
+    return input.replace(/[^\p{L}\p{N}\s\.\-]/gu, "");
+  } catch {
+    return input.replace(/[^\w\s\.\-]/g, "");
+  }
+}
+

@@ -39,11 +39,11 @@ export default function FeedItem({ item, index }: FeedItemProps) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
-      className="group flex items-start justify-between gap-4 py-3 border-b border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors"
+      className="group flex flex-col sm:flex-row items-start justify-between gap-3 sm:gap-4 py-3 border-b border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors"
     >
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
-          <h3 className="font-medium font-mono text-foreground group-hover:opacity-70 transition-opacity">
+          <h3 className="font-medium font-mono text-foreground group-hover:opacity-70 transition-opacity truncate">
             {item.title}
           </h3>
           {isExternal && (

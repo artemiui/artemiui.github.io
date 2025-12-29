@@ -47,7 +47,7 @@ export default function Home() {
   }, [filteredItems, currentPage]);
 
   return (
-    <div className="space-y-12 text-xl font-semibold mb-6">
+    <div className="space-y-8 sm:space-y-12 text-xl font-semibold mb-6 overflow-x-hidden">
       {/* Bio Section */}
       <section>
         <p className="text-green-600 dark:text-zinc-300 leading-7">
@@ -56,7 +56,7 @@ export default function Home() {
       </section>
 
       {/* Feed Section */}
-      <section>
+      <section className="overflow-x-hidden">
         <FeedFilter
           activeCategory={activeCategory}
           onCategoryChange={setActiveCategory}

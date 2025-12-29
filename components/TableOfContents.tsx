@@ -2,6 +2,22 @@
 
 import { useEffect, useState } from "react";
 
+const sanitizeHeadingLabelDisplay = (input: string) => {
+  try {
+    return input.replace(/[^\p{L}\p{N}\s\.\-]/gu, "");
+  } catch {
+    return input.replace(/[^\w\s\.\-]/g, "");
+  }
+};
+
+const generateMdHeadingId = (index: number, text: string) => {
+  const safe = text
+    .toLowerCase()
+    .replace(/[<>]/g, (c) => (c === "<" ? "&lt;" : "&gt;"))
+    .replace(/\s+/g, "-");
+  return `heading-${index}-${safe}`;
+};
+
 type Heading = {
   id: string;
   text: string;
@@ -19,7 +35,7 @@ export default function TableOfContents({ content }: { content: string }) {
     const extracted: Heading[] = matches.map((match, index) => {
       const level = match[1].length;
       const text = match[2].trim();
-      const id = `heading-${index}-${text.toLowerCase().replace(/\s+/g, "-")}`;
+      const id = generateMdHeadingId(index, text);
       return { id, text, level };
     });
 
@@ -75,7 +91,7 @@ export default function TableOfContents({ content }: { content: string }) {
                   : ""
               }`}
             >
-              {heading.text}
+              {sanitizeHeadingLabelDisplay(heading.text)}
             </a>
           </li>
         ))}
