@@ -194,14 +194,15 @@ export default function AboutOverlay({ isOpen, onClose }: AboutOverlayProps) {
                             osuPP={3185}
                             osuSince="July 2018"
                             memoryUrls={[
-                              "https://media.discordapp.net/attachments/1454778907659337778/1454779586159054888/IMG_0003.JPG?ex=69525491&is=69510311&hm=c1fea42f41ddc6fbefd181c3d70e0d67fa6d1ae69b60765d74db19735b4b8f44&=&format=webp&width=1296&height=864",
-                              "https://media.discordapp.net/attachments/1454778907659337778/1454779586968682560/471969345_1642505339635405_7114917024896565091_n.jpg?ex=69525492&is=69510312&hm=0b233f454dc623448733625e1bb6a7a424ca0cbe4c25c5533d8100cd60513a64&=&format=webp&width=1296&height=864",
-                              "https://media.discordapp.net/attachments/1454778907659337778/1454779587769667616/dsad.png?ex=69525492&is=69510312&hm=00b51f466823838b4440ec25785529c24ff4e570d6d0fd987d4130bbe110856f&=&format=webp&quality=lossless&width=1317&height=864",
-                              "https://media.discordapp.net/attachments/1454778907659337778/1454779588273115136/5.png?ex=69525492&is=69510312&hm=5073a9a2ccffdd4e738808f07abe39ee3b004087cd20d0b6b1ea64b6d987dba3&=&format=webp&quality=lossless&width=1080&height=864",
-                              "https://media.discordapp.net/attachments/1454778907659337778/1454779588835020952/3.png?ex=69525492&is=69510312&hm=a2af7721feb67b2442a0c922a17ea9d40a2820fe6f73581d4ceb1a7e668cf16b&=&format=webp&quality=lossless&width=1728&height=864",
-                              "https://media.discordapp.net/attachments/1454778907659337778/1454779589476876401/RobloxScreenShot20250721_163242768.png?ex=69525492&is=69510312&hm=0f3cde10a5cee3a364c53f03e0e9592bd571214a43a5d145c17c7f4924caa649&=&format=webp&quality=lossless&width=1535&height=863",
-                              "https://media.discordapp.net/attachments/1454778907659337778/1454779590118609002/POSTER_A_Dual-Method_Approach_to_Exploring_the_Mechanisms_of_Phytochemical_Combination_of_Curcumin_and_Quercetin_on_Anticarcinogenic_Properties_1.png?ex=69525492&is=69510312&hm=d881fbb104bc988998998ef812383c16dfee889b58a863ea5e032ba9dedf4497&=&format=webp&quality=lossless&width=1222&height=864",
-                              "https://media.discordapp.net/attachments/1454778907659337778/1454779591578095729/philippines_big_one_simulation.png?ex=69525493&is=69510313&hm=ac081fb2c27f597cba284ab4659fd291fe6973f8acba09b125466c6e05cfa4bb&=&format=webp&quality=lossless&width=1298&height=864",
+                              "https://i.imgur.com/84i8LAh.jpeg",
+                              "https://i.imgur.com/GmAqvdW.png",
+                              "https://i.imgur.com/AWAfrRQ.jpeg",
+                              "https://i.imgur.com/ysRfNG3.png",
+                              "https://i.imgur.com/ukZhCB7.jpeg",
+                              "https://i.imgur.com/95MC8aa.jpeg",
+                              "https://i.imgur.com/VUmcGjx.jpeg",
+                              "https://i.imgur.com/XWq6vjX.jpeg",
+                              "https://i.imgur.com/ukZhCB7.jpeg",
                           ]}
                           />
                         ) : (
