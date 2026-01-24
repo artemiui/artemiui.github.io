@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@vercel/analytics": "^1.6.1",
     "framer-motion": "^12.23.26",
     "fs": "^0.0.1-security",
     "gray-matter": "^4.0.3",

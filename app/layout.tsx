@@ -8,6 +8,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import IntroWrapper from "@/components/IntroWrapper";
 import "katex/dist/katex.min.css";
 import GlobalRouteBackground from "@/components/GlobalRouteBackground";
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({
   variable: "--font-inter",
