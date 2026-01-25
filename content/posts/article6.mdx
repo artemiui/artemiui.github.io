@@ -121,10 +121,14 @@ $\frac{1}{x} = \frac{1}{\sqrt{x^2}}$
 let's take another example. we evaluate:
 $$\lim_{x \rightarrow -\infty} (\sqrt{9x^2-x}+3x)$$
 
-$\implies \lim_{x \rightarrow -\infty} (\sqrt{9x^2-x}+3x) \frac{\sqrt{9x^2-x}-3x}{\sqrt{9x^2-x}-3x}$ 
-$\implies \lim_{x \rightarrow -\infty} \frac{9x^2-x-9x^2}{\sqrt{9x^2-x}-3x}$ 
-$\implies \lim_{x \rightarrow -\infty} \frac{-x}{\sqrt{9x^2-x}-3x}$ 
-$\implies \lim_{x \rightarrow -\infty} \frac{-x}{\sqrt{9x^2-x}-3x} \frac{\frac{1}{x}}{\frac{1}{\sqrt{x^2}}}$
+$$
+\begin{aligned}
+&\implies \lim_{x \rightarrow -\infty} (\sqrt{9x^2-x}+3x) \frac{\sqrt{9x^2-x}-3x}{\sqrt{9x^2-x}-3x}$ 
+&\implies \lim_{x \rightarrow -\infty} \frac{9x^2-x-9x^2}{\sqrt{9x^2-x}-3x}$ 
+&\implies \lim_{x \rightarrow -\infty} \frac{-x}{\sqrt{9x^2-x}-3x}$ 
+&\implies \lim_{x \rightarrow -\infty} \frac{-x}{\sqrt{9x^2-x}-3x} \frac{\frac{1}{x}}{\frac{1}{\sqrt{x^2}}}$
+\end{aligned}
+$$ 
 where $\frac{\frac{1}{x}}{\frac{1}{\sqrt{x^2}}} = \frac{\frac{1}{-x}}{\frac{1}{-x}}$ because $x \rightarrow -\infty$. 
 we are then left with $\lim_{x \rightarrow -\infty} \frac{1}{\sqrt{9-\frac{1}{x}}+3}$ 
 
