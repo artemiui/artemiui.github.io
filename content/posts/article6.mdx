@@ -29,19 +29,23 @@ math 21, course title Elementary Analysis I of upd, is an introductory course to
 		$$\implies \lim_{x \rightarrow 1} \frac{\sqrt[3]{x}-1}{\sqrt{x}-1}$$
 		we multiply the expression by a special product identity but is still equal to one over one, we are basically just scaling the expression by a another expression without adding onto it. here, we use the identity: $$a^3-b^3 = (a-b)(a^2+ab+b^2)$$note that because $\sqrt[3]{x}-1$ can be treated as $(a-b)$ pertaining to the identity, we can multiply another  $(a^2+ab+b^2)$ to get a complete expression $(a-b)(a^2+ab+b^2)$ which we have established to be equal to $a^3-b^3$.  therefore, we cancel out the cubic root in $\sqrt[3]{x}-1$, and are left with $x-1$.
 
-		$\implies \lim_{x \rightarrow 1} \frac{\sqrt[3]{x}-1}{\sqrt{x}-1} \frac{(\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1}{(\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1}$
+$$\implies \lim_{x \rightarrow 1} \frac{\sqrt[3]{x}-1}{\sqrt{x}-1} \cdot \frac{(\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1}{(\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1}$$
 	
 		because we only treat the radical in the numerator, our denominator remains conjoined to $(\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1$.
 		
-		$\implies \lim_{x \rightarrow 1} \frac{x-1}{(\sqrt{x}-1)((\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1)}$ 
+$$\implies \lim_{x \rightarrow 1} \frac{x-1}{(\sqrt{x}-1)((\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1)}$$ 
 		
 		we see that there is another radical that we can cancel out in the bottom expression $\sqrt{x} - 1$, therefore we can utilize another identity:
 		$$a^2-b^2=(a+b)(a-b)$$  
-		$\implies \lim_{x \rightarrow 1} \frac{x-1}{(\sqrt{x}-1)((\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1)} \frac{\sqrt{x}+1}{\sqrt{x}+1}$ 
-		$\implies \lim_{x \rightarrow 1} \frac{(x-1)(\sqrt{x}+1)}{(x-1)((\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1)}$ 
-		$\implies \lim_{x \rightarrow 1} \frac{(\sqrt{x}+1)}{((\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1)}$  then substituting,
-		$\implies \lim_{x \rightarrow 1} \frac{(\sqrt{1}+1)}{((\sqrt[3]{1})^2 + (\sqrt[3]{1}) + 1)}$ 
-			$\therefore \frac{2}{3}$ 
+$$
+\begin{aligned}
+&\implies \lim_{x \rightarrow 1} \frac{x-1}{(\sqrt{x}-1)((\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1)} \cdot \frac{\sqrt{x}+1}{\sqrt{x}+1} \\[0.5em]
+&\implies \lim_{x \rightarrow 1} \frac{(x-1)(\sqrt{x}+1)}{(x-1)((\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1)} \\[0.5em]
+&\implies \lim_{x \rightarrow 1} \frac{(\sqrt{x}+1)}{((\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1)} \quad \text{then substituting,} \\[0.5em]
+&\implies \lim_{x \rightarrow 1} \frac{(\sqrt{1}+1)}{((\sqrt[3]{1})^2 + (\sqrt[3]{1}) + 1)} \\[0.5em]
+&\therefore \frac{2}{3}
+\end{aligned}
+$$ 
 ### 1.2 one-sided limits
 - take for example you want to assess the limit at $a$ from the right of the equation, this is denoted as $a^+$ and likewise from the right, it is $a^-$. this just means we are assessing values of $a$ with a difference of either $0^+$ or $0^-$. neither of these zeroes actually are true zero, therefore when performing operations the symbol for right and left are necessary. 
 - we can interpret both $0^+$ or $0^-$ as non-zero positive or negative values respectively. they are not zero, but are any arbitrary value infinitesimally close to zero.
@@ -57,10 +61,10 @@ math 21, course title Elementary Analysis I of upd, is an introductory course to
 	1. the piecewise definition of absolute values
 		denoted by $f(x)=|x|$ where we can represent the same concept as:
 $$
-  |x| = \cases{x & $x \ge0$ \cr -x & $x < 0$ }
+|x| = \begin{cases} x & \text{if } x \ge 0 \\ -x & \text{if } x < 0 \end{cases}
 $$
 		this is used in limit problems with nested absolute values. absolute value functions will be used more than just the simple base case. for example:
-		$f(x) = |x+2|$, where we can represent the same function as: $$ |x+2| = \cases{x+2 & $x \ge -2$ \cr -(x+2) & $x < -2$ } $$
+		$f(x) = |x+2|$, where we can represent the same function as: $$|x+2| = \begin{cases} x+2 & \text{if } x \ge -2 \\ -(x+2) & \text{if } x < -2 \end{cases}$$
 	2. greatest integer functions or the [floor function](https://en.wikipedia.org/wiki/Floor_and_ceiling_functions)
 	- the greatest integer function considers the closest *floor* integer to whichever output is evaluated. for example, we are testing the right-sided limit $x \rightarrow 2^+$ where $f(x) = \lfloor2x\rfloor$, our output becomes $y = 4^+$. the floor integer corresponding to $4^+$ where  $4^+ \neq 4$ but instead $4 + \epsilon$ where $\epsilon$ is an arbitrarily small number, the closest value to the right or the *floor* is 4. see [this video](https://www.youtube.com/watch?v=q68Hl7DhsuQ) for a more intuitive guide to gifs.
 	- a more formal definition would be: $$ \lfloor x \rfloor = \max \{\, n \in \mathbb{Z} \mid n \le x \,\} $$

@@ -22,30 +22,37 @@ const katexSanitizeOptions = {
   ...(defaultSchema ?? {}),
   tagNames: [
     ...baseTagNames,
-    'span','div',
-    'math','semantics','mrow','mi','mn','mo','mfrac','msup','msub','mtext','annotation','mspace','msqrt','mtable','mtr','mtd'
+    'span', 'div',
+    'math', 'semantics', 'mrow', 'mi', 'mn', 'mo', 'mfrac', 'msup', 'msub', 'mtext', 'annotation', 'mspace', 'msqrt', 'mtable', 'mtr', 'mtd', 'munder', 'mover', 'munderover', 'mlabeledtr', 'maligngroup', 'malignmark', 'mpadded', 'mphantom', 'mroot', 'mstyle', 'menclose', 'mmultiscripts', 'mprescripts', 'none'
   ],
   attributes: {
     ...baseAttributes,
-    span: ['className','aria-hidden'],
-    div: ['className'],
-    math: ['className'],
+    span: ['className', 'aria-hidden', 'style'],
+    div: ['className', 'style'],
+    math: ['className', 'xmlns', 'display'],
     semantics: ['className'],
     mrow: ['className'],
-    mi: ['className'],
+    mi: ['className', 'mathvariant'],
     mn: ['className'],
-    mo: ['className'],
-    mfrac: ['className'],
+    mo: ['className', 'fence', 'stretchy', 'symmetric', 'largeop', 'movablelimits', 'accent', 'lspace', 'rspace', 'minsize', 'maxsize'],
+    mfrac: ['className', 'linethickness'],
     msup: ['className'],
     msub: ['className'],
     mtext: ['className'],
-    annotation: ['className'],
-    mspace: ['className'],
+    annotation: ['className', 'encoding'],
+    mspace: ['className', 'width', 'height', 'depth'],
     msqrt: ['className'],
-    mtable: ['className'],
+    mtable: ['className', 'columnalign', 'rowspacing', 'columnspacing'],
     mtr: ['className'],
-    mtd: ['className'],
-    '*': [...(baseAttributes['*'] ?? []), 'className', 'aria-hidden']
+    mtd: ['className', 'columnalign'],
+    munder: ['className', 'accentunder'],
+    mover: ['className', 'accent'],
+    munderover: ['className'],
+    mpadded: ['className', 'width', 'height', 'depth', 'lspace', 'voffset'],
+    mphantom: ['className'],
+    mroot: ['className'],
+    mstyle: ['className', 'displaystyle', 'scriptlevel'],
+    '*': [...(baseAttributes['*'] ?? []), 'className', 'aria-hidden', 'style']
   }
 };
 
@@ -91,7 +98,7 @@ export default async function BlogPost({ params }: Props) {
             </div>
           </header>
 
-          <MDXRemote 
+          <MDXRemote
             source={post.content}
             components={{
               AudioPlayer,
@@ -99,10 +106,7 @@ export default async function BlogPost({ params }: Props) {
             options={{
               mdxOptions: {
                 remarkPlugins: [remarkMath],
-                rehypePlugins: [
-                  rehypeKatex,
-                  [rehypeSanitize, katexSanitizeOptions],
-                ],
+                rehypePlugins: [rehypeKatex],
               },
             }}
           />
