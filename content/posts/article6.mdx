@@ -1,0 +1,76 @@
+---
+title: "lecture notes: math 21, elementary analysis i"
+date: "2026-01-25"
+category: "Knowledge"
+description: "an online collection of my lecture notes in the up diliman course: math 21."
+---
+
+# introduction
+math 21, course title Elementary Analysis I of upd, is an introductory course to calculus for undergraduate students across ba and bs programs of the university. i'm sharing my notes on math 21 here directly from my obsidian notebook to my blog as a means of simply sharing cool things, examples, and solving techniques i've learnt throughout the course. any undocumented notes are simply those we haven't discussed yet, or those i have yet to rewrite.
+
+**resources to be used**:
+[math 21 lecture videos](https://www.youtube.com/watch?v=OYmiYjRrLuE&list=PL2kta8PKtfXSd5McJgIrHwFUd-PvSZEIW)
+[math 21 discussion videos](https://www.youtube.com/watch?v=q2DrySb02bc&list=PL2kta8PKtfXSt5Yxh29fNMIypBVPvX7qW)
+[stewart calculus](https://www.stewartcalculus.com/)
+[paul's online notes](https://tutorial.math.lamar.edu/)
+
+**disclaimer:** the following course notes are based on both my classes and the up diliman institute of mathematics youtube channel for math 21 lectures and discussion videos. i am not an official of the up system nor am i an instructor, i am just an undergraduate student sharing my notes. should there be any corrections within these notes, please contact me.
+# lecture notes
+*i encourage that you utilize the linked google notebook environment for visualizing concepts.*
+## le 1: limits and continuity: indeterminates, limits involving infinity, ivt, l'hopital's
+### 1.1: limits, indeterminates, rationalization
+#### the intuitive definition of a limit
+- $\displaystyle \lim_{x \to a} f(x) = L$ means that as $x$ gets arbitrarily close to $a$ (but not equal to $a$), $f(x)$ gets arbitrarily close to $L$. we do not necessarily care what happens to $a$ unless we are evaluating the limit at $a$ as a point specifically. a more appropriate term for this evaluation would be to check for continuity.
+		$\implies f$ is continuous at $a$ if $\displaystyle \lim_{x \to a} f(x) = f(a)$, meaning the graph has no breaks, jumps, or holes at $x = a$.
+- something that we can do whenever a limit returns $\frac{0}{0}$ is to 
+	1.  *factorization:* for a review, see [this video]().
+	2. *rationalization*: typically also with special products, involving radicals wherein we simply multiply by a form of $\frac{1}{1}$ to cancel out a root.
+		take for example, we are asked to evaluate the limit $x \rightarrow 1$ for $f(x) = \frac{\sqrt[3]{x}-1}{\sqrt{x}-1}$ 
+		$$\implies \lim_{x \rightarrow 1} \frac{\sqrt[3]{x}-1}{\sqrt{x}-1}$$
+		we multiply the expression by a special product identity but is still equal to one over one, we are basically just scaling the expression by a another expression without adding onto it. here, we use the identity: $$a^3-b^3 = (a-b)(a^2+ab+b^2)$$note that because $\sqrt[3]{x}-1$ can be treated as $(a-b)$ pertaining to the identity, we can multiply another  $(a^2+ab+b^2)$ to get a complete expression $(a-b)(a^2+ab+b^2)$ which we have established to be equal to $a^3-b^3$.  therefore, we cancel out the cubic root in $\sqrt[3]{x}-1$, and are left with $x-1$.
+
+		$\implies \lim_{x \rightarrow 1} \frac{\sqrt[3]{x}-1}{\sqrt{x}-1} \frac{(\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1}{(\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1}$
+	
+		because we only treat the radical in the numerator, our denominator remains conjoined to $(\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1$.
+		
+		$\implies \lim_{x \rightarrow 1} \frac{x-1}{(\sqrt{x}-1)((\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1)}$ 
+		
+		we see that there is another radical that we can cancel out in the bottom expression $\sqrt{x} - 1$, therefore we can utilize another identity:
+		$$a^2-b^2=(a+b)(a-b)$$  
+		$\implies \lim_{x \rightarrow 1} \frac{x-1}{(\sqrt{x}-1)((\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1)} \frac{\sqrt{x}+1}{\sqrt{x}+1}$ 
+		$\implies \lim_{x \rightarrow 1} \frac{(x-1)(\sqrt{x}+1)}{(x-1)((\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1)}$ 
+		$\implies \lim_{x \rightarrow 1} \frac{(\sqrt{x}+1)}{((\sqrt[3]{x})^2 + (\sqrt[3]{x}) + 1)}$  then substituting,
+		$\implies \lim_{x \rightarrow 1} \frac{(\sqrt{1}+1)}{((\sqrt[3]{1})^2 + (\sqrt[3]{1}) + 1)}$ 
+			$\therefore \frac{2}{3}$ 
+### 1.2 one-sided limits
+- take for example you want to assess the limit at $a$ from the right of the equation, this is denoted as $a^+$ and likewise from the right, it is $a^-$. this just means we are assessing values of $a$ with a difference of either $0^+$ or $0^-$. neither of these zeroes actually are true zero, therefore when performing operations the symbol for right and left are necessary. 
+- we can interpret both $0^+$ or $0^-$ as non-zero positive or negative values respectively. they are not zero, but are any arbitrary value infinitesimally close to zero.
+- we use one-sided limits when the two-sided limit doesn't exist or we want to analyze behavior from only one side. some formal intuitive definitions are the following:
+
+	- $\displaystyle \lim_{x \to a^+} f(x) = L$ means as $x$ approaches $a$ from the right where we take values greater than x, or $x > a$, and $f(x)$ approaches a limit $L$. likewise, from the left, $\displaystyle \lim_{x \to a^-} f(x) = L$ means as $x$ approaches $a$ from the left (with $x < a$), $f(x)$ approaches $L$.
+	- The two-sided limit *exists* $\iff$ both one-sided limits *exist* and *are equal*: $\displaystyle \lim_{x \to a} f(x) = L \iff \lim_{x \to a^+} f(x) = \lim_{x \to a^-} f(x) = L$.
+	
+- note that a one-sided limit can exist even while the two-sided limit does not exist. they are not mutually exclusive.
+- recall the use of piecewise functions, where $f(x)$ can have multiple definitions at different domains, but are still functions as all corresponding values of $y$ are of only a single $x$ value. 
+	- one-sided limits are easily understood in this regard, as piecewise functions typically have different approached $y$ values if we are evaluating the limit at a point where our definitions of $f$ change.
+- some important things to take note of:
+	1. the piecewise definition of absolute values
+		denoted by $f(x)=|x|$ where we can represent the same concept as:
+$$
+  |x| = \cases{x & $x \ge0$ \cr -x & $x < 0$ }
+$$
+		this is used in limit problems with nested absolute values. absolute value functions will be used more than just the simple base case. for example:
+		$f(x) = |x+2|$, where we can represent the same function as: $$ |x+2| = \cases{x+2 & $x \ge -2$ \cr -(x+2) & $x < -2$ } $$
+	2. greatest integer functions or the [floor function](https://en.wikipedia.org/wiki/Floor_and_ceiling_functions)
+	- the greatest integer function considers the closest *floor* integer to whichever output is evaluated. for example, we are testing the right-sided limit $x \rightarrow 2^+$ where $f(x) = \lfloor2x\rfloor$, our output becomes $y = 4^+$. the floor integer corresponding to $4^+$ where  $4^+ \neq 4$ but instead $4 + \epsilon$ where $\epsilon$ is an arbitrarily small number, the closest value to the right or the *floor* is 4. see [this video](https://www.youtube.com/watch?v=q68Hl7DhsuQ) for a more intuitive guide to gifs.
+	- a more formal definition would be: $$ \lfloor x \rfloor = \max \{\, n \in \mathbb{Z} \mid n \le x \,\} $$
+### 1.3: infinite limits
+
+
+## le 2: differential calculus
+
+## le 3: applications of derivatives: optimization problems, critical points, etc.
+
+## le 4: integral calculus
+
+# problem solving
