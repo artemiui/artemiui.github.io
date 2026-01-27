@@ -134,7 +134,18 @@ $$
 \end{aligned}
 $$ 
 where $\frac{\frac{1}{x}}{\frac{1}{\sqrt{x^2}}} = \frac{\frac{1}{-x}}{\frac{1}{-x}}$ because $x \rightarrow -\infty$. 
-we are then left with $\lim_{x \rightarrow -\infty} \frac{1}{\sqrt{9-\frac{1}{x}}+3}$ 
+we are then left with $\lim_{x \rightarrow -\infty} \frac{1}{\sqrt{9-\frac{1}{x}}+3}$
+
+### 1.4 the formal definition of a limit and continuity
+for the formal definition of a limit, we utilize what we call the [epsilon-delta definition of a limit](https://math.libretexts.org/Bookshelves/Calculus/Calculus_3e_(Apex)/01%3A_Limits/1.02%3A_Epsilon-Delta_Definition_of_a_Limit). for this case, i'm going to recommend a video i came across [here](https://www.youtube.com/watch?v=eCBM1tVHDqo). in my opinion, one of the best explanations of the formal definition. in addition, [here's a really great resource for visualizing $\epsilon-\delta$ proofs on desmos.](https://www.desmos.com/calculator/iejhw8zhqd)
+- we begin by defining the distance between $x$ and $a$. we can define distances as absolute values, therefore this idea can be written as: $|x-a|$
+- x is defined as close to a, so close in fact, that we infinitesimally shrink that distance between them. 
+- that distance is what we will call $\delta$. since we cannot just say that the distance is getting "small", we shall use delta as that guideline. hence, $|x-a|<\delta$. 
+- note that $x$ is getting closer to $a$, but is not necessarily $a$. therefore, their distance cannot be $0$. we can write that $x$ is close to $a$, but not $a$: $0<|x-a|<\delta$.
+- then we arrive at our conclusion set, since $x$ is close to $a$, we can also say that our function $f$ is close to our limit $L$. because as we are getting closer to the value $a$, our output gets closer to the limit $L$ we are computing. hence: $$0<|x-a|<\delta \implies |f(x)-L|<\epsilon$$
+- because we don't necessarily need to evaluate the point itself, we have to define what $\epsilon$ and $\delta$ are. for every one value of epsilon, we have a value of delta that makes the limit implication true.
+- note that as we make $\epsilon$ smaller, there must be a $\delta$ that works. limits that have a discontinuity or a 'jump' disrespect this rule. as we shrink the horizontal distance with $\epsilon$, our $\delta$ seizes to exist whenever there is a jump. $\therefore\forall\epsilon > 0 ,\exists\delta>0$
+- note that $\delta$ is on the x-axis, and $\epsilon$ is on the y-axis. hence,  the distances that are shown in the equation.
 
 ## le 2: differential calculus
 
