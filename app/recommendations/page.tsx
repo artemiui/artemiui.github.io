@@ -108,6 +108,12 @@ const youtubeVideos: YouTubeVideo[] = [
     description: "A masterfully written piece of analysis of the underlying politics behind the Star Wars prequels. Prior to Andor, this highlighted the potential of diving into the compexities of the political conflicts within Star Wars.",
   },
   {
+    title: "The Death of Socrates: How to Read a Painting",
+    channel: "Nerdwriter1",
+    url: "https://youtu.be/rKhfFBbVtFg?si=xBTUYHv_NlnIOyz9",
+    description: "An amazingly written piece of writing on Jean-Jacques Louis' THE DEATH OF SOCRATES.",
+  },
+  {
     title: "The Banach-Tarski Paradox",
     channel: "VSauce",
     url: "https://www.youtube.com/watch?v=s86-Z-CbaHA&pp=ygUVYmFuYWNoIHRhcnNraSBwYXJhZG942AZc",
