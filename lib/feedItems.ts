@@ -22,7 +22,7 @@ const externalLinks: FeedItemType[] = [
     date: "2026-02-28",
     url: "https://www.youtube.com/watch?v=D9ivU_IKO6M",
     category: "Knowldge",
-    description: "A research system I've adopted from the great Artem, a neuroscientist I share a name with."
+    description: "A research system I've adopted from the great Artem, a neuroscientist I share a name with.",
   },
 ];
 
