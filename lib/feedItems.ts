@@ -21,7 +21,7 @@ const externalLinks: FeedItemType[] = [
     title: "Zettelkasten workflow for research papers | Zotero & Obsidian",
     date: "2026-02-28",
     url: "https://www.youtube.com/watch?v=D9ivU_IKO6M",
-    category: "Knowldge",
+    category: "Knowledge",
     description: "A research system I've adopted from the great Artem, a neuroscientist I share a name with.",
   },
 ];
