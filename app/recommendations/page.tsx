@@ -97,6 +97,11 @@ const books: Book[] = [
     author: "Satoshi Yagisawa",
     coverUrl: "https://img.perlego.com/book-covers/3631627/9780063278684.jpg",
   },
+  {
+    title: "Tokyo Ghoul :re",
+    author: "Ishida Sui",
+    coverUrl: "https://static.wikia.nocookie.net/tokyoghoul/images/4/42/Re_Vol_07_English.png/revision/latest?cb=20200911224253",
+  },
   // Add more books here
 ];
 
