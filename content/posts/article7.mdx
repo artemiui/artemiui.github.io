@@ -1,0 +1,119 @@
+
+as a brief preface, the way i will write arguments in this document and all proceeding reviewers, should there be any, is in the **sequent notation**, where premises are separated by commas, and the operator between premises and the conclusion $C$ is denoted as $\vdash$   . this is simply because it's more convenient to type and format within LaTeX, the language this document is written in   . therefore, a typical argument would look like $P_1,P_2 \vdash C$  
+
+# the rules and their formal definitions
+
+ **rules of inference** are standard logical forms used to deduce valid conclusions from a set of premises   . such rules serve as the fundamental blocks for the construction of formal proofs .
+
+### modus ponens
+ if $p \supset q$ and $p$ are both true, then $q$ must be true .
+-  establish that condition $p$ guarantees result $q$ .
+-  confirm that $p$ has indeed occurred .
+-  deduce that $q$ is a guaranteed and unavoidable outcome .
+-  formula: $(p \supset q), p \vdash q$  
+
+### modus tollens
+ if $p \supset q$ and $\sim q$ are true, then $\sim p$ is true .
+-  set the rule that $p$ strictly requires $q$ to happen .
+-  observe that $q$ failed to happen .
+-  logically conclude that the initial condition $p$ could not have possibly been met .
+-  formula: $(p \supset q), \sim q \vdash \sim p$  
+-  *as you may notice, this is precisely why a statement that is true in its antecedent and false in its consequent has a false truth value.*  
+
+### disjunctive syllogism
+ given $p \vee q$ and $\sim p$, you can validly conclude $q$ .
+-  recognize a mandatory choice where at least one of $p$ or $q$ must be true .
+-  eliminate option $p$ as false .
+-  confirm $q$ is the only remaining valid option by process of elimination .
+-  formula: $(p \vee q), \sim p \vdash q$  
+
+### hypothetical syllogism
+ a chain reaction: $p \supset q$ and $q \supset r$ yields $p \supset r$ .
+-  link the initial condition $p$ to an intermediate result $q$ .
+-  link that intermediate result $q$ directly to a final outcome $r$ .
+-  trace the transitive path to bridge the first premise $p$ directly to the final outcome $r$ .
+-  formula: $(p \supset q), (q \supset r) \vdash p \supset r$  
+
+### constructive dilemma
+ given $(p \supset q) \cdot (r \supset s)$ and the disjunction $p \vee r$, the result is $q \vee s$ .
+-  establish two separate conditional pathways where $p$ leads to $q$, and $r$ leads to $s$ .
+-  confirm that at least one of the starting points, $p$ or $r$, is definitively true .
+-  safely deduce that at least one of their respective destinations, $q$ or $s$, will logically follow .
+-  formula: $(p \supset q) \cdot (r \supset s), (p \vee r) \vdash q \vee s$  
+
+### destructive dilemma
+ given $(p \supset q) \cdot (r \supset s)$ and $\sim q \vee \sim s$, you deduce $\sim p \vee \sim r$ .
+-  map out two conditional rules where $p$ leads to $q$ and $r$ leads to $s$ .
+-  observe that at least one of the expected results, $q$ or $s$, failed to occur .
+-  trace backward to deduce that at least one of the initial triggers, $p$ or $r$, must have been false to begin with .
+-  formula: $(p \supset q) \cdot (r \supset s), (\sim q \vee \sim s) \vdash \sim p \vee \sim r$  
+
+### conjunction
+ two separate premises $p$ and $q$ can be joined together as $p \cdot q$ .
+-  identify a verified truth $p$ .
+-  identify another verified truth $q$ .
+-  bind them together, as both are simultaneously true independent of one another .
+-  formula: $p, q \vdash p \cdot q$  
+
+### simplification
+ from a conjunction $p \cdot q$, you can independently extract $p$ (or $q$) .
+-  introduce a compound statement where both $p$ and $q$ are verified together .
+-  isolate one component .
+-  conclude it is independently true, because if both are true concurrently, each remains true when evaluated individually .
+-  formula: $(p \cdot q) \vdash p$  
+
+### addition
+ if premise $p$ is true, you can add any proposition to form $p \vee q$ .
+-  confirm a solid truth $p$ .
+-  construct a disjunction combining $p$ with an unverified unknown $q$ .
+-  recognize this is fully valid because a disjunctive statement only requires a minimum of one true component, which $p$ naturally satisfies .
+-  formula: $p \vdash p \vee q$  
+
+---
+
+# how do these work in natural language?
+
+ here i provide examples in everyday language and how each rule would translate accordingly .
+
+### modus ponens
+- $P_1$: if it is raining, then the street is wet. ($p \supset q$)
+- $P_2$: it is raining. ($p$)
+- $C$: therefore, the street is wet. ($\therefore q$)  
+
+### modus tollens
+- $P_1$: if my pomodoro cycle ends, the timer will ring. ($p \supset q$)  
+- $P_2$: the timer did not ring. ($\sim q$)  
+- $C$: therefore, my pomodoro cycle has not ended yet. ($\therefore \sim p$)  
+
+### disjunctive syllogism
+- $P_1$: i will drink coffee or i will drink tea. ($p \vee q$)  
+- $P_2$: i will not drink tea. ($\sim p$)  
+- $C$: therefore, i will drink coffee. ($\therefore q$)  
+
+### hypothetical syllogism
+- $P_1$: if i study hard, i will pass the exam. ($p \supset q$)  
+- $P_2$: if i pass the exam, i will graduate. ($q \supset r$)  
+- $C$: therefore, if i study hard, i will graduate. ($\therefore p \supset r$)  
+
+### constructive dilemma
+- $P_1$: if i go to the movies, i will spend money; and if i stay home, i will be bored. ($(p \supset q)  \cdot (r \supset s)$) 
+- $P_2$: either i go to the movies or stay home. ($p \vee r$)  
+- $C$: therefore, i will either spend money or be bored. ($\therefore q \vee s$)  
+
+### destructive dilemma
+- $P_1$: if it is a bird, it has wings; and if it is a fish, it has gills. ($(p \supset q)  \cdot (r \supset s)$) 
+- $P_2$: the animal either does not have wings or it does not have gills. ($\sim q \vee \sim s$)  
+- $C$: therefore, the animal is either not a bird or not a fish. ($\therefore \sim p \vee \sim r$)  
+
+### conjunction
+- $P_1$: the sun is shining. ($p$)  
+- $P_2$: the birds are singing. ($q$)  
+- $C$: therefore, the sun is shining and the birds are singing. ($\therefore p \cdot q$)  
+
+### simplification
+- $P_1$: the book is long and the book is difficult. ($p \cdot q$)  
+- $C$: therefore, the book is long. ($\therefore p$)  
+
+### addition
+- $P_1$: i have an apple. ($p$)  
+- $C$: therefore, i have an apple or i have a banana. ($\therefore p \vee q$)  
