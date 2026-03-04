@@ -114,7 +114,7 @@ const DSiIntro: React.FC<DSiIntroProps> = ({ onComplete }) => {
 
         <div className="absolute bottom-10 left-0 right-0 flex items-center justify-center">
           <button onClick={handleContinue} className="text-gray-600 text-sm underline-offset-2 hover:text-black select-none">
-            Touch the Touch Screen to continue.
+            Click here to continue.
           </button>
         </div>
       </div>
