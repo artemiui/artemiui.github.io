@@ -1,75 +1,76 @@
 ---
-title: "intermediate logic: rules of inference"  
+title: "intermediate logic: rules of inference and replacement"  
 date: "2026-03-05"
 category: "Knowledge"
-description: "a public repo of my notes in philo 12, intermediate logic focused on rules of inference." 
+description: "a public repo of my notes in philo 12, intermediate logic focused on rules of inference and replacement."
 ---
 
-as a brief preface, the way i will write arguments in this document and all proceeding reviewers, should there be any, is in the **sequent notation**, where premises are separated by commas, and the operator between premises and the conclusion $C$ is denoted as $\vdash$   . this is simply because it's more convenient to type and format within LaTeX, the language this document is written in   . therefore, a typical argument would look like $P_1,P_2 \vdash C$  
+as a brief preface, the way i will write arguments in this document and all proceeding reviewers, should there be any, is in the **sequent notation**, where premises are separated by commas, and the operator between premises and the conclusion $C$ is denoted as $\vdash$ .
+this is simply because it's more convenient to type and format within LaTeX, the language this document is written in .
+therefore, a typical argument would look like $P_1,P_2 \vdash C$  
 
 # the rules and their formal definitions
 
- **rules of inference** are standard logical forms used to deduce valid conclusions from a set of premises   . such rules serve as the fundamental blocks for the construction of formal proofs .
+**rules of inference** are standard logical forms used to deduce valid conclusions from a set of premises .
+such rules serve as the fundamental blocks for the construction of formal proofs .
 
 ### modus ponens
- if $p \supset q$ and $p$ are both true, then $q$ must be true .
+if $p \supset q$ and $p$ are both true, then $q$ must be true .
 -  establish that condition $p$ guarantees result $q$ .
 -  confirm that $p$ has indeed occurred .
 -  deduce that $q$ is a guaranteed and unavoidable outcome .
 -  formula: $(p \supset q), p \vdash q$  
 
 ### modus tollens
- if $p \supset q$ and $\sim q$ are true, then $\sim p$ is true .
+if $p \supset q$ and $\sim q$ are true, then $\sim p$ is true .
 -  set the rule that $p$ strictly requires $q$ to happen .
 -  observe that $q$ failed to happen .
 -  logically conclude that the initial condition $p$ could not have possibly been met .
 -  formula: $(p \supset q), \sim q \vdash \sim p$  
--  *as you may notice, this is precisely why a statement that is true in its antecedent and false in its consequent has a false truth value.*  
-
-### disjunctive syllogism
- given $p \vee q$ and $\sim p$, you can validly conclude $q$ .
+-  *as you may notice, this is precisely why a statement that is true in its antecedent and false in its consequent has a false truth value.* ### disjunctive syllogism
+given $p \vee q$ and $\sim p$, you can validly conclude $q$ .
 -  recognize a mandatory choice where at least one of $p$ or $q$ must be true .
 -  eliminate option $p$ as false .
 -  confirm $q$ is the only remaining valid option by process of elimination .
 -  formula: $(p \vee q), \sim p \vdash q$  
 
 ### hypothetical syllogism
- a chain reaction: $p \supset q$ and $q \supset r$ yields $p \supset r$ .
+a chain reaction: $p \supset q$ and $q \supset r$ yields $p \supset r$ .
 -  link the initial condition $p$ to an intermediate result $q$ .
 -  link that intermediate result $q$ directly to a final outcome $r$ .
 -  trace the transitive path to bridge the first premise $p$ directly to the final outcome $r$ .
 -  formula: $(p \supset q), (q \supset r) \vdash p \supset r$  
 
 ### constructive dilemma
- given $(p \supset q) \cdot (r \supset s)$ and the disjunction $p \vee r$, the result is $q \vee s$ .
+given $(p \supset q) \cdot (r \supset s)$ and the disjunction $p \vee r$, the result is $q \vee s$ .
 -  establish two separate conditional pathways where $p$ leads to $q$, and $r$ leads to $s$ .
 -  confirm that at least one of the starting points, $p$ or $r$, is definitively true .
 -  safely deduce that at least one of their respective destinations, $q$ or $s$, will logically follow .
 -  formula: $(p \supset q) \cdot (r \supset s), (p \vee r) \vdash q \vee s$  
 
 ### destructive dilemma
- given $(p \supset q) \cdot (r \supset s)$ and $\sim q \vee \sim s$, you deduce $\sim p \vee \sim r$ .
+given $(p \supset q) \cdot (r \supset s)$ and $\sim q \vee \sim s$, you deduce $\sim p \vee \sim r$ .
 -  map out two conditional rules where $p$ leads to $q$ and $r$ leads to $s$ .
 -  observe that at least one of the expected results, $q$ or $s$, failed to occur .
 -  trace backward to deduce that at least one of the initial triggers, $p$ or $r$, must have been false to begin with .
 -  formula: $(p \supset q) \cdot (r \supset s), (\sim q \vee \sim s) \vdash \sim p \vee \sim r$  
 
 ### conjunction
- two separate premises $p$ and $q$ can be joined together as $p \cdot q$ .
+two separate premises $p$ and $q$ can be joined together as $p \cdot q$ .
 -  identify a verified truth $p$ .
 -  identify another verified truth $q$ .
 -  bind them together, as both are simultaneously true independent of one another .
 -  formula: $p, q \vdash p \cdot q$  
 
 ### simplification
- from a conjunction $p \cdot q$, you can independently extract $p$ (or $q$) .
+from a conjunction $p \cdot q$, you can independently extract $p$ (or $q$) .
 -  introduce a compound statement where both $p$ and $q$ are verified together .
 -  isolate one component .
 -  conclude it is independently true, because if both are true concurrently, each remains true when evaluated individually .
 -  formula: $(p \cdot q) \vdash p$  
 
 ### addition
- if premise $p$ is true, you can add any proposition to form $p \vee q$ .
+if premise $p$ is true, you can add any proposition to form $p \vee q$ .
 -  confirm a solid truth $p$ .
 -  construct a disjunction combining $p$ with an unverified unknown $q$ .
 -  recognize this is fully valid because a disjunctive statement only requires a minimum of one true component, which $p$ naturally satisfies .
@@ -77,9 +78,70 @@ as a brief preface, the way i will write arguments in this document and all proc
 
 ---
 
+**rules of replacement** (or logical equivalences) differ from rules of inference because they are bi-directional . they state that two propositions have the exact same truth value in every possible scenario, meaning you can substitute one for the other anywhere in a proof . we use the symbol $\equiv$ to denote this strict equivalence .
+
+### de morgan's theorems (DeM)
+the negation of a conjunction is the disjunction of the negations, and vice versa .
+-  distribute the negation across the terms inside the parentheses .
+-  flip the operator from a conjunction to a disjunction (or disjunction to conjunction) .
+-  formula: $\sim (p \cdot q) \equiv (\sim p \vee \sim q)$ and $\sim (p \vee q) \equiv (\sim p \cdot \sim q)$
+
+### commutativity (Com)
+the order of the terms in a conjunction or disjunction does not matter .
+-  swap the positions of the two propositions .
+-  recognize that the overall truth value remains completely unchanged .
+-  formula: $(p \vee q) \equiv (q \vee p)$ and $(p \cdot q) \equiv (q \cdot p)$
+
+### associativity (Assoc)
+the grouping of three or more identical consecutive operators does not matter .
+-  shift the parentheses to group different terms together .
+-  formula: $[p \vee (q \vee r)] \equiv [(p \vee q) \vee r]$ and $[p \cdot (q \cdot r)] \equiv [(p \cdot q) \cdot r]$
+
+### distribution (Dist)
+a proposition conjoined or disjoined to a parenthetical statement can be distributed to each term inside .
+-  apply the outside term and its operator to each inside term .
+-  join the newly formed groupings with the operator that was originally inside the parentheses .
+-  formula: $[p \cdot (q \vee r)] \equiv [(p \cdot q) \vee (p \cdot r)]$ and $[p \vee (q \cdot r)] \equiv [(p \vee q) \cdot (p \vee r)]$
+
+### double negation (DN)
+the negation of a negated proposition is equivalent to the original affirmative proposition .
+-  remove or add two consecutive negation signs without changing the truth value .
+-  formula: $p \equiv \sim \sim p$
+
+### transposition (Trans)
+a conditional statement is equivalent to its contrapositive .
+-  swap the antecedent and the consequent .
+-  negate both of the new terms .
+-  formula: $(p \supset q) \equiv (\sim q \supset \sim p)$
+
+### material implication (Impl)
+a conditional statement is logically equivalent to a disjunction where the antecedent is negated .
+-  change the implication to a disjunction .
+-  negate the first term (the antecedent) while leaving the second term (the consequent) as is .
+-  formula: $(p \supset q) \equiv (\sim p \vee q)$
+
+### material equivalence (Equiv)
+a biconditional statement means both propositions imply each other, or both share the exact same truth value .
+-  expand the biconditional into two separate conditional statements joined by a conjunction .
+-  alternatively, express it as the disjunction of them both being true or both being false .
+-  formula: $(p \equiv q) \equiv [(p \supset q) \cdot (q \supset p)]$ and $(p \equiv q) \equiv [(p \cdot q) \vee (\sim p \cdot \sim q)]$
+
+### exportation (Exp)
+if a conditional statement has a conjunction as its antecedent, it can be separated into a chain of conditionals .
+-  extract one of the conjoined terms from the antecedent .
+-  turn it into the antecedent of a new, nested conditional statement .
+-  formula: $[(p \cdot q) \supset r] \equiv [p \supset (q \supset r)]$
+
+### tautology (Taut)
+a proposition conjoined or disjoined with itself is logically equivalent to itself .
+-  simplify redundant identical terms .
+-  formula: $p \equiv (p \vee p)$ and $p \equiv (p \cdot p)$
+
+---
+
 # how do these work in natural language?
 
- here i provide examples in everyday language and how each rule would translate accordingly .
+here i provide examples in everyday language and how each rule would translate accordingly .
 
 ### modus ponens
 - $P_1$: if it is raining, then the street is wet. ($p \supset q$)
@@ -122,4 +184,44 @@ as a brief preface, the way i will write arguments in this document and all proc
 
 ### addition
 - $P_1$: i have an apple. ($p$)  
-- $C$: therefore, i have an apple or i have a banana. ($\therefore p \vee q$)  
+- $C$: therefore, i have an apple or i have a banana. ($\therefore p \vee q$)
+
+### de morgan's theorems
+- $P_1$: it is not the case that i am both tired and hungry. ($\sim (p \cdot q)$)
+- $C$: therefore, either i am not tired, or i am not hungry. ($\therefore \sim p \vee \sim q$)
+
+### commutativity
+- $P_1$: i have a cat and i have a dog. ($p \cdot q$)
+- $C$: therefore, i have a dog and i have a cat. ($\therefore q \cdot p$)
+
+### associativity
+- $P_1$: i will buy apples, and also bananas and cherries. ($p \cdot (q \cdot r)$)
+- $C$: therefore, i will buy apples and bananas, and also cherries. ($\therefore (p \cdot q) \cdot r$)
+
+### distribution
+- $P_1$: i will have coffee, and either a pastry or a sandwich. ($p \cdot (q \vee r)$)
+- $C$: therefore, i will either have coffee and a pastry, or i will have coffee and a sandwich. ($\therefore (p \cdot q) \vee (p \cdot r)$)
+
+### double negation
+- $P_1$: it is not true that i am not going. ($\sim \sim p$)
+- $C$: therefore, i am going. ($\therefore p$)
+
+### transposition
+- $P_1$: if it is a dog, then it is a mammal. ($p \supset q$)
+- $C$: therefore, if it is not a mammal, then it is not a dog. ($\therefore \sim q \supset \sim p$)
+
+### material implication
+- $P_1$: if you study, you will pass. ($p \supset q$)
+- $C$: therefore, either you do not study, or you will pass. ($\therefore \sim p \vee q$)
+
+### material equivalence
+- $P_1$: we will play the game if and only if it is sunny. ($p \equiv q$)
+- $C$: therefore, if we play the game then it is sunny, and if it is sunny then we will play the game. ($\therefore (p \supset q) \cdot (q \supset p)$)
+
+### exportation
+- $P_1$: if you have a ticket and you are in line, you can enter. ($(p \cdot q) \supset r$)
+- $C$: therefore, if you have a ticket, then if you are in line, you can enter. ($\therefore p \supset (q \supset r)$)
+
+### tautology
+- $P_1$: the sun is shining. ($p$)
+- $C$: therefore, the sun is shining or the sun is shining. ($\therefore p \vee p$)
