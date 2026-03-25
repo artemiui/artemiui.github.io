@@ -10,29 +10,25 @@ this is simply because it's more convenient to type and format within LaTeX, the
 therefore, a typical argument would look like $P_1,P_2 \vdash C$  
 
 # cheat-sheet
-# cheat sheet: rules of inference and replacement
-
-| rule name | formula |
-| :--- | :--- |
-| **modus ponens** | $(p \supset q), p \vdash q$|
-| **modus tollens** | $(p \supset q), \sim q \vdash \sim p$ |
-| **disjunctive syllogism** | $(p \vee q), \sim p \vdash q$ |
-| **hypothetical syllogism**| $(p \supset q), (q \supset r) \vdash p \supset r$ |
-| **constructive dilemma** | $(p \supset q) \cdot (r \supset s), (p \vee r) \vdash q \vee s$ |
-| **destructive dilemma** | $(p \supset q) \cdot (r \supset s), (\sim q \vee \sim s) \vdash \sim p \vee \sim r$ |
-| **conjunction** | $p, q \vdash p \cdot q$ |
-| **simplification** | $(p \cdot q) \vdash p$ |
-| **addition** | $p \vdash p \vee q$ |
-| **de morgan's theorems** | $\sim (p \cdot q) \equiv (\sim p \vee \sim q)$ OR $\sim (p \vee q) \equiv (\sim p \cdot \sim q)$ |
-| **commutativity** | $(p \vee q) \equiv (q \vee p)$ OR $(p \cdot q) \equiv (q \cdot p)$ |
-| **associativity** | $[p \vee (q \vee r)] \equiv [(p \vee q) \vee r]$ OR $[p \cdot (q \cdot r)] \equiv [(p \cdot q) \cdot r]$ |
-| **distribution** | $[p \cdot (q \vee r)] \equiv [(p \cdot q) \vee (p \cdot r)]$ OR $[p \vee (q \cdot r)] \equiv [(p \vee q) \cdot (p \vee r)]$ |
-| **double negation** | $p \equiv \sim \sim p$ |
-| **transposition** | $(p \supset q) \equiv (\sim q \supset \sim p)$ |
-| **material implication** | $(p \supset q) \equiv (\sim p \vee q)$ |
-| **material equivalence** | $(p \equiv q) \equiv [(p \supset q) \cdot (q \supset p)]$ OR $(p \equiv q) \equiv [(p \cdot q) \vee (\sim p \cdot \sim q)]$ |
-| **exportation** | $[(p \cdot q) \supset r] \equiv [p \supset (q \supset r)]$ |
-| **tautology** | $p \equiv (p \vee p)$ OR $p \equiv (p \cdot p)$ |
+-  **modus ponens**: (p ⊃ q), p ⊢ q
+-  **modus tollens**: (p ⊃ q), ~q ⊢ ~p
+-  **disjunctive syllogism**: (p ∨ q), ~p ⊢ q
+-  **hypothetical syllogism**: (p ⊃ q), (q ⊃ r) ⊢ p ⊃ r
+-  **constructive dilemma**: (p ⊃ q) · (r ⊃ s), (p ∨ r) ⊢ q ∨ s
+-  **destructive dilemma**: (p ⊃ q) · (r ⊃ s), (~q ∨ ~s) ⊢ ~p ∨ ~r
+-  **conjunction**: p, q ⊢ p · q
+-  **simplification**: (p · q) ⊢ p
+-  **addition**: p ⊢ p ∨ q
+-  **de morgan's theorems**: ~(p · q) ≡ (~p ∨ ~q) OR ~(p ∨ q) ≡ (~p · ~q)
+-  **commutativity**: (p ∨ q) ≡ (q ∨ p) OR (p · q) ≡ (q · p)
+-  **associativity**: [p ∨ (q ∨ r)] ≡ [(p ∨ q) ∨ r] OR [p · (q · r)] ≡ [(p · q) · r]
+-  **distribution**: [p · (q ∨ r)] ≡ [(p · q) ∨ (p · r)] OR [p ∨ (q · r)] ≡ [(p ∨ q) · (p ∨ r)]
+-  **double negation**: p ≡ ~~p
+-  **transposition**: (p ⊃ q) ≡ (~q ⊃ ~p)
+-  **material implication**: (p ⊃ q) ≡ (~p ∨ q)
+-  **material equivalence**: (p ≡ q) ≡ [(p ⊃ q) · (q ⊃ p)] OR (p ≡ q) ≡ [(p · q) ∨ (~p · ~q)]
+-  **exportation**: [(p · q) ⊃ r] ≡ [p ⊃ (q ⊃ r)]
+-  **tautology**: p ≡ (p ∨ p) OR p ≡ (p · p)
 
 # the rules and their formal definitions
 
