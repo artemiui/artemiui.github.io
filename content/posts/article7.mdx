@@ -9,6 +9,31 @@ as a brief preface, the way i will write arguments in this document and all proc
 this is simply because it's more convenient to type and format within LaTeX, the language this document is written in .
 therefore, a typical argument would look like $P_1,P_2 \vdash C$  
 
+# cheat-sheet
+# cheat sheet: rules of inference and replacement
+
+| rule name | formula |
+| :--- | :--- |
+| **modus ponens** | [cite_start]$(p \supset q), p \vdash q$ [cite: 9] |
+| **modus tollens** | [cite_start]$(p \supset q), \sim q \vdash \sim p$ [cite: 12] |
+| **disjunctive syllogism** | [cite_start]$(p \vee q), \sim p \vdash q$ [cite: 15] |
+| **hypothetical syllogism**| [cite_start]$(p \supset q), (q \supset r) \vdash p \supset r$ [cite: 19] |
+| **constructive dilemma** | [cite_start]$(p \supset q) \cdot (r \supset s), (p \vee r) \vdash q \vee s$ [cite: 23] |
+| **destructive dilemma** | [cite_start]$(p \supset q) \cdot (r \supset s), (\sim q \vee \sim s) \vdash \sim p \vee \sim r$ [cite: 27] |
+| **conjunction** | [cite_start]$p, q \vdash p \cdot q$ [cite: 30] |
+| **simplification** | [cite_start]$(p \cdot q) \vdash p$ [cite: 33] |
+| **addition** | [cite_start]$p \vdash p \vee q$ [cite: 36] |
+| **de morgan's theorems** | $\sim (p \cdot q) \equiv (\sim p \vee \sim q)$ <br> $\sim (p \vee q) \equiv (\sim p \cdot \sim q)$ |
+| **commutativity** | $(p \vee q) \equiv (q \vee p)$ <br> $(p \cdot q) \equiv (q \cdot p)$ |
+| **associativity** | $[p \vee (q \vee r)] \equiv [(p \vee q) \vee r]$ <br> $[p \cdot (q \cdot r)] \equiv [(p \cdot q) \cdot r]$ |
+| **distribution** | $[p \cdot (q \vee r)] \equiv [(p \cdot q) \vee (p \cdot r)]$ <br> $[p \vee (q \cdot r)] \equiv [(p \vee q) \cdot (p \vee r)]$ |
+| **double negation** | $p \equiv \sim \sim p$ |
+| **transposition** | $(p \supset q) \equiv (\sim q \supset \sim p)$ |
+| **material implication** | $(p \supset q) \equiv (\sim p \vee q)$ |
+| **material equivalence** | $(p \equiv q) \equiv [(p \supset q) \cdot (q \supset p)]$ <br> $(p \equiv q) \equiv [(p \cdot q) \vee (\sim p \cdot \sim q)]$ |
+| **exportation** | $[(p \cdot q) \supset r] \equiv [p \supset (q \supset r)]$ |
+| **tautology** | $p \equiv (p \vee p)$ <br> $p \equiv (p \cdot p)$ |
+
 # the rules and their formal definitions
 
 **rules of inference** are standard logical forms used to deduce valid conclusions from a set of premises .
