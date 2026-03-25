@@ -37,7 +37,7 @@ export default function Header() {
         <div className="flex items-center gap-4">
           <div className="w-[100px] h-[100px] rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0 overflow-hidden">
             <Image
-              src="/placeholder-avatar.gif"
+              src="/placeholder-avatar.jpg"
               alt="Avatar"
               width={100}
               height={100}
