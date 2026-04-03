@@ -24,6 +24,20 @@ const externalLinks: FeedItemType[] = [
     category: "Knowledge",
     description: "A research system I've adopted from the great Artem, a neuroscientist I share a name with.",
   },
+  {
+    title: "Computer-Aided Drug Design (CADD) Vault",
+    date: "2026-04-02",
+    url: "https://drugbud-suite.github.io/CADD_Vault/",
+    category: "Knowledge",
+    description: "An open-source collection of computional drug discovery software. Great for computational biology research.",
+  },  
+  {
+    title: "Anthropic’s philosopher answers your questions",
+    date: "2026-04-02",
+    url: "https://www.youtube.com/watch?v=I9aGC6Ui3eE",
+    category: "Knowledge",
+    description: "Amanda Askell is a philosopher at Anthropic who works on Claude's character.",
+  },
 ];
 
 export async function getFeedItems(): Promise<FeedItemType[]> {
