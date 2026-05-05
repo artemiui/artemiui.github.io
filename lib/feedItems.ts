@@ -39,18 +39,18 @@ const externalLinks: FeedItemType[] = [
     description: "Amanda Askell is a philosopher at Anthropic who works on Claude's character.",
   },
 	{
-		title: "On the Ontological Limitations of Digital Twins"
-		date: "2026-04-28"
-		url: "https://philosophy.upd.edu.ph/wp-content/uploads/2026/04/On-the-Formal-Isomorphism-and-the-Asymptotic-Limits-of-Digital-Twins.pdf"
-		category: "Knowledge"
-		description: "I had recently presented a paper in the Emmanuel Q. Fernando Undergraduate Seminar of the UP Diliman Department of Philosophy under the Philosophy of Science category."
+		title: "On the Ontological Limitations of Digital Twins",
+		date: "2026-04-28",
+		url: "https://philosophy.upd.edu.ph/wp-content/uploads/2026/04/On-the-Formal-Isomorphism-and-the-Asymptotic-Limits-of-Digital-Twins.pdf",
+		category: "Knowledge",
+		description: "I had recently presented a paper in the Emmanuel Q. Fernando Undergraduate Seminar of the UP Diliman Department of Philosophy under the Philosophy of Science category.",
 	},
 	{
-		title: "UP Diliman Department of Philosophy Hosts the Second Emmanuel Q. Fernando Philosophy Undergraduate Conference"
-		date: "2026-04-28"
+		title: "UP Diliman Department of Philosophy Hosts the Second Emmanuel Q. Fernando Philosophy Undergraduate Conference",
+		date: "2026-04-28",
 		url: "https://philosophy.upd.edu.ph/up-diliman-department-of-philosophy-hosts-the-second-emmanuel-q-fernando-philosophy-undergraduate-conference/"
-		category: "Knowledge"
-		description: "For the second year in a row, the UP Diliman Department of Philosophy hosted the Emmanuel Q. Fernando Philosophy Undergraduate Conference from April 27-28, 2026."
+		category: "Knowledge",
+		description: "For the second year in a row, the UP Diliman Department of Philosophy hosted the Emmanuel Q. Fernando Philosophy Undergraduate Conference from April 27-28, 2026.",
 	},
 ];
 
