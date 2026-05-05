@@ -48,7 +48,7 @@ const externalLinks: FeedItemType[] = [
 	{
 		title: "UP Diliman Department of Philosophy Hosts the Second Emmanuel Q. Fernando Philosophy Undergraduate Conference",
 		date: "2026-04-28",
-		url: "https://philosophy.upd.edu.ph/up-diliman-department-of-philosophy-hosts-the-second-emmanuel-q-fernando-philosophy-undergraduate-conference/"
+		url: "https://philosophy.upd.edu.ph/up-diliman-department-of-philosophy-hosts-the-second-emmanuel-q-fernando-philosophy-undergraduate-conference/",
 		category: "Knowledge",
 		description: "For the second year in a row, the UP Diliman Department of Philosophy hosted the Emmanuel Q. Fernando Philosophy Undergraduate Conference from April 27-28, 2026.",
 	},
