@@ -30,7 +30,7 @@ therefore, a typical argument would look like $P_1,P_2 \vdash C$
 -  **exportation**: [(p · q) ⊃ r] ≡ [p ⊃ (q ⊃ r)]
 -  **tautology**: p ≡ (p ∨ p) OR p ≡ (p · p)
 
-# the rules and their formal definitions
+# propositional rules
 
 **rules of inference** are standard logical forms used to deduce valid conclusions from a set of premises .
 such rules serve as the fundamental blocks for the construction of formal proofs .
@@ -246,3 +246,41 @@ here i provide examples in everyday language and how each rule would translate a
 ### tautology
 - $P_1$: the sun is shining. ($p$)
 - $C$: therefore, the sun is shining or the sun is shining. ($\therefore p \vee p$)
+
+# predicate logic
+the core idea of predicate logic is the use of quantifiers: hence there emerges the need for, formally, 4 new rules of inference: the universal instatiation and the universal generalization, and the existential instatiation and existential generalization.
+
+![square of oppositions](https://plato.stanford.edu/entries/square/image-a.jpg)
+
+### quantifiers
+let us first understand what the quantifiers are:
+1. universals: if i were to say that all even numbers are of the form 2a, let x be any number, V as the descriptor or the predicate that assigns the property of evenness to it.
+		- (x)(Vx) would mean that for all x, Vx. Vx means "x is an even number", hence we end up with all x are even numbers.
+		- suppose that we were to use this in proof-solving, when creating an instance of a universal like this, we must use the symbol y. that is to say, if we treat x as an input, all its outputs y must contain its properties. e.g., x(Vx), creating an instance would mean that Vy.
+	- when we negate the universal, say $\neg (x)(Ax)$, then it is not the case that all x is A, therefore some of x is A because it does not posit a necessary restriction for x to be A. if we want no x to be A, then we say that it is $(x)(\neg Ax)$ that is to say, for any x, there is no x that is A.
+2. existential quantifiers: this is sort of the inverse that treats them as 'some', meaning, there exists some x that has the property P, but it is not necessarily the case that all x is P. hence, we only create instances of cases.
+		- if we say $(\exists x)(Px)$, this means that there is at least one case in the domain of x that is possessing of the characteristic P. 
+		- when we create an instance in symbolic proof, we choose any letter between a to w (as we recall that x is always our placeholder or *domain*, y is our output, and z may be used for multivariable instances.)
+		- hence, $(\exists x)(Px) \therefore Pa, \lor Pb, \lor Pc, ...$
+
+### universal and existential instantiations
+these two are reversible processes, where we can simply use them as transformations of one another. for instance, if all x is P in other words x(Px), then we can also say that Py. if it is the case that Py, then (x)(Px). likewise when we create an instatiation where there exists alpha such that alpha is omega, then $(\exists \alpha)(\omega \alpha)$, by instantiation, $\omega a$. 
+
+$$(x)(Px) \implies Py$$
+$$(\exists x)(Px) \implies Pa$$
+
+### use in symbolic proof
+say we are asked to prove that $\therefore (\exists x)(Ax \land Yx)$
+given:
+- $p_1: (\exists x)(Yx \land Zx)$
+- $p_2: (\exists x)(Zx \rightarrow Ax)$
+create an instance of 1, as we know that there exists x such that x is Yz AND Zx, we let that instance be $a$.
+- $E.I., 1: Ya \land Za$
+let us likewise create an instance of 2, but we use the same letters since we are trying to bridge the two cases and create a generalization based on the conclusion.
+- $U.I., 2: Za \rightarrow Aa$
+commutate and simplify $Ya \land Za \implies Za$.
+from the universal instantiatio $Za \rightarrow Aa$, we can do a modus ponens $p \rightarrow q, p \therefore q$. hence,
+$Za \rightarrow Aa, Za \therefore Ya$
+conjoin the previously simplified $Za$ with the newly proven $Ya$, $\therefore Aa \land Ya$
+since we have proven that such an existence of x exists here both are true, we can say and existentially generalize to $(\exists x)(Ax \land Yx)$
+
