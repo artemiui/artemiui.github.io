@@ -52,6 +52,27 @@ const externalLinks: FeedItemType[] = [
 		category: "Knowledge",
 		description: "For the second year in a row, the UP Diliman Department of Philosophy hosted the Emmanuel Q. Fernando Philosophy Undergraduate Conference from April 27-28, 2026.",
 	},
+  {
+    title: "How to self-study pure math - Aleph0",
+    date: "2026-05-15",
+    url: "https://www.youtube.com/watch?v=byNaO_zn2fI",
+    description: "This video has a list of books, videos, and exercises that goes through the undergrad pure mathematics curriculum from start to finish.",
+    category: "Knowledge",
+  },
+{
+    title: "The Vienna Circle and its Significance | Virtual Bath Royal",
+    date: "2026-05-17",
+    url: "https://youtu.be/shuHzSMUy30",
+    description: "The vienna circle has astounded me since I encountered the philosophy of language and logical positivism. Their work, On Scientific Conceptions of the World, has a particular hold on me because of its criticism of traditional metaphysics and convoluted language."
+    category: "Knowledge",
+  },
+{
+    title: "https://www.youtube.com/watch?v=VgW_PFl-Xs4",
+    date: "2026-05-7",
+    url: "https://youtu.be/VgW_PFl-Xs4?si=h67uwp150EslOCnD",
+    description: "Wittgenstein: The limits of my language mean the limits of my world",
+    category: "Knowledge",
+  },
 ];
 
 export async function getFeedItems(): Promise<FeedItemType[]> {
