@@ -67,9 +67,9 @@ const externalLinks: FeedItemType[] = [
     category: "Knowledge",
   },
 {
-    title: "https://www.youtube.com/watch?v=VgW_PFl-Xs4",
+    title: "Ludwig Wittgenstein (1889—1951) The Limits of Language",
     date: "2026-05-7",
-    url: "https://youtu.be/VgW_PFl-Xs4?si=h67uwp150EslOCnD",
+    url: "https://youtu.be/VgW_PFl-Xs4?si=ejA5dwydkZNhtGyR",
     description: "Wittgenstein: The limits of my language mean the limits of my world",
     category: "Knowledge",
   },
