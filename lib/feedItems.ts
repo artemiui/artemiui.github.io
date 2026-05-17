@@ -63,7 +63,7 @@ const externalLinks: FeedItemType[] = [
     title: "The Vienna Circle and its Significance | Virtual Bath Royal",
     date: "2026-05-17",
     url: "https://youtu.be/shuHzSMUy30",
-    description: "The vienna circle has astounded me since I encountered the philosophy of language and logical positivism. Their work, On Scientific Conceptions of the World, has a particular hold on me because of its criticism of traditional metaphysics and convoluted language."
+    description: "The vienna circle has astounded me since I encountered the philosophy of language and logical positivism. Their work, On Scientific Conceptions of the World, has a particular hold on me because of its criticism of traditional metaphysics and convoluted language.",
     category: "Knowledge",
   },
 {
