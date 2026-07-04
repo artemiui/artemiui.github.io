@@ -11,7 +11,7 @@ export type FeedItemType = {
   date: string;
   slug?: string;
   url?: string;
-  category: "Knowledge" | "Media" | "Hobby" | "Design";
+  category: "Knowledge" | "Media" | "Hobby" | "Papers";
 };
 
 // Helper function to truncate description to 30 words

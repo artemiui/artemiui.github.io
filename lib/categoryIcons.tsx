@@ -10,7 +10,7 @@ export const categoryIcons = {
   Hobby: (props: { className?: string }) => (
     <img src="/hobby.svg" alt="Hobby" className={props.className} />
   ),
-  Design: (props: { className?: string }) => (
-    <img src="/design.svg" alt="Design" className={props.className} />
+  Papers: (props: { className?: string }) => (
+    <img src="/design.svg" alt="Papers" className={props.className} />
   ),
 };
