@@ -66,12 +66,6 @@ export default function Header() {
             Recommendations
           </Link>
           <Link
-            href="/graphics"
-            className="text-zinc-600 dark:text-zinc-400 hover:text-foreground transition-colors"
-          >
-            Graphics
-          </Link>
-          <Link
             href="https://linkedin.com/in/artemioarcega"
             target="_blank"
             rel="noopener noreferrer"

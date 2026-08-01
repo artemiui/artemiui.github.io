@@ -8,7 +8,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import IntroWrapper from "@/components/IntroWrapper";
 import "katex/dist/katex.min.css";
 import GlobalRouteBackground from "@/components/GlobalRouteBackground";
-import { Analytics } from "@vercel/analytics/next";
+import { siteConfig } from "@/lib/siteConfig";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -17,8 +17,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "artemiui",
-  description: "a collection of ideas and pixels",
+  title: siteConfig.title,
+  description: siteConfig.description,
 };
 
 export default function RootLayout({
@@ -31,9 +31,11 @@ export default function RootLayout({
       <body className="antialiased bg-background text-foreground">
         <GlobalRouteBackground />
         <IntroWrapper>
-          <div className="fixed bottom-4 right-4 z-50">
-            <ThemeToggle />
-          </div>
+          {siteConfig.features.enableThemeToggle && (
+            <div className="fixed bottom-4 right-4 z-50">
+              <ThemeToggle />
+            </div>
+          )}
           <div className="min-h-screen flex flex-col">
             <div className="flex-1 w-full max-w-[768px] mx-auto px-6 py-12">
               <Header />
@@ -41,7 +43,7 @@ export default function RootLayout({
             </div>
             <Footer />
           </div>
-          <IdleScreensaver />
+          {siteConfig.features.enableScreensaver && <IdleScreensaver />}
         </IntroWrapper>
       </body>
     </html>
