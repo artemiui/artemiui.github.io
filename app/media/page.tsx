@@ -25,6 +25,7 @@ import {
   getMediaStats,
   parseMediaDate,
 } from "@/lib/mediaService";
+import LastMediaWidget from "@/components/LastMediaWidget";
 
 const ITEMS_PER_PAGE = 24;
 
@@ -187,44 +188,53 @@ export default function MediaLogPage() {
             </h1>
           </div>
 
-        {/* Action Toggle Controls */}
-        <div className="flex items-center gap-3 text-xs font-sans">
-          {/* Toggle Search Button */}
-          <button
-            onClick={() => setIsSearchOpen(!isSearchOpen)}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-xs font-sans transition-all ${
-              isSearchOpen || searchQuery
-                ? "bg-red-600 text-white border-red-600 font-medium shadow-sm"
-                : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-foreground"
-            }`}
-          >
-            <Search className="w-3.5 h-3.5" />
-            <span>Search</span>
-            {searchQuery && (
-              <span className="w-1.5 h-1.5 rounded-full bg-white ml-0.5" />
-            )}
-          </button>
+          {/* Action Toggle Controls */}
+          <div className="flex items-center gap-3 text-xs font-sans">
+            {/* Toggle Search Button */}
+            <button
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-xs font-sans transition-all ${
+                isSearchOpen || searchQuery
+                  ? "bg-red-600 text-white border-red-600 font-medium shadow-sm"
+                  : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-foreground"
+              }`}
+            >
+              <Search className="w-3.5 h-3.5" />
+              <span>Search</span>
+              {searchQuery && (
+                <span className="w-1.5 h-1.5 rounded-full bg-white ml-0.5" />
+              )}
+            </button>
 
-          {/* Toggle Filter Menu Button */}
-          <button
-            onClick={() => setIsFilterOpen(!isFilterOpen)}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-xs font-sans transition-all ${
-              isFilterOpen || activeFilterCount > 0
-                ? "bg-red-600 text-white border-red-600 font-medium shadow-sm"
-                : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-foreground"
-            }`}
-          >
-            <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span>Filter & Sort</span>
-            {activeFilterCount > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-white text-red-600 font-bold ml-0.5">
-                {activeFilterCount}
-              </span>
-            )}
-          </button>
+            {/* Toggle Filter Menu Button */}
+            <button
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-xs font-sans transition-all ${
+                isFilterOpen || activeFilterCount > 0
+                  ? "bg-red-600 text-white border-red-600 font-medium shadow-sm"
+                  : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-foreground"
+              }`}
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <span>Filter & Sort</span>
+              {activeFilterCount > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-white text-red-600 font-bold ml-0.5">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Dynamic Latest Activity Widget */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.05 }}
+      >
+        <LastMediaWidget onSelect={(item) => setSelectedItem(item)} />
+      </motion.div>
 
       {/* Expandable Search Input Bar */}
       <AnimatePresence>
@@ -406,8 +416,8 @@ export default function MediaLogPage() {
                 whileHover={{ y: -5 }}
                 onClick={() => setSelectedItem(item)}
               >
-                {/* 4:5 Ratio Media Poster Container */}
-                <div className="relative aspect-[4/5] w-full bg-zinc-100 dark:bg-zinc-800 rounded-md overflow-hidden shadow-sm group-hover:shadow-md transition-all duration-300 border border-zinc-200/60 dark:border-zinc-800/60">
+                {/* 27:40 Ratio Media Poster Container */}
+                <div className="relative aspect-[27/40] w-full bg-zinc-100 dark:bg-zinc-800 rounded-md overflow-hidden shadow-sm group-hover:shadow-md transition-all duration-300 border border-zinc-200/60 dark:border-zinc-800/60">
                   {item.cover_link ? (
                     <img
                       src={item.cover_link}
@@ -436,7 +446,7 @@ export default function MediaLogPage() {
                 {/* Rating, Title & Optional Date below poster */}
                 <div className="space-y-1">
                   <div>{renderStarRating(item.rating)}</div>
-                  <h3 className="font-sans font-semibold text-xs text-foreground group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2 leading-tight">
+                  <h3 className="font-mono font-semibold text-xs text-foreground group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors line-clamp-2 leading-tight">
                     {item.title}
                   </h3>
                   {displayDate && (
@@ -528,7 +538,7 @@ export default function MediaLogPage() {
 
                 <div className="flex flex-col sm:flex-row gap-5 items-start">
                   {/* Poster image in modal */}
-                  <div className="w-36 aspect-[4/5] bg-zinc-100 dark:bg-zinc-800 rounded-md overflow-hidden flex-shrink-0 border border-zinc-200 dark:border-zinc-800 shadow-md">
+                  <div className="w-36 aspect-[27/40] bg-zinc-100 dark:bg-zinc-800 rounded-md overflow-hidden flex-shrink-0 border border-zinc-200 dark:border-zinc-800 shadow-md">
                     {selectedItem.cover_link ? (
                       <img
                         src={selectedItem.cover_link}

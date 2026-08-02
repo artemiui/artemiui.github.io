@@ -52,3 +52,30 @@ export function parseMediaDate(dateStr?: string): number {
   const parsed = Date.parse(clean);
   return isNaN(parsed) ? 0 : parsed;
 }
+
+// Get the single most recent completed/started entry
+export function getLatestMediaItem(): MediaItem | null {
+  let latestItem: MediaItem | null = null;
+  let latestTime = 0;
+
+  for (const item of mediaDatabase) {
+    const time = parseMediaDate(item.completed || item.started);
+    if (time > latestTime) {
+      latestTime = time;
+      latestItem = item;
+    }
+  }
+
+  return latestItem || mediaDatabase.find((item) => !!item.cover_link) || mediaDatabase[0] || null;
+}
+
+// Generate dynamic sentence verb & noun for the latest item
+export function getLatestItemSentence(type: string): { verb: string; noun: string } {
+  const t = type.toLowerCase().trim();
+  if (t === "movie") return { verb: "watched", noun: "movie" };
+  if (t === "anime") return { verb: "watched", noun: "anime" };
+  if (t === "game") return { verb: "played", noun: "game" };
+  if (t === "manga") return { verb: "read", noun: "manga" };
+  if (t === "light novel" || t === "book") return { verb: "read", noun: "book" };
+  return { verb: "completed", noun: "entry" };
+}
