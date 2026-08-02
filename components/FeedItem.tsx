@@ -30,8 +30,8 @@ type FeedItemProps = {
 };
 
 export default function FeedItem({ item, index }: FeedItemProps) {
-  const isExternal = !!item.url;
-  const href = isExternal ? item.url : item.slug ? `/blog/${item.slug}` : "#";
+  const isExternal = Boolean(item.url);
+  const internalHref = item.slug ? `/blog/${item.slug}` : "#";
   const [isOpen, setIsOpen] = useState(false);
 
   const CategoryIcon = categoryIcons[item.category];
@@ -93,7 +93,7 @@ export default function FeedItem({ item, index }: FeedItemProps) {
           {content}
         </div>
       ) : (
-        <Link href={href} className="block">
+        <Link href={internalHref} className="block">
           {content}
         </Link>
       )}
