@@ -193,31 +193,33 @@ const links: RecommendationLink[] = [
 
 export default function RecommendationsPage() {
   return (
-    <div className="space-y-12">
-      {/* Back link */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-foreground mb-8 transition-colors font-sans"
+    <div className="space-y-8">
+      {/* Header & Back Link Container */}
+      <div className="space-y-1">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
         >
-          <ArrowLeft className="w-4 h-4" />
-          Back
-        </Link>
-      </motion.div>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-foreground transition-colors font-sans"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </Link>
+        </motion.div>
 
-      {/* Page Title */}
-      <motion.h1
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.05 }}
-        className="text-3xl font-mono font-semibold mb-8 text-green-600"
-      >
-        Recommendations
-      </motion.h1>
+        {/* Page Title */}
+        <motion.h1
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.05 }}
+          className="text-3xl font-mono font-semibold text-green-600"
+        >
+          Recommendations
+        </motion.h1>
+      </div>
 
       {/* Books Section */}
       {books.length > 0 && (

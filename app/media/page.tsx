@@ -169,22 +169,23 @@ export default function MediaLogPage() {
 
   return (
     <div className="space-y-8">
-      {/* Top Back Link */}
-      <Link
-        href="/"
-        className="inline-flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 hover:text-foreground mb-4 transition-colors font-sans"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Back
-      </Link>
+      {/* Header & Back Link Container */}
+      <div className="space-y-1">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-foreground transition-colors font-sans"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back
+        </Link>
 
-      {/* Header Title & Toggleable Action Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-mono font-semibold text-red-600 dark:text-red-500">
-            Welcome to artboxd.
-          </h1>
-        </div>
+        {/* Header Title & Toggleable Action Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
+          <div>
+            <h1 className="text-3xl font-mono font-semibold text-red-600 dark:text-red-500">
+              Welcome to artboxd.
+            </h1>
+          </div>
 
         {/* Action Toggle Controls */}
         <div className="flex items-center gap-3 text-xs font-sans">
@@ -223,6 +224,7 @@ export default function MediaLogPage() {
           </button>
         </div>
       </div>
+    </div>
 
       {/* Expandable Search Input Bar */}
       <AnimatePresence>
