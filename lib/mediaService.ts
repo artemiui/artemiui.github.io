@@ -10,16 +10,16 @@ export type MediaItem = {
   started?: string;
   completed?: string;
   cover_link: string;
-  properties?: Record<string, string>;
+  properties?: Record<string, string | undefined>;
   body?: string;
 };
 
-export const mediaDatabase: MediaItem[] = (mediaDataRaw as MediaItem[]).map(
-  (item) => ({
-    ...item,
-    type: item.type ? item.type.toLowerCase().trim() : "other",
-  })
-);
+export const mediaDatabase: MediaItem[] = (
+  mediaDataRaw as unknown as MediaItem[]
+).map((item) => ({
+  ...item,
+  type: item.type ? item.type.toLowerCase().trim() : "other",
+}));
 
 export function getMediaStats() {
   const total = mediaDatabase.length;
