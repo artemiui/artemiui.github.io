@@ -4,6 +4,7 @@ export const siteConfig = {
   quote: '"The divide between the arts and the sciences is a mistake."',
   navLinks: [
     { label: "Blog", href: "/" },
+    { label: "About", href: "/about" },
     { label: "Recs", href: "/recommendations" },
   ],
   features: {

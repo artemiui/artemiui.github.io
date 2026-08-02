@@ -88,11 +88,21 @@ const musicAlbums: MusicAlbum[] = [
 
 const books: Book[] = [
   {
-    title: "Anthem",
-    author: "Ayn Rand",
-    coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1401162953i/806847.jpg",
+    title: "Art and Society",
+    author: "Alice Guillermo",
+    coverUrl: "https://imgv2-2-f.scribdassets.com/img/document/482093105/original/21093a7efe/1?v=1",
   },
-    {
+  {
+    title: "Tractatus Logico-Philosophicus",
+    author: "Ludwig Wittgenstein",
+    coverUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxUuMIiSolvi4zs-Xk-gj01se5SezBWKJsSDpjSHQzmQs6D_LvlL1qKrAO&s=10",
+  },
+  {
+    title: "Fifteen Lectures on Artificial Intelligence Philosophy",
+    author: "Yu Xingjin",
+    coverUrl: "https://utppublishing.com/cms/asset/a413faf8-72bb-4bb9-9bea-c6c0d0f46115/9781049801605.cover.jpg",
+  },
+  {
     title: "Days at the Morisaki Bookshop",
     author: "Satoshi Yagisawa",
     coverUrl: "https://img.perlego.com/book-covers/3631627/9780063278684.jpg",
@@ -102,7 +112,6 @@ const books: Book[] = [
     author: "Ishida Sui",
     coverUrl: "https://static.wikia.nocookie.net/tokyoghoul/images/4/42/Re_Vol_07_English.png/revision/latest?cb=20200911224253",
   },
-  // Add more books here
 ];
 
 const youtubeVideos: YouTubeVideo[] = [
@@ -135,7 +144,6 @@ const youtubeVideos: YouTubeVideo[] = [
     url: "https://www.youtube.com/playlist?list=PLdXcEDO2xtB-pjqwTiPmWn1wxKmYZqjN8",
     description: "This series is one of the most comprehensive analysis of 氷菓 and arguably also one of the best analyses of an anime period.",
   },
-  // Add more videos here
 ];
 
 const games: Games[] = [
@@ -169,7 +177,6 @@ const games: Games[] = [
     link: "https://store.steampowered.com/app/1392820/Milk_inside_a_bag_of_milk_inside_a_bag_of_milk/",
     creator: "Nikita Kryukov",
   },
-  // Add more games here
 ];
 
 const links: RecommendationLink[] = [
