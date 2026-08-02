@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { ExternalLink, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
-import Image from "next/image";
 
 // Type definitions
 type Book = {
@@ -19,7 +18,7 @@ type Games = {
   coverUrl: string;
   link: string;
   creator: string;
-}
+};
 
 type YouTubeVideo = {
   title: string;
@@ -41,11 +40,11 @@ type RecommendationLink = {
   description?: string;
 };
 
-// function to get yt thumbnail
+// helper function to get yt thumbnail
 const getYouTubeId = (url: string) => {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
-  return (match && match[2].length === 11) ? match[2] : null;
+  return match && match[2].length === 11 ? match[2] : null;
 };
 
 const getYouTubeThumbnail = (url: string) => {
@@ -72,13 +71,13 @@ const musicAlbums: MusicAlbum[] = [
     coverUrl: "https://media.pitchfork.com/photos/6621ba5dff5c6aa81b93a44c/master/w_1280%2Cc_limit/The-1975.jpg",
     link: "https://open.spotify.com/album/6PWXKiakqhI17mTYM4y6oY?si=9327ec9ecec14d41",
   },
-    {
+  {
     title: "LOVE LETTER Soundtrack",
     artist: "REMEDIOS",
     coverUrl: "https://i.scdn.co/image/ab67616d0000b273dc68d2c7fe0057d90ab3bf9e",
     link: "https://open.spotify.com/album/4bwtyBUKQu0nVw0zZ6XkSP?si=zGs78aVfTwa_lPOT9xf2nw",
   },
-    {
+  {
     title: "A Shape of Light",
     artist: "Kensuke Ushio",
     coverUrl: "https://i.scdn.co/image/ab67616d0000b273598142e7eef56d543ec8f922",
@@ -165,13 +164,13 @@ const games: Games[] = [
     link: "https://waxwing0.itch.io/fbc",
     creator: "io",
   },
-    {
+  {
     title: "Ender Lilies: Quietus of the Knights",
     coverUrl: "https://cdn.cdkeys.com/496x700/media/catalog/product/e/n/ender_lilies__quietus_of_the_knights_pc.jpg",
     link: "https://store.steampowered.com/app/1369630/ENDER_LILIES_Quietus_of_the_Knights/",
     creator: "Live Wire, AdGlobe",
   },
-    {
+  {
     title: "Milk Inside a Bag of Milk Inside a Bag of Milk",
     coverUrl: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1392820/header.jpg?t=1743295757",
     link: "https://store.steampowered.com/app/1392820/Milk_inside_a_bag_of_milk_inside_a_bag_of_milk/",
@@ -190,32 +189,54 @@ const links: RecommendationLink[] = [
     url: "https://www.sakay.ph/",
     description: "For getting around Metro Manila via commute",
   },
-  // Add more links here
 ];
 
 export default function RecommendationsPage() {
   return (
     <div className="space-y-12">
       {/* Back link */}
-      <Link
-        href="/"
-        className="inline-flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 hover:text-foreground mb-8 transition-colors"
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
       >
-        <ArrowLeft className="w-4 h-4" />
-        Back
-      </Link>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-foreground mb-8 transition-colors font-sans"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back
+        </Link>
+      </motion.div>
 
       {/* Page Title */}
-      <h1 className="text-3xl font-mono font-semibold mb-8 text-green-600">Recommendations</h1>
+      <motion.h1
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.05 }}
+        className="text-3xl font-mono font-semibold mb-8 text-green-600"
+      >
+        Recommendations
+      </motion.h1>
 
       {/* Books Section */}
       {books.length > 0 && (
         <section className="space-y-6">
-          <h2 className="text-xl font-mono font-semibold mb-6">To Read</h2>
+          <motion.h2
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+            className="text-xl font-mono font-semibold mb-6"
+          >
+            To Read
+          </motion.h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {books.map((book, index) => (
               <motion.div
                 key={index}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
                 className="group relative flex flex-col space-y-3"
                 whileHover={{ y: -5 }}
               >
@@ -223,17 +244,16 @@ export default function RecommendationsPage() {
                   href={book.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block relative aspect-[2/3] bg-zinc-100 dark:bg-zinc-800 rounded-md overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300"
+                  className="block relative aspect-[2/3] bg-zinc-100 rounded-md overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300"
                 >
                   <img
                     src={book.coverUrl}
                     alt={book.title}
                     className="object-cover w-full h-full"
                   />
-                  {/* Overlay on hover */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                 </a>
-                
+
                 <div className="space-y-1">
                   <h3 className="font-medium text-foreground leading-tight group-hover:text-green-600 transition-colors">
                     {book.link ? (
@@ -249,9 +269,7 @@ export default function RecommendationsPage() {
                       <span className="line-clamp-2">{book.title}</span>
                     )}
                   </h3>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                    {book.author}
-                  </p>
+                  <p className="text-sm text-zinc-500">{book.author}</p>
                 </div>
               </motion.div>
             ))}
@@ -262,14 +280,24 @@ export default function RecommendationsPage() {
       {/* YouTube Videos Section */}
       {youtubeVideos.length > 0 && (
         <section className="space-y-6">
-          <h2 className="text-xl font-mono font-semibold mb-6">To Watch</h2>
+          <motion.h2
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+            className="text-xl font-mono font-semibold mb-6"
+          >
+            To Watch
+          </motion.h2>
           <div className="space-y-6">
             {youtubeVideos.map((video, index) => {
               const thumbnail = getYouTubeThumbnail(video.url);
               return (
-                <div
+                <motion.div
                   key={index}
-                  className="py-4 border-b border-zinc-200 dark:border-zinc-800"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  className="py-4 border-b border-zinc-200"
                 >
                   <a
                     href={video.url}
@@ -279,7 +307,7 @@ export default function RecommendationsPage() {
                   >
                     <div className="flex flex-col sm:flex-row gap-4">
                       {thumbnail && (
-                        <div className="relative w-full sm:w-48 aspect-video flex-shrink-0 overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-800">
+                        <div className="relative w-full sm:w-48 aspect-video flex-shrink-0 overflow-hidden rounded-md bg-zinc-100">
                           <img
                             src={thumbnail}
                             alt={video.title}
@@ -294,18 +322,18 @@ export default function RecommendationsPage() {
                           </h3>
                           <ExternalLink className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0" />
                         </div>
-                        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+                        <p className="text-sm text-zinc-600 mb-2">
                           {video.channel}
                         </p>
                         {video.description && (
-                          <p className="text-sm text-zinc-500 dark:text-zinc-500 line-clamp-2">
+                          <p className="text-sm text-zinc-500 line-clamp-2">
                             {video.description}
                           </p>
                         )}
                       </div>
                     </div>
                   </a>
-                </div>
+                </motion.div>
               );
             })}
           </div>
@@ -315,11 +343,21 @@ export default function RecommendationsPage() {
       {/* Games Section */}
       {games.length > 0 && (
         <section className="space-y-6">
-          <h2 className="text-xl font-mono font-semibold mb-6">To Play</h2>
+          <motion.h2
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+            className="text-xl font-mono font-semibold mb-6"
+          >
+            To Play
+          </motion.h2>
           <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {games.map((game, index) => (
               <motion.div
                 key={index}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
                 className="group relative flex flex-col space-y-3"
                 whileHover={{ y: -5 }}
               >
@@ -327,17 +365,16 @@ export default function RecommendationsPage() {
                   href={game.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block relative aspect-[16/9] bg-zinc-100 dark:bg-zinc-800 rounded-md overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300"
+                  className="block relative aspect-[16/9] bg-zinc-100 rounded-md overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300"
                 >
                   <img
                     src={game.coverUrl}
                     alt={game.title}
                     className="object-cover w-full h-full"
                   />
-                  {/* Overlay on hover */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                 </a>
-                
+
                 <div className="space-y-1">
                   <h3 className="font-medium text-foreground leading-tight group-hover:text-green-600 transition-colors">
                     {game.link ? (
@@ -353,9 +390,7 @@ export default function RecommendationsPage() {
                       <span className="line-clamp-2">{game.title}</span>
                     )}
                   </h3>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                    {game.creator}
-                  </p>
+                  <p className="text-sm text-zinc-500">{game.creator}</p>
                 </div>
               </motion.div>
             ))}
@@ -366,15 +401,25 @@ export default function RecommendationsPage() {
       {/* Music Section */}
       {musicAlbums.length > 0 && (
         <section className="space-y-6">
-          <h2 className="text-xl font-mono font-semibold mb-6">To Listen</h2>
+          <motion.h2
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+            className="text-xl font-mono font-semibold mb-6"
+          >
+            To Listen
+          </motion.h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {musicAlbums.map((album, index) => (
               <motion.a
                 key={index}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
                 href={album.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative block aspect-square bg-zinc-100 dark:bg-zinc-800 rounded-md overflow-hidden"
+                className="group relative block aspect-square bg-zinc-100 rounded-md overflow-hidden"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -400,12 +445,22 @@ export default function RecommendationsPage() {
       {/* Links Section */}
       {links.length > 0 && (
         <section className="space-y-6">
-          <h2 className="text-xl font-mono font-semibold mb-6">Useful Links</h2>
+          <motion.h2
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+            className="text-xl font-mono font-semibold mb-6"
+          >
+            Useful Links
+          </motion.h2>
           <div className="space-y-4">
             {links.map((link, index) => (
-              <div
+              <motion.div
                 key={index}
-                className="py-3 border-b border-zinc-200 dark:border-zinc-800"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+                className="py-3 border-b border-zinc-200"
               >
                 <a
                   href={link.url}
@@ -422,26 +477,18 @@ export default function RecommendationsPage() {
                         <ExternalLink className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0" />
                       </div>
                       {link.description && (
-                        <p className="text-sm text-zinc-500 dark:text-zinc-500 mt-2">
+                        <p className="text-sm text-zinc-500 mt-2">
                           {link.description}
                         </p>
                       )}
                     </div>
                   </div>
                 </a>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>
       )}
-
-      {/* Empty state */}
-      {books.length === 0 && youtubeVideos.length === 0 && links.length === 0 && (
-        <p className="text-sm text-zinc-500 dark:text-zinc-500 py-8">
-          No recommendations yet. Check back soon!
-        </p>
-      )}
     </div>
   );
 }
-

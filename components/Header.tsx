@@ -61,6 +61,12 @@ export default function Header() {
           About
         </Link>
         <Link
+          href="/media"
+          className="text-zinc-600 dark:text-zinc-400 hover:text-foreground transition-colors"
+        >
+          Artboxd
+        </Link>
+        <Link
           href="/recommendations"
           className="text-zinc-600 dark:text-zinc-400 hover:text-foreground transition-colors"
         >

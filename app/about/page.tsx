@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { motion } from "framer-motion";
 import CurrentObsessions from "@/components/CurrentObsessions";
 import GenshinStatsWidget from "@/components/GenshinStatsWidget";
 
@@ -118,21 +119,30 @@ export default function AboutPage() {
   return (
     <div className="space-y-12">
       {/* Back Link */}
-      <Link
-        href="/"
-        className="inline-flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 hover:text-foreground mb-8 transition-colors font-sans"
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
       >
-        <ArrowLeft className="w-4 h-4" />
-        Back
-      </Link>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-foreground mb-8 transition-colors font-sans"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back
+        </Link>
+      </motion.div>
 
       {/* About Sections List */}
       <div className="space-y-10">
-        {aboutSections.map((section) => {
+        {aboutSections.map((section, sIndex) => {
           return (
-            <section
+            <motion.section
               key={section.id}
-              className="py-6 border-b border-zinc-200 dark:border-zinc-800 space-y-4"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: sIndex * 0.1 }}
+              className="py-6 border-b border-zinc-200 space-y-4"
             >
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-mono font-semibold text-foreground">
@@ -145,98 +155,116 @@ export default function AboutPage() {
                 <div className="mt-4 space-y-8">
                   {/* Education History */}
                   <div className="space-y-4">
-                    <h3 className="text-base font-mono font-semibold text-zinc-800 dark:text-zinc-200">
+                    <h3 className="text-base font-mono font-semibold text-zinc-800">
                       Education
                     </h3>
-                    <div className="space-y-4 pl-1 border-l-2 border-zinc-200 dark:border-zinc-800 ml-2">
+                    <div className="space-y-4 pl-1 border-l-2 border-zinc-200 ml-2">
                       {educationList.map((edu, idx) => (
-                        <div key={idx} className="relative pl-5 space-y-1">
-                          <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-red-600 dark:bg-red-400" />
+                        <motion.div
+                          key={idx}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3, delay: idx * 0.05 }}
+                          className="relative pl-5 space-y-1"
+                        >
+                          <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-red-600" />
                           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                             <h4 className="font-mono font-medium text-sm text-foreground">
                               {edu.degree}
                               {edu.gpaOrHonors && (
-                                <span className="ml-2 text-xs font-normal text-red-600 dark:text-red-400">
+                                <span className="ml-2 text-xs font-normal text-red-600">
                                   ({edu.gpaOrHonors})
                                 </span>
                               )}
                             </h4>
                             {edu.dates && (
-                              <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+                              <span className="text-xs font-mono text-zinc-500">
                                 {edu.dates}
                               </span>
                             )}
                           </div>
                           {edu.institution && (
-                            <p className="text-xs font-sans text-zinc-600 dark:text-zinc-400">
+                            <p className="text-xs font-sans text-zinc-600">
                               {edu.institution}
                             </p>
                           )}
-                        </div>
+                        </motion.div>
                       ))}
                     </div>
                   </div>
 
                   {/* Volunteering Section */}
                   <div className="space-y-4">
-                    <h3 className="text-base font-mono font-semibold text-zinc-800 dark:text-zinc-200">
+                    <h3 className="text-base font-mono font-semibold text-zinc-800">
                       Volunteering
                     </h3>
-                    <div className="space-y-4 pl-1 border-l-2 border-zinc-200 dark:border-zinc-800 ml-2">
+                    <div className="space-y-4 pl-1 border-l-2 border-zinc-200 ml-2">
                       {volunteeringExperience.map((vol, idx) => (
-                        <div key={idx} className="relative pl-5 space-y-1">
-                          <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-red-600 dark:bg-red-400" />
+                        <motion.div
+                          key={idx}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3, delay: idx * 0.05 }}
+                          className="relative pl-5 space-y-1"
+                        >
+                          <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-red-600" />
                           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                             <h4 className="font-mono font-medium text-sm text-foreground">
                               {vol.title}
                             </h4>
-                            <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+                            <span className="text-xs font-mono text-zinc-500">
                               {vol.dates}
                             </span>
                           </div>
-                          <p className="text-xs font-sans text-zinc-600 dark:text-zinc-400">
+                          <p className="text-xs font-sans text-zinc-600">
                             {vol.organization}
                           </p>
-                        </div>
+                        </motion.div>
                       ))}
                     </div>
                   </div>
 
                   {/* Relevant Experience Timeline */}
                   <div className="space-y-4">
-                    <h3 className="text-base font-mono font-semibold text-zinc-800 dark:text-zinc-200">
+                    <h3 className="text-base font-mono font-semibold text-zinc-800">
                       Experience
                     </h3>
-                    <div className="space-y-6 pl-1 border-l-2 border-zinc-200 dark:border-zinc-800 ml-2">
+                    <div className="space-y-6 pl-1 border-l-2 border-zinc-200 ml-2">
                       {relevantExperience.map((exp, idx) => (
-                        <div key={idx} className="relative pl-5 space-y-2">
-                          <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-red-600 dark:bg-red-400" />
+                        <motion.div
+                          key={idx}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3, delay: idx * 0.05 }}
+                          className="relative pl-5 space-y-2"
+                        >
+                          <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-red-600" />
 
                           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                             <h4 className="font-mono font-medium text-sm text-foreground">
                               {exp.title}
                             </h4>
                             {exp.dates && (
-                              <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+                              <span className="text-xs font-mono text-zinc-500">
                                 {exp.dates}
                               </span>
                             )}
                           </div>
 
                           {exp.organization && (
-                            <p className="text-xs font-sans text-zinc-600 dark:text-zinc-400">
+                            <p className="text-xs font-sans text-zinc-600">
                               {exp.organization}
                             </p>
                           )}
 
-                          <ul className="list-disc list-inside space-y-1 pt-1 text-xs font-sans text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                          <ul className="list-disc list-inside space-y-1 pt-1 text-xs font-sans text-zinc-600 leading-relaxed">
                             {exp.responsibilities.map((resp, rIdx) => (
                               <li key={rIdx} className="leading-5">
                                 <span>{resp}</span>
                               </li>
                             ))}
                           </ul>
-                        </div>
+                        </motion.div>
                       ))}
                     </div>
                   </div>
@@ -250,7 +278,7 @@ export default function AboutPage() {
                   <GenshinStatsWidget uid="833534626" profileUrl="https://akasha.cv/profile/833534626" />
                 </div>
               )}
-            </section>
+            </motion.section>
           );
         })}
       </div>

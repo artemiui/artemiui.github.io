@@ -4,7 +4,6 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import IdleScreensaver from "@/components/IdleScreensaver";
-import ThemeToggle from "@/components/ThemeToggle";
 import IntroWrapper from "@/components/IntroWrapper";
 import "katex/dist/katex.min.css";
 import GlobalRouteBackground from "@/components/GlobalRouteBackground";
@@ -31,11 +30,6 @@ export default function RootLayout({
       <body className="antialiased bg-background text-foreground">
         <GlobalRouteBackground />
         <IntroWrapper>
-          {siteConfig.features.enableThemeToggle && (
-            <div className="fixed bottom-4 right-4 z-50">
-              <ThemeToggle />
-            </div>
-          )}
           <div className="min-h-screen flex flex-col">
             <div className="flex-1 w-full max-w-[768px] mx-auto px-6 py-12">
               <Header />

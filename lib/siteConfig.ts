@@ -5,12 +5,12 @@ export const siteConfig = {
   navLinks: [
     { label: "Blog", href: "/" },
     { label: "About", href: "/about" },
+    { label: "Media", href: "/media" },
     { label: "Recs", href: "/recommendations" },
   ],
   features: {
     enableScreensaver: true,
     enableIntroAnimation: true,
-    enableThemeToggle: true,
   },
 };
 
