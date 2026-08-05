@@ -73,6 +73,12 @@ export default function Header() {
           Recommendations
         </Link>
         <Link
+          href="/gf"
+          className="text-rose-600 dark:text-rose-400 hover:text-foreground transition-colors font-semibold"
+        >
+          ♡
+        </Link>
+        <Link
           href="https://linkedin.com/in/artemioarcega"
           target="_blank"
           rel="noopener noreferrer"

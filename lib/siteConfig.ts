@@ -7,6 +7,7 @@ export const siteConfig = {
     { label: "About", href: "/about" },
     { label: "Artboxd", href: "/media" },
     { label: "Recs", href: "/recommendations" },
+    { label: "♡", href: "/gf" },
   ],
   features: {
     enableScreensaver: true,
