@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Music, Mic, PenTool, Palette, Layout } from "lucide-react";
 import { motion } from "framer-motion";
 import CurrentObsessions from "@/components/CurrentObsessions";
 import GenshinStatsWidget from "@/components/GenshinStatsWidget";
@@ -104,6 +104,14 @@ const relevantExperience: ExperienceItem[] = [
   },
 ];
 
+const skillsList = [
+  { name: "Piano", icon: Music },
+  { name: "Casual Singing", icon: Mic },
+  { name: "Creative Writing", icon: PenTool },
+  { name: "Illustration", icon: Palette },
+  { name: "Layout & Graphic Design", icon: Layout },
+];
+
 const aboutSections: SaveFile[] = [
   {
     id: "hobbies",
@@ -134,6 +142,40 @@ export default function AboutPage() {
           </Link>
         </motion.div>
       </div>
+
+      {/* Personal Description Placeholder */}
+      <motion.section
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.05 }}
+        className="pb-6 border-b border-zinc-200 dark:border-zinc-800 space-y-4"
+      >
+        <h1 className="text-2xl font-mono font-bold text-foreground">Who I am</h1>
+        <p className="text-sm font-sans text-zinc-600 dark:text-zinc-400 leading-relaxed">
+          I'm a statistics student from UP Diliman with an interest in quantitative finance, biostatistics, computational physics, analytical philosophy (language), AI philosophy, and xAI. I believe that a healthy intersection of the liberal arts and technical ability goes a long way.
+        </p>
+
+        {/* Skills & Pursuits */}
+        <div className="pt-2 space-y-2">
+          <span className="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+            Skills & Creative Pursuits
+          </span>
+          <div className="flex flex-wrap gap-2 pt-0.5">
+            {skillsList.map((skill, idx) => {
+              const Icon = skill.icon;
+              return (
+                <span
+                  key={idx}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-mono text-zinc-700 dark:text-zinc-300 bg-zinc-200/60 dark:bg-zinc-800/60 border border-zinc-300/60 dark:border-zinc-700/60 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
+                >
+                  <Icon className="w-3.5 h-3.5 text-red-600 dark:text-red-500" />
+                  {skill.name}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+      </motion.section>
 
       {/* About Sections List */}
       <div className="space-y-10">
