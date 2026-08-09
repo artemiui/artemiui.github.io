@@ -152,7 +152,7 @@ export default function AboutPage() {
       >
         <h1 className="text-2xl font-mono font-bold text-foreground">Who I am</h1>
         <p className="text-sm font-sans text-zinc-600 dark:text-zinc-400 leading-relaxed">
-          I'm a statistics student from UP Diliman with an interest in quantitative finance, biostatistics, computational physics, analytical philosophy (language), AI philosophy, and xAI. I believe that a healthy intersection of the liberal arts and technical ability goes a long way.
+          I'm a statistics student from UP Diliman with an interest in working in banking. Academically, I'm interested in in-silico pharmacology, biostatistics, analytical philosophy (language), AI philosophy, and xAI. I believe that a healthy intersection of the liberal arts and technical ability goes a long way.
         </p>
 
         {/* Skills & Pursuits */}
