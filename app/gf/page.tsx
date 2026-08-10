@@ -4,31 +4,6 @@ import Link from "next/link";
 import { ArrowLeft, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 
-const topRoseAscii = `                     .-~~~-
-                .-~~~_._~~~\\   
-                /~-~~   ~.  \`._ 
-               /    \\     \\  | ~~-_ 
-       __     |      |     | |  /~\\|
-   _-~~  ~~-..|       ______||/__..-~~/
-    ~-.___     \\     /~\\_________.-~~
-         \\~~--._\\   |             /
-          ^-_    ~\\  \\          /^
-             ^~---|~~~~-.___.-~^
-               /~^| | | |^~\\
-              //~^\`/ /_/ ^~\\\\
-              /   //~||      \\
-                 ~   ||
-          ___      -(||      __ ___ _
-         |\\|  \\       ||_.-~~ /|\\-  \\~-._
-         | -\\| |      ||/   /  | |\\- | |\\ \\
-          \\__-\\|______ ||  |    \\___\\|  \\_\\|
-    _____ _.-~/|\\     \\\\||  \  |  /       ~-.
-  /'  --/|  / /|  \    \\||    \\ /          |\\~-
- ' ---/| | |   |\\  |     ||                 \\__|
-| --/| | ;  \\ /|  /    -(||
-\`./  |  /     \\|/        ||)-
-  \`~^~^                  ||`;
-
 const asciiFlowers = `                    _
                   _(_)_                          wWWWw   _
       @@@@       (_)@(_)   vVVVv     _     @@@@  (___) _(_)_
@@ -71,21 +46,7 @@ export default function ForYouPage() {
         </motion.div>
       </div>
 
-      {/* 1. TOP: Rose ASCII Art */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-        className="py-2 flex justify-center"
-      >
-        <div className="overflow-x-auto w-full max-w-full flex justify-center">
-          <pre className="font-mono text-[10px] sm:text-xs text-rose-600 dark:text-rose-400 leading-none select-none whitespace-pre tracking-normal">
-            {topRoseAscii}
-          </pre>
-        </div>
-      </motion.div>
-
-      {/* 2. MIDDLE: 16:9 Framed Image */}
+      {/* 1. 16:9 Framed Image */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -94,24 +55,36 @@ export default function ForYouPage() {
       >
         <div className="relative aspect-[16/9] w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-900 overflow-hidden shadow-md group transition-all">
           <img
-            src="/gf-photo.jpg"
+            src="/motmot-photo.jpg"
             alt="Welcome Home"
             className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
           />
         </div>
       </motion.div>
 
-      {/* 3. Spotify Playlist Embed */}
+      {/* Poem Placeholder */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.18 }}
+        transition={{ duration: 0.3, delay: 0.17 }}
+        className="w-full py-4 text-center text-zinc-600 dark:text-zinc-400 font-serif leading-relaxed"
+      >
+        <p className="whitespace-pre-line text-sm sm:text-base">
+          {`Entropy. As with all physical objects, they all are in perpetual motion, a claim as old as, strengthened even, from Aristotle. My love, we will rebel. We will not join the cloud of chaos that awaits the entire universe for we, together, will constitute our own homogeneity. Our own little cloud of chaos. Our love.`}
+        </p>
+      </motion.div>
+
+      {/* 2. Spotify Playlist Embed */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
         className="w-full"
       >
         <iframe
           data-testid="embed-iframe"
           style={{ borderRadius: "12px" }}
-          src="https://open.spotify.com/embed/playlist/0bRVJbLByRt1MPSH710TVw?utm_source=generator&si=d47ecc018ea54bce"
+          src="https://open.spotify.com/embed/playlist/52gp9QLteAL0VLZ9rIecZ4?utm_source=generator&si=94b17393aaf94689"
           width="100%"
           height="152"
           frameBorder="0"
@@ -120,11 +93,11 @@ export default function ForYouPage() {
         />
       </motion.div>
 
-      {/* 4. BOTTOM: ASCII Flowers */}
+      {/* 3. BOTTOM: ASCII Flowers */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.2 }}
+        transition={{ duration: 0.3, delay: 0.22 }}
         className="pt-4 border-t border-zinc-200 dark:border-zinc-800 flex justify-center"
       >
         <div className="overflow-x-auto w-full max-w-full flex justify-center py-2">
