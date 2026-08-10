@@ -40,7 +40,7 @@ export default function ForYouPage() {
           className="flex items-center gap-2"
         >
           <h1 className="text-3xl font-mono font-semibold text-rose-600 dark:text-rose-500">
-            welcome home.
+            happy monthsary, mia principessa
           </h1>
           <Heart className="w-5 h-5 text-rose-500 fill-rose-500/20" />
         </motion.div>
