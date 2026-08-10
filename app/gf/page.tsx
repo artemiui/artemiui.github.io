@@ -70,7 +70,7 @@ export default function ForYouPage() {
         className="w-full py-4 text-center text-zinc-600 dark:text-zinc-400 font-serif leading-relaxed"
       >
         <p className="whitespace-pre-line text-sm sm:text-base">
-          {`Entropy. As with all physical objects, they all are in perpetual motion, a claim as old as, strengthened even, from Aristotle. My love, we will rebel. We will not join the cloud of chaos that awaits the entire universe for we, together, will constitute our own homogeneity. Our own little cloud of chaos. Our love.`}
+          {`Entropy. As with all physical objects, they all are in perpetual motion, a claim as old as, strengthened even, from Aristotle. My love, we shall rebel. We will not join the cloud of chaos that awaits the entire universe--for we, together, will constitute our own homogeneity. Our own little cloud of chaos. Our love unbound by the categories of the dissipating universe.`}
         </p>
       </motion.div>
 
