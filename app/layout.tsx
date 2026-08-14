@@ -15,6 +15,10 @@ const inter = Inter({
   display: "swap",
 });
 
+export const viewport = {
+  colorScheme: "light" as const,
+};
+
 export const metadata: Metadata = {
   title: siteConfig.title,
   description: siteConfig.description,
@@ -26,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={inter.variable} style={{ colorScheme: "light" }}>
       <body className="antialiased bg-background text-foreground">
         <GlobalRouteBackground />
         <IntroWrapper>

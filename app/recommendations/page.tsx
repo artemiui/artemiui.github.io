@@ -117,7 +117,7 @@ const youtubeVideos: YouTubeVideo[] = [
   {
     title: "How Liberty Dies: The Politics of Star Wars",
     channel: "Arken the Amerikan",
-    url: "https://www.youtube.com/watch?v=v6Q6y4-qKac",
+    url: "https://www.youtube.com/watch?v=-TSqjRgh2ZY",
     description: "A masterfully written piece of analysis of the underlying politics behind the Star Wars prequels. Prior to Andor, this highlighted the potential of diving into the compexities of the political conflicts within Star Wars.",
   },
   {
@@ -318,11 +318,11 @@ export default function RecommendationsPage() {
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-medium text-foreground group-hover:opacity-70 transition-opacity truncate">
+                        <div className="flex items-start gap-2 mb-1">
+                          <h3 className="font-medium text-foreground group-hover:opacity-70 transition-opacity break-words leading-snug">
                             {video.title}
                           </h3>
-                          <ExternalLink className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0" />
+                          <ExternalLink className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0 mt-0.5" />
                         </div>
                         <p className="text-sm text-zinc-600 mb-2">
                           {video.channel}

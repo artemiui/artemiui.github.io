@@ -1,7 +1,7 @@
 export const siteConfig = {
   title: "artemiui",
   description: "a collection of ideas and pixels",
-  quote: '"The divide between the arts and the sciences is a mistake."',
+  quote: '"The limits of my language mean the limits of my world"',
   navLinks: [
     { label: "Blog", href: "/" },
     { label: "About", href: "/about" },

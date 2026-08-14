@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { categoryIcons } from "@/lib/categoryIcons";
 
-export type Category = "All" | "Knowledge" | "Media" | "Hobby" | "Papers";
+export type Category = "All" | "Research" | "Knowledge Sharing" | "Culture" | "Commentary";
 
 type FeedFilterProps = {
   activeCategory: Category;
@@ -15,21 +15,21 @@ const filterCategoryIcons = {
   ...categoryIcons,
 };
 
-const categories: Category[] = ["All", "Knowledge", "Media", "Hobby", "Papers"];
+const categories: Category[] = ["All", "Research", "Knowledge Sharing", "Culture", "Commentary"];
 
 export default function FeedFilter({
   activeCategory,
   onCategoryChange,
 }: FeedFilterProps) {
   return (
-    <div className="flex gap-6 mb-8 pb-4 border-b border-zinc-200 dark:border-zinc-800">
+    <div className="flex overflow-x-auto sm:overflow-x-visible scrollbar-hide gap-4 sm:gap-6 mb-8 pb-4 border-b border-zinc-200 dark:border-zinc-800 flex-nowrap sm:flex-wrap">
       {categories.map((category) => {
         const Icon = filterCategoryIcons[category];
         return (
           <button
             key={category}
             onClick={() => onCategoryChange(category)}
-            className="flex items-center gap-2 text-sm relative pb-1"
+            className="flex items-center gap-2 text-sm relative pb-1 whitespace-nowrap flex-shrink-0"
           >
             {Icon && <Icon className="w-4 h-4" />}
             <span

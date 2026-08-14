@@ -168,7 +168,7 @@ export default function AboutPage() {
                   key={idx}
                   className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-mono text-zinc-700 dark:text-zinc-300 bg-zinc-200/60 dark:bg-zinc-800/60 border border-zinc-300/60 dark:border-zinc-700/60 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
                 >
-                  <Icon className="w-3.5 h-3.5 text-red-600 dark:text-red-500" />
+                  <Icon className="w-3.5 h-3.5 text-zinc-700 dark:text-zinc-300" />
                   {skill.name}
                 </span>
               );
@@ -211,12 +211,12 @@ export default function AboutPage() {
                           transition={{ duration: 0.3, delay: idx * 0.05 }}
                           className="relative pl-5 space-y-1"
                         >
-                          <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-red-600" />
+                          <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-zinc-900 dark:bg-zinc-100" />
                           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                             <h4 className="font-mono font-medium text-sm text-foreground">
                               {edu.degree}
                               {edu.gpaOrHonors && (
-                                <span className="ml-2 text-xs font-normal text-red-600">
+                                <span className="ml-2 text-xs font-normal text-zinc-600 dark:text-zinc-400">
                                   ({edu.gpaOrHonors})
                                 </span>
                               )}
@@ -251,7 +251,7 @@ export default function AboutPage() {
                           transition={{ duration: 0.3, delay: idx * 0.05 }}
                           className="relative pl-5 space-y-1"
                         >
-                          <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-red-600" />
+                          <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-zinc-900 dark:bg-zinc-100" />
                           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                             <h4 className="font-mono font-medium text-sm text-foreground">
                               {vol.title}
@@ -282,7 +282,7 @@ export default function AboutPage() {
                           transition={{ duration: 0.3, delay: idx * 0.05 }}
                           className="relative pl-5 space-y-2"
                         >
-                          <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-red-600" />
+                          <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-zinc-900 dark:bg-zinc-100" />
 
                           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                             <h4 className="font-mono font-medium text-sm text-foreground">
@@ -317,7 +317,7 @@ export default function AboutPage() {
 
               {/* Interactive Current Obsessions & Genshin Akasha Widgets */}
               {section.id === "hobbies" && (
-                <div className="pt-4 space-y-8">
+                <div className="pt-2 space-y-6">
                   <CurrentObsessions />
                   <GenshinStatsWidget uid="833534626" profileUrl="https://akasha.cv/profile/833534626" />
                 </div>

@@ -12,7 +12,8 @@ export type FeedItemType = {
   date: string;
   slug?: string;
   url?: string;
-  category: "Knowledge" | "Media" | "Hobby" | "Papers";
+  category: "Research" | "Knowledge Sharing" | "Culture" | "Commentary";
+  tags?: string[];
 };
 
 // Helper function to truncate description to 30 words for the home feed
@@ -54,22 +55,36 @@ export default function FeedItem({ item, index }: FeedItemProps) {
       className="group flex flex-col sm:flex-row items-start justify-between gap-3 sm:gap-4 py-3 border-b border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors cursor-pointer"
     >
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <h3 className="font-medium font-mono text-foreground group-hover:opacity-70 transition-opacity truncate">
+        <div className="flex items-start gap-2 mb-1">
+          <h3 className="font-medium font-mono text-foreground group-hover:opacity-70 transition-opacity break-words leading-snug">
             {item.title}
           </h3>
           {isExternal && (
-            <ExternalLink className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0" />
+            <ExternalLink className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0 mt-0.5" />
           )}
         </div>
         {item.description && (
-          <p className="text-xs font-sans font-normal text-zinc-600 dark:text-zinc-400 leading-relaxed">
+          <p className="text-xs font-sans font-normal text-zinc-600 dark:text-zinc-400 leading-relaxed mb-1.5">
             {truncateDescription(item.description)}
           </p>
         )}
-        <p className="text-xs font-mono text-zinc-500 dark:text-zinc-500 mb-1">
-          {item.date}
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-xs font-mono text-zinc-500 dark:text-zinc-500">
+            {item.date}
+          </p>
+          {item.tags && item.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {item.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-sans bg-zinc-100 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-400 border border-zinc-200/80 dark:border-zinc-700/60"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
         <motion.div
@@ -133,9 +148,9 @@ export default function FeedItem({ item, index }: FeedItemProps) {
 
                 {/* Modal Title & Category Badge */}
                 <div className="space-y-2 pr-8">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     {CategoryIcon && (
-                      <CategoryIcon className="w-4 h-4 text-red-600 dark:text-red-400" />
+                      <CategoryIcon className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
                     )}
                     <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                       {item.category}
@@ -144,9 +159,22 @@ export default function FeedItem({ item, index }: FeedItemProps) {
                     <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400">
                       {item.date}
                     </span>
+                    {item.tags && item.tags.length > 0 && (
+                      <>
+                        <span className="text-zinc-300 dark:text-zinc-700">•</span>
+                        {item.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="px-2 py-0.5 rounded-full text-xs font-sans bg-zinc-100 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-400 border border-zinc-200/80 dark:border-zinc-700/60"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </>
+                    )}
                   </div>
 
-                  <h2 className="text-xl font-mono font-semibold text-foreground leading-snug">
+                  <h2 className="text-lg sm:text-xl font-mono font-semibold text-foreground leading-snug break-words">
                     {item.title}
                   </h2>
                 </div>
@@ -166,7 +194,7 @@ export default function FeedItem({ item, index }: FeedItemProps) {
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center p-2.5 rounded-md bg-red-600 hover:bg-red-700 text-white shadow transition-all duration-200 group"
+                    className="inline-flex items-center justify-center p-2.5 rounded-md bg-zinc-900 hover:bg-black text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 shadow transition-all duration-200 group"
                     aria-label="Redirect to external link"
                   >
                     <ExternalLink className="w-4 h-4 group-hover:scale-110 transition-transform" />

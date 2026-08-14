@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* NDS12 Font Face Declarations */
 @font-face {
 	font-family:'NDS12';
@@ -22,9 +24,14 @@
 }
 
 :root {
-  --background: #ececec;
+  --background: #ffffff;
   --foreground: #18181b;
   color-scheme: light;
+}
+
+html, body {
+  color-scheme: light;
+  overflow-y: scroll;
 }
 
 @theme inline {
@@ -103,7 +110,9 @@ body {
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 /* KaTeX math styling */

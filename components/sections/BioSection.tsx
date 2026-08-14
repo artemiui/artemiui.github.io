@@ -11,7 +11,7 @@ export default function BioSection({
 }: BioSectionProps) {
   return (
     <section className={`bio-section ${className}`}>
-      <p className="text-green-600 dark:text-zinc-300 leading-7">
+      <p className="text-red-600 dark:text-red-500 leading-7 font-medium">
         {quote}
       </p>
     </section>

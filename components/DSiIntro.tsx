@@ -74,6 +74,14 @@ const DSiIntro: React.FC<DSiIntroProps> = ({ onComplete }) => {
     willChange: 'transform,left,top',
   };
 
+  useEffect(() => {
+    const handleKeyDown = () => {
+      onComplete?.();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onComplete]);
+
   return (
     <>
       <style>{`
@@ -86,14 +94,17 @@ const DSiIntro: React.FC<DSiIntroProps> = ({ onComplete }) => {
 
       <img src="/spriteko.png" alt="spriteko" style={spriteStyle} />
 
-      <div className="min-h-screen bg-[#e0e0e0] flex items-center justify-center p-4 font-nds">
+      <div
+        onClick={handleContinue}
+        className="min-h-screen bg-[#e0e0e0] flex items-center justify-center p-4 font-nds cursor-pointer select-none"
+      >
         <div className="absolute top-2 right-4 flex space-x-2 text-gray-500">
           <span className="text-xs mt-1 tabular-nums">{timeStr}</span>
           <Wifi size={16} />
           <Battery size={16} />
         </div>
 
-        <div className="flex flex-col items-center justify-center h-full w-full">
+        <div className="flex flex-col items-center justify-center h-full w-full pointer-events-none">
           {stage === 'welcome' && (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -106,16 +117,16 @@ const DSiIntro: React.FC<DSiIntroProps> = ({ onComplete }) => {
                 initial={{ width: 0 }}
                 animate={{ width: '100%' }}
                 transition={{ delay: 0.3, duration: 0.6 }}
-                className="h-1 bg-cyan-400 mx-auto rounded-full max-w-xs"
+                className="h-1 bg-zinc-800 dark:bg-zinc-200 mx-auto rounded-full max-w-xs"
               />
             </motion.div>
           )}
         </div>
 
         <div className="absolute bottom-10 left-0 right-0 flex items-center justify-center">
-          <button onClick={handleContinue} className="text-gray-600 text-sm underline-offset-2 hover:text-black select-none">
-            Click here to continue.
-          </button>
+          <p className="text-gray-600 text-sm hover:text-black select-none cursor-pointer">
+            Click anywhere to continue.
+          </p>
         </div>
       </div>
     </>

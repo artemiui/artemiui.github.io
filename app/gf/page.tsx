@@ -39,10 +39,10 @@ export default function ForYouPage() {
           transition={{ duration: 0.3, delay: 0.05 }}
           className="flex items-center gap-2"
         >
-          <h1 className="text-3xl font-mono font-semibold text-rose-600 dark:text-rose-500">
+          <h1 className="text-3xl font-mono font-semibold text-zinc-900 dark:text-zinc-100">
             happy monthsary, mia principessa
           </h1>
-          <Heart className="w-5 h-5 text-rose-500 fill-rose-500/20" />
+          <Heart className="w-5 h-5 text-zinc-700 fill-zinc-700/20 dark:text-zinc-300 dark:fill-zinc-300/20" />
         </motion.div>
       </div>
 
@@ -101,7 +101,7 @@ export default function ForYouPage() {
         className="pt-4 border-t border-zinc-200 dark:border-zinc-800 flex justify-center"
       >
         <div className="overflow-x-auto w-full max-w-full flex justify-center py-2">
-          <pre className="font-mono text-[10px] sm:text-xs text-rose-600 dark:text-rose-400 leading-none select-none whitespace-pre tracking-normal">
+          <pre className="font-mono text-[10px] sm:text-xs text-zinc-700 dark:text-zinc-300 leading-none select-none whitespace-pre tracking-normal">
             {asciiFlowers}
           </pre>
         </div>

@@ -84,7 +84,7 @@ export default async function BlogPost({ params }: Props) {
       <div className="flex gap-12">
         <div className="flex-1 prose prose-slate dark:prose-invert max-w-none">
           <header className="mb-8">
-            <h1 className="text-3xl font-semibold mb-2">{post.frontmatter.title}</h1>
+            <h1 className="text-2xl sm:text-3xl font-semibold mb-2 leading-tight break-words">{post.frontmatter.title}</h1>
             <div className="flex items-center gap-4 text-sm text-zinc-500 dark:text-zinc-500">
               <time dateTime={post.frontmatter.date}>
                 {new Date(post.frontmatter.date).toLocaleDateString("en-US", {
@@ -95,6 +95,18 @@ export default async function BlogPost({ params }: Props) {
               </time>
               <span>•</span>
               <span>{post.frontmatter.category}</span>
+              {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (
+                <>
+                  <span>•</span>
+                  <div className="flex items-center gap-1.5">
+                    {post.frontmatter.tags.map((tag) => (
+                      <span key={tag} className="px-2 py-0.5 rounded-full text-xs font-sans bg-zinc-100 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-400 border border-zinc-200/80 dark:border-zinc-700/60">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </header>
 

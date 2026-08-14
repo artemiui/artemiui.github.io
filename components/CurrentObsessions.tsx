@@ -68,18 +68,18 @@ export default function CurrentObsessions({
         </h3>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-3 gap-2.5 sm:gap-4 md:gap-6">
         {obsessions.map((item, index) => {
           const Icon = typeIconMap[item.type] || Film;
 
           return (
             <motion.div
               key={index}
-              className="group relative flex flex-col space-y-3"
-              whileHover={{ y: -5 }}
+              className="group relative flex flex-col space-y-2"
+              whileHover={{ y: -3 }}
             >
               {/* Media Aspect Ratio Cover Container matching Recommendations */}
-              <div className="relative aspect-[4/5] w-full bg-zinc-100 dark:bg-zinc-800 rounded-md overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300">
+              <div className="relative aspect-[4/5] w-full bg-zinc-100 dark:bg-zinc-800 rounded-md overflow-hidden shadow-sm group-hover:shadow-md transition-all duration-300">
                 <img
                   src={item.coverUrl}
                   alt={item.title}
@@ -88,23 +88,23 @@ export default function CurrentObsessions({
                 />
 
                 {/* Icon-Only Overlay Badge */}
-                <div className="absolute top-2 left-2 flex items-center justify-center p-1.5 rounded-md bg-black/60 backdrop-blur-md text-white shadow">
-                  <Icon className="w-3.5 h-3.5" />
+                <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 flex items-center justify-center p-1 sm:p-1.5 rounded bg-black/60 backdrop-blur-md text-white shadow">
+                  <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </div>
               </div>
 
               {/* Title & Metadata below the cover image */}
-              <div className="space-y-1">
-                <h4 className="font-medium text-foreground leading-tight text-sm">
+              <div className="space-y-0.5">
+                <h4 className="font-medium text-foreground leading-snug text-xs sm:text-sm line-clamp-1 sm:line-clamp-none">
                   {item.title}
                 </h4>
                 {item.creatorOrYear && (
-                  <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+                  <p className="text-[10px] sm:text-xs font-mono text-zinc-500 dark:text-zinc-400 line-clamp-1">
                     {item.creatorOrYear}
                   </p>
                 )}
                 {item.notes && (
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400 pt-1 leading-relaxed">
+                  <p className="text-[10px] sm:text-xs text-zinc-600 dark:text-zinc-400 pt-0.5 leading-tight sm:leading-relaxed line-clamp-2 sm:line-clamp-none">
                     {item.notes}
                   </p>
                 )}

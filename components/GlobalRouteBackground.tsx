@@ -33,8 +33,7 @@ function PS3WaveBackground() {
 
   useEffect(() => {
     const computeIsDark = () =>
-      document.documentElement.classList.contains("dark") ||
-      window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.classList.contains("dark");
 
     const update = () => setIsDark(computeIsDark());
 
@@ -43,13 +42,8 @@ function PS3WaveBackground() {
     const observer = new MutationObserver(update);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 
-    const mql = window.matchMedia("(prefers-color-scheme: dark)");
-    const onChange = () => update();
-    mql.addEventListener("change", onChange);
-
     return () => {
       observer.disconnect();
-      mql.removeEventListener("change", onChange);
     };
   }, []);
 
