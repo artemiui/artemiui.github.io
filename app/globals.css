@@ -29,9 +29,13 @@
   color-scheme: light;
 }
 
-html, body {
+html {
   color-scheme: light;
-  overflow-y: scroll;
+}
+
+body {
+  color-scheme: light;
+  overflow-x: hidden;
 }
 
 @theme inline {
