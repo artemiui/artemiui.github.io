@@ -2,8 +2,6 @@ import mediaDataRaw from "./media_database.json";
 
 export type MediaItem = {
   title: string;
-  filename?: string;
-  filepath?: string;
   type: string;
   rating: string;
   genre?: string;
@@ -12,14 +10,56 @@ export type MediaItem = {
   cover_link: string;
   properties?: Record<string, string | undefined>;
   body?: string;
+  filename?: string;
+  filepath?: string;
+  [key: string]: any;
 };
 
+const EXCLUDED_PROPERTIES = new Set([
+  "title",
+  "filename",
+  "filepath",
+  "cover_link",
+  "cover link",
+  "body",
+  "properties",
+]);
+
 export const mediaDatabase: MediaItem[] = (
-  mediaDataRaw as unknown as MediaItem[]
-).map((item) => ({
-  ...item,
-  type: item.type ? item.type.toLowerCase().trim() : "other",
-}));
+  mediaDataRaw as unknown as Record<string, any>[]
+).map((item) => {
+  const type = item.type ? item.type.toLowerCase().trim() : "other";
+
+  // Build the properties dictionary for modal and details view
+  const properties: Record<string, string | undefined> = {};
+
+  if (item.properties && typeof item.properties === "object") {
+    for (const [k, v] of Object.entries(item.properties)) {
+      if (v !== undefined && v !== null && String(v).trim() !== "" && !EXCLUDED_PROPERTIES.has(k)) {
+        properties[k] = String(v).trim();
+      }
+    }
+  }
+
+  for (const [k, v] of Object.entries(item)) {
+    if (v !== undefined && v !== null && String(v).trim() !== "" && !EXCLUDED_PROPERTIES.has(k)) {
+      properties[k] = String(v).trim();
+    }
+  }
+
+  return {
+    ...item,
+    title: item.title || "",
+    type,
+    rating: item.rating ? String(item.rating).trim() : "",
+    genre: item.genre ? String(item.genre).trim() : "",
+    started: item.started ? String(item.started).trim() : "",
+    completed: item.completed ? String(item.completed).trim() : "",
+    cover_link: item.cover_link || "",
+    body: item.body || "",
+    properties,
+  };
+});
 
 export function getMediaStats() {
   const total = mediaDatabase.length;
