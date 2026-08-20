@@ -8,16 +8,13 @@ import IntroWrapper from "@/components/IntroWrapper";
 import "katex/dist/katex.min.css";
 import GlobalRouteBackground from "@/components/GlobalRouteBackground";
 import { siteConfig } from "@/lib/siteConfig";
+import { ThemeProvider } from "@/lib/themeContext";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
 });
-
-export const viewport = {
-  colorScheme: "light" as const,
-};
 
 export const metadata: Metadata = {
   title: siteConfig.title,
@@ -30,19 +27,38 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable} style={{ colorScheme: "light" }}>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const savedTheme = localStorage.getItem('theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
       <body className="antialiased bg-background text-foreground">
-        <GlobalRouteBackground />
-        <IntroWrapper>
-          <div className="min-h-screen flex flex-col">
-            <div className="flex-1 w-full max-w-[768px] mx-auto px-6 py-12">
-              <Header />
-              <main className="mt-6">{children}</main>
+        <ThemeProvider>
+          <GlobalRouteBackground />
+          <IntroWrapper>
+            <div className="min-h-screen flex flex-col">
+              <div className="flex-1 w-full max-w-[768px] mx-auto px-6 py-12">
+                <Header />
+                <main className="mt-6">{children}</main>
+              </div>
+              <Footer />
             </div>
-            <Footer />
-          </div>
-          {siteConfig.features.enableScreensaver && <IdleScreensaver />}
-        </IntroWrapper>
+            {siteConfig.features.enableScreensaver && <IdleScreensaver />}
+          </IntroWrapper>
+        </ThemeProvider>
       </body>
     </html>
   );

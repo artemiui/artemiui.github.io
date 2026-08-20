@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowLeft, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import { motion } from "framer-motion";
 
 const asciiFlowers = `                    _
@@ -17,34 +16,17 @@ jgs \\|//   \\|///  \\\\\\|//\\\\\\|/// \\|///  \\\\\\|//  \\|//  \\\\\\|//
 export default function ForYouPage() {
   return (
     <div className="space-y-8">
-      {/* Header & Back Link Container */}
-      <div className="space-y-1">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-foreground transition-colors font-sans"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </Link>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.05 }}
-          className="flex items-center gap-2"
-        >
-          <h1 className="text-3xl font-mono font-semibold text-zinc-900 dark:text-zinc-100">
-            happy monthsary, mia principessa
-          </h1>
-          <Heart className="w-5 h-5 text-zinc-700 fill-zinc-700/20 dark:text-zinc-300 dark:fill-zinc-300/20" />
-        </motion.div>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.05 }}
+        className="flex items-center gap-2"
+      >
+        <h1 className="text-3xl font-mono font-semibold text-zinc-900 dark:text-zinc-100">
+          happy monthsary, mia principessa
+        </h1>
+        <Heart className="w-5 h-5 text-zinc-700 fill-zinc-700/20 dark:text-zinc-300 dark:fill-zinc-300/20" />
+      </motion.div>
 
       {/* 1. 16:9 Framed Image */}
       <motion.div

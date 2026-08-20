@@ -4,7 +4,6 @@ import Link from "next/link";
 import { ExternalLink, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import { categoryIcons } from "@/lib/categoryIcons";
 
 export type FeedItemType = {
   title: string;
@@ -34,8 +33,6 @@ export default function FeedItem({ item, index }: FeedItemProps) {
   const isExternal = Boolean(item.url);
   const internalHref = item.slug ? `/blog/${item.slug}` : "#";
   const [isOpen, setIsOpen] = useState(false);
-
-  const CategoryIcon = categoryIcons[item.category];
 
   // Close modal on Escape key press
   useEffect(() => {
@@ -94,9 +91,6 @@ export default function FeedItem({ item, index }: FeedItemProps) {
         >
           →
         </motion.div>
-        {CategoryIcon && (
-          <CategoryIcon className="w-4 h-4 text-zinc-400 dark:text-zinc-500 flex-shrink-0" />
-        )}
       </div>
     </motion.div>
   );
@@ -149,9 +143,6 @@ export default function FeedItem({ item, index }: FeedItemProps) {
                 {/* Modal Title & Category Badge */}
                 <div className="space-y-2 pr-8">
                   <div className="flex flex-wrap items-center gap-2">
-                    {CategoryIcon && (
-                      <CategoryIcon className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
-                    )}
                     <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                       {item.category}
                     </span>

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState, useMemo, useEffect } from "react";
 import {
-  ArrowLeft,
   Search,
   Film,
   Tv,
@@ -170,63 +169,6 @@ export default function MediaLogPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header & Back Link Container */}
-      <div className="space-y-1">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-foreground transition-colors font-sans"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back
-        </Link>
-
-        {/* Header Title & Toggleable Action Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
-          <div>
-            <h1 className="text-3xl font-mono font-semibold text-red-600 dark:text-red-500">
-              Welcome to artboxd.
-            </h1>
-          </div>
-
-          {/* Action Toggle Controls */}
-          <div className="flex items-center gap-3 text-xs font-sans">
-            {/* Toggle Search Button */}
-            <button
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-xs font-sans transition-all ${
-                isSearchOpen || searchQuery
-                  ? "bg-red-600 text-white border-red-600 font-medium shadow-sm"
-                  : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-foreground"
-              }`}
-            >
-              <Search className="w-3.5 h-3.5" />
-              <span>Search</span>
-              {searchQuery && (
-                <span className="w-1.5 h-1.5 rounded-full bg-white ml-0.5" />
-              )}
-            </button>
-
-            {/* Toggle Filter Menu Button */}
-            <button
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-xs font-sans transition-all ${
-                isFilterOpen || activeFilterCount > 0
-                  ? "bg-red-600 text-white border-red-600 font-medium shadow-sm"
-                  : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-foreground"
-              }`}
-            >
-              <SlidersHorizontal className="w-3.5 h-3.5" />
-              <span>Filter & Sort</span>
-              {activeFilterCount > 0 && (
-                <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-white text-red-600 font-bold ml-0.5">
-                  {activeFilterCount}
-                </span>
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Dynamic Latest Activity Widget */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -235,6 +177,43 @@ export default function MediaLogPage() {
       >
         <LastMediaWidget onSelect={(item) => setSelectedItem(item)} />
       </motion.div>
+
+      {/* Action Toggle Controls (Search & Filter) */}
+      <div className="flex items-center justify-end gap-3 text-xs font-sans -mt-2">
+        {/* Toggle Search Button */}
+        <button
+          onClick={() => setIsSearchOpen(!isSearchOpen)}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-xs font-sans transition-all ${
+            isSearchOpen || searchQuery
+              ? "bg-red-600 text-white border-red-600 font-medium shadow-sm"
+              : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-foreground"
+          }`}
+        >
+          <Search className="w-3.5 h-3.5" />
+          <span>Search</span>
+          {searchQuery && (
+            <span className="w-1.5 h-1.5 rounded-full bg-white ml-0.5" />
+          )}
+        </button>
+
+        {/* Toggle Filter Menu Button */}
+        <button
+          onClick={() => setIsFilterOpen(!isFilterOpen)}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-xs font-sans transition-all ${
+            isFilterOpen || activeFilterCount > 0
+              ? "bg-red-600 text-white border-red-600 font-medium shadow-sm"
+              : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-foreground"
+          }`}
+        >
+          <SlidersHorizontal className="w-3.5 h-3.5" />
+          <span>Filter & Sort</span>
+          {activeFilterCount > 0 && (
+            <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-white text-red-600 font-bold ml-0.5">
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
+      </div>
 
       {/* Expandable Search Input Bar */}
       <AnimatePresence>

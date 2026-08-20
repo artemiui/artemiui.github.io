@@ -1,7 +1,7 @@
 export const siteConfig = {
   title: "artemiui",
   description: "a collection of ideas and pixels",
-  quote: '"The limits of my language mean the limits of my world"',
+  quote: "",
   navLinks: [
     { label: "Blog", href: "/" },
     { label: "About", href: "/about" },

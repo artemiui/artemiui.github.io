@@ -2,38 +2,33 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { Home } from "lucide-react";
-import NetworkStatus from "./NetworkStatus";
+import { usePathname } from "next/navigation";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Header() {
-  const [currentTime, setCurrentTime] = useState("");
+  const pathname = usePathname();
 
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setCurrentTime(
-        now.toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        })
-      );
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const isLinkActive = (href: string) => {
+    if (href === "/") {
+      return pathname === "/" || pathname?.startsWith("/blog");
+    }
+    return pathname === href || pathname?.startsWith(href + "/");
+  };
 
-  // TODO: Replace with actual last modified date from CMS or build info
-  const lastSavedDate = "2025-12-28";
+  const getLinkClass = (href: string, extraClasses: string = "") => {
+    const active = isLinkActive(href);
+    return `${
+      active
+        ? "text-foreground font-semibold"
+        : "text-zinc-600 dark:text-zinc-400 hover:text-foreground"
+    } transition-colors whitespace-nowrap ${extraClasses}`.trim();
+  };
 
   return (
     <header className="flex flex-col gap-4">
-      {/* System Time and Network Status */}
-      <div className="flex justify-between items-center text-xs font-mono text-zinc-500 dark:text-zinc-400">
-        <span>{currentTime}</span>
-        <NetworkStatus lastUpdatedDate={lastSavedDate} />
+      {/* Top bar with Theme Toggle */}
+      <div className="flex justify-end items-center">
+        <ThemeToggle />
       </div>
 
       <div className="flex items-center gap-4">
@@ -57,28 +52,27 @@ export default function Header() {
       <nav className="w-full flex flex-wrap items-center justify-start gap-x-3 sm:gap-x-5 gap-y-2 text-xs sm:text-sm font-mono leading-relaxed">
         <Link
           href="/"
-          className="text-zinc-600 dark:text-zinc-400 hover:text-foreground transition-colors flex items-center justify-center whitespace-nowrap"
-          aria-label="Home"
+          className={getLinkClass("/")}
         >
-          <Home className="w-4 h-4" />
+          blog
         </Link>
         <Link
           href="/about"
-          className="text-zinc-600 dark:text-zinc-400 hover:text-foreground transition-colors whitespace-nowrap"
+          className={getLinkClass("/about")}
         >
-          About
+          cv
         </Link>
         <Link
           href="/media"
-          className="text-zinc-600 dark:text-zinc-400 hover:text-foreground transition-colors whitespace-nowrap"
+          className={getLinkClass("/media")}
         >
-          Artboxd
+          media
         </Link>
         <Link
           href="/recommendations"
-          className="text-zinc-600 dark:text-zinc-400 hover:text-foreground transition-colors whitespace-nowrap"
+          className={getLinkClass("/recommendations")}
         >
-          Recommendations
+          recommendations
         </Link>
         <Link
           href="https://linkedin.com/in/artemioarcega"
@@ -86,7 +80,7 @@ export default function Header() {
           rel="noopener noreferrer"
           className="text-zinc-600 dark:text-zinc-400 hover:text-foreground transition-colors whitespace-nowrap"
         >
-          LinkedIn
+          linkedin
         </Link>
         <Link
           href="https://github.com/artemiui"
@@ -94,11 +88,11 @@ export default function Header() {
           rel="noopener noreferrer"
           className="text-zinc-600 dark:text-zinc-400 hover:text-foreground transition-colors whitespace-nowrap"
         >
-          GitHub
+          github
         </Link>
         <Link
           href="/gf"
-          className="text-zinc-600 dark:text-zinc-400 hover:text-foreground transition-colors font-semibold whitespace-nowrap"
+          className={getLinkClass("/gf", "font-semibold")}
         >
           ♡
         </Link>

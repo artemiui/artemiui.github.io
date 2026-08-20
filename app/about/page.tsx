@@ -1,10 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowLeft, Music, Mic, PenTool, Palette, Layout } from "lucide-react";
+import { Music, Mic, PenTool, Palette, Layout } from "lucide-react";
 import { motion } from "framer-motion";
-import CurrentObsessions from "@/components/CurrentObsessions";
-import GenshinStatsWidget from "@/components/GenshinStatsWidget";
 
 type EducationItem = {
   degree: string;
@@ -114,10 +111,6 @@ const skillsList = [
 
 const aboutSections: SaveFile[] = [
   {
-    id: "hobbies",
-    title: "Things I love",
-  },
-  {
     id: "education",
     title: "My professional background",
   },
@@ -126,23 +119,6 @@ const aboutSections: SaveFile[] = [
 export default function AboutPage() {
   return (
     <div className="space-y-8">
-      {/* Header & Back Link Container */}
-      <div className="space-y-1">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-foreground transition-colors font-sans"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </Link>
-        </motion.div>
-      </div>
-
       {/* Personal Description Placeholder */}
       <motion.section
         initial={{ opacity: 0, y: 10 }}
@@ -186,7 +162,7 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: sIndex * 0.1 }}
-              className="py-6 border-b border-zinc-200 space-y-4"
+              className="py-6 border-b border-zinc-200 dark:border-zinc-800 space-y-4"
             >
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-mono font-semibold text-foreground">
@@ -199,10 +175,10 @@ export default function AboutPage() {
                 <div className="mt-4 space-y-8">
                   {/* Education History */}
                   <div className="space-y-4">
-                    <h3 className="text-base font-mono font-semibold text-zinc-800">
+                    <h3 className="text-base font-mono font-semibold text-zinc-800 dark:text-zinc-200">
                       Education
                     </h3>
-                    <div className="space-y-4 pl-1 border-l-2 border-zinc-200 ml-2">
+                    <div className="space-y-4 pl-1 border-l-2 border-zinc-200 dark:border-zinc-800 ml-2">
                       {educationList.map((edu, idx) => (
                         <motion.div
                           key={idx}
@@ -222,13 +198,13 @@ export default function AboutPage() {
                               )}
                             </h4>
                             {edu.dates && (
-                              <span className="text-xs font-mono text-zinc-500">
+                              <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400">
                                 {edu.dates}
                               </span>
                             )}
                           </div>
                           {edu.institution && (
-                            <p className="text-xs font-sans text-zinc-600">
+                            <p className="text-xs font-sans text-zinc-600 dark:text-zinc-400">
                               {edu.institution}
                             </p>
                           )}
@@ -239,10 +215,10 @@ export default function AboutPage() {
 
                   {/* Volunteering Section */}
                   <div className="space-y-4">
-                    <h3 className="text-base font-mono font-semibold text-zinc-800">
+                    <h3 className="text-base font-mono font-semibold text-zinc-800 dark:text-zinc-200">
                       Volunteering
                     </h3>
-                    <div className="space-y-4 pl-1 border-l-2 border-zinc-200 ml-2">
+                    <div className="space-y-4 pl-1 border-l-2 border-zinc-200 dark:border-zinc-800 ml-2">
                       {volunteeringExperience.map((vol, idx) => (
                         <motion.div
                           key={idx}
@@ -256,11 +232,11 @@ export default function AboutPage() {
                             <h4 className="font-mono font-medium text-sm text-foreground">
                               {vol.title}
                             </h4>
-                            <span className="text-xs font-mono text-zinc-500">
+                            <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400">
                               {vol.dates}
                             </span>
                           </div>
-                          <p className="text-xs font-sans text-zinc-600">
+                          <p className="text-xs font-sans text-zinc-600 dark:text-zinc-400">
                             {vol.organization}
                           </p>
                         </motion.div>
@@ -270,10 +246,10 @@ export default function AboutPage() {
 
                   {/* Relevant Experience Timeline */}
                   <div className="space-y-4">
-                    <h3 className="text-base font-mono font-semibold text-zinc-800">
+                    <h3 className="text-base font-mono font-semibold text-zinc-800 dark:text-zinc-200">
                       Experience
                     </h3>
-                    <div className="space-y-6 pl-1 border-l-2 border-zinc-200 ml-2">
+                    <div className="space-y-6 pl-1 border-l-2 border-zinc-200 dark:border-zinc-800 ml-2">
                       {relevantExperience.map((exp, idx) => (
                         <motion.div
                           key={idx}
@@ -289,19 +265,19 @@ export default function AboutPage() {
                               {exp.title}
                             </h4>
                             {exp.dates && (
-                              <span className="text-xs font-mono text-zinc-500">
+                              <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400">
                                 {exp.dates}
                               </span>
                             )}
                           </div>
 
                           {exp.organization && (
-                            <p className="text-xs font-sans text-zinc-600">
+                            <p className="text-xs font-sans text-zinc-600 dark:text-zinc-400">
                               {exp.organization}
                             </p>
                           )}
 
-                          <ul className="list-disc list-inside space-y-1 pt-1 text-xs font-sans text-zinc-600 leading-relaxed">
+                          <ul className="list-disc list-inside space-y-1 pt-1 text-xs font-sans text-zinc-600 dark:text-zinc-400 leading-relaxed">
                             {exp.responsibilities.map((resp, rIdx) => (
                               <li key={rIdx} className="leading-5">
                                 <span>{resp}</span>
@@ -312,14 +288,6 @@ export default function AboutPage() {
                       ))}
                     </div>
                   </div>
-                </div>
-              )}
-
-              {/* Interactive Current Obsessions & Genshin Akasha Widgets */}
-              {section.id === "hobbies" && (
-                <div className="pt-2 space-y-6">
-                  <CurrentObsessions />
-                  <GenshinStatsWidget uid="833534626" profileUrl="https://akasha.cv/profile/833534626" />
                 </div>
               )}
             </motion.section>

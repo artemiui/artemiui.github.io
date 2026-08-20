@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { ExternalLink, ArrowLeft } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 
 // Type definitions
@@ -194,32 +193,15 @@ const links: RecommendationLink[] = [
 export default function RecommendationsPage() {
   return (
     <div className="space-y-8">
-      {/* Header & Back Link Container */}
-      <div className="space-y-1">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-foreground transition-colors font-sans"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </Link>
-        </motion.div>
-
-        {/* Page Title */}
-        <motion.h1
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.05 }}
-          className="text-3xl font-mono font-semibold text-green-600"
-        >
-          Recommendations
-        </motion.h1>
-      </div>
+      {/* Page Title */}
+      <motion.h1
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.05 }}
+        className="text-3xl font-mono font-semibold text-zinc-900 dark:text-zinc-100"
+      >
+        Recommendations
+      </motion.h1>
 
       {/* Books Section */}
       {books.length > 0 && (
@@ -228,7 +210,7 @@ export default function RecommendationsPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="text-xl font-mono font-semibold mb-6"
+            className="text-xl font-mono font-semibold mb-6 text-foreground"
           >
             To Read
           </motion.h2>
@@ -246,7 +228,7 @@ export default function RecommendationsPage() {
                   href={book.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block relative aspect-[2/3] bg-zinc-100 rounded-md overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300"
+                  className="block relative aspect-[2/3] bg-zinc-100 dark:bg-zinc-800 rounded-md overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300 border border-zinc-200/60 dark:border-zinc-800/60"
                 >
                   <img
                     src={book.coverUrl}
@@ -257,7 +239,7 @@ export default function RecommendationsPage() {
                 </a>
 
                 <div className="space-y-1">
-                  <h3 className="font-medium text-foreground leading-tight group-hover:text-green-600 transition-colors">
+                  <h3 className="font-medium text-foreground leading-tight group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
                     {book.link ? (
                       <a
                         href={book.link}
@@ -271,7 +253,7 @@ export default function RecommendationsPage() {
                       <span className="line-clamp-2">{book.title}</span>
                     )}
                   </h3>
-                  <p className="text-sm text-zinc-500">{book.author}</p>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">{book.author}</p>
                 </div>
               </motion.div>
             ))}
@@ -286,7 +268,7 @@ export default function RecommendationsPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="text-xl font-mono font-semibold mb-6"
+            className="text-xl font-mono font-semibold mb-6 text-foreground"
           >
             To Watch
           </motion.h2>
@@ -299,7 +281,7 @@ export default function RecommendationsPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="py-4 border-b border-zinc-200"
+                  className="py-4 border-b border-zinc-200 dark:border-zinc-800"
                 >
                   <a
                     href={video.url}
@@ -309,7 +291,7 @@ export default function RecommendationsPage() {
                   >
                     <div className="flex flex-col sm:flex-row gap-4">
                       {thumbnail && (
-                        <div className="relative w-full sm:w-48 aspect-video flex-shrink-0 overflow-hidden rounded-md bg-zinc-100">
+                        <div className="relative w-full sm:w-48 aspect-video flex-shrink-0 overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/60 dark:border-zinc-800/60">
                           <img
                             src={thumbnail}
                             alt={video.title}
@@ -324,11 +306,11 @@ export default function RecommendationsPage() {
                           </h3>
                           <ExternalLink className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0 mt-0.5" />
                         </div>
-                        <p className="text-sm text-zinc-600 mb-2">
+                        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
                           {video.channel}
                         </p>
                         {video.description && (
-                          <p className="text-sm text-zinc-500 line-clamp-2">
+                          <p className="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2">
                             {video.description}
                           </p>
                         )}
@@ -341,7 +323,6 @@ export default function RecommendationsPage() {
           </div>
         </section>
       )}
-
       {/* Games Section */}
       {games.length > 0 && (
         <section className="space-y-6">
@@ -349,7 +330,7 @@ export default function RecommendationsPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="text-xl font-mono font-semibold mb-6"
+            className="text-xl font-mono font-semibold mb-6 text-foreground"
           >
             To Play
           </motion.h2>
@@ -367,7 +348,7 @@ export default function RecommendationsPage() {
                   href={game.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block relative aspect-[16/9] bg-zinc-100 rounded-md overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300"
+                  className="block relative aspect-[16/9] bg-zinc-100 dark:bg-zinc-800 rounded-md overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300 border border-zinc-200/60 dark:border-zinc-800/60"
                 >
                   <img
                     src={game.coverUrl}
@@ -378,7 +359,7 @@ export default function RecommendationsPage() {
                 </a>
 
                 <div className="space-y-1">
-                  <h3 className="font-medium text-foreground leading-tight group-hover:text-green-600 transition-colors">
+                  <h3 className="font-medium text-foreground leading-tight group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
                     {game.link ? (
                       <a
                         href={game.link}
@@ -392,7 +373,7 @@ export default function RecommendationsPage() {
                       <span className="line-clamp-2">{game.title}</span>
                     )}
                   </h3>
-                  <p className="text-sm text-zinc-500">{game.creator}</p>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">{game.creator}</p>
                 </div>
               </motion.div>
             ))}
@@ -407,7 +388,7 @@ export default function RecommendationsPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="text-xl font-mono font-semibold mb-6"
+            className="text-xl font-mono font-semibold mb-6 text-foreground"
           >
             To Listen
           </motion.h2>
@@ -421,7 +402,7 @@ export default function RecommendationsPage() {
                 href={album.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative block aspect-square bg-zinc-100 rounded-md overflow-hidden"
+                className="group relative block aspect-square bg-zinc-100 dark:bg-zinc-800 rounded-md overflow-hidden border border-zinc-200/60 dark:border-zinc-800/60 shadow-sm hover:shadow-md"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -451,7 +432,7 @@ export default function RecommendationsPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="text-xl font-mono font-semibold mb-6"
+            className="text-xl font-mono font-semibold mb-6 text-foreground"
           >
             Useful Links
           </motion.h2>
@@ -462,7 +443,7 @@ export default function RecommendationsPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
-                className="py-3 border-b border-zinc-200"
+                className="py-3 border-b border-zinc-200 dark:border-zinc-800"
               >
                 <a
                   href={link.url}
@@ -479,7 +460,7 @@ export default function RecommendationsPage() {
                         <ExternalLink className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0" />
                       </div>
                       {link.description && (
-                        <p className="text-sm text-zinc-500 mt-2">
+                        <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
                           {link.description}
                         </p>
                       )}
