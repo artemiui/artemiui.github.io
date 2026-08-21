@@ -107,6 +107,14 @@ const externalLinks: FeedItemType[] = [
     description: "Wittgenstein: The limits of my language mean the limits of my world",
     category: "Knowledge Sharing",
   },
+  {
+    title: "Analytic Philosophy in the Philippines",
+    date: "2026-08-21",
+    url: "https://doi.org/10.1007/s44204-022-00029-z",
+    category: "Research",
+    tags: ["Philosophy"],
+    description: "What I think to be the initial reading for the Philosophical Society of UP Diliman. I had recently joined regardless of being a major in statistics with my withstanding love for the department and for analytic philosophy in particular.",
+  },
 ];
 
 export async function getFeedItems(): Promise<FeedItemType[]> {
