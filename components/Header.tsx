@@ -57,6 +57,12 @@ export default function Header() {
           blog
         </Link>
         <Link
+          href="/projects"
+          className={getLinkClass("/projects")}
+        >
+          projects
+        </Link>
+        <Link
           href="/about"
           className={getLinkClass("/about")}
         >

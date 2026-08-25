@@ -4,6 +4,7 @@ export const siteConfig = {
   quote: "",
   navLinks: [
     { label: "Blog", href: "/" },
+    { label: "Projects", href: "/projects" },
     { label: "About", href: "/about" },
     { label: "Artboxd", href: "/media" },
     { label: "Recs", href: "/recommendations" },
