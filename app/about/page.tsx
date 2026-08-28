@@ -23,6 +23,12 @@ type ExperienceItem = {
   responsibilities: string[];
 };
 
+type AwardItem = {
+  title: string;
+  event?: string;
+  dates?: string;
+};
+
 type SaveFile = {
   id: string;
   title: string;
@@ -101,6 +107,32 @@ const relevantExperience: ExperienceItem[] = [
   },
 ];
 
+const awardsList: AwardItem[] = [
+  {
+    title: "First Place, Philosophy of Science",
+    event: "Emmanuel Q. Fernando Philosophy Undergraduate Conference",
+    dates: "2026",
+  },
+  {
+    title: "Best in Research, STEM Capstone, Excellence in IT, Excellence in Science",
+    dates: "A.Y. 2024–2025",
+  },
+  {
+    title: "Merit Award",
+    event: "National Mathletics Challenge",
+    dates: "A.Y. 2024–2025",
+  },
+  {
+    title: "Regional Schools Press Conference Qualifier",
+    dates: "A.Y. 2023–2024 & A.Y. 2024–2025",
+  },
+  {
+    title: "First Runner Up, Finalist",
+    event: "Quake Quest 2024",
+    dates: "2024",
+  },
+];
+
 const skillsList = [
   { name: "Piano", icon: Music },
   { name: "Casual Singing", icon: Mic },
@@ -133,7 +165,7 @@ export default function AboutPage() {
 
         {/* Skills & Pursuits */}
         <div className="pt-2 space-y-2">
-          <span className="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+          <span className="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400">
             Skills & Creative Pursuits
           </span>
           <div className="flex flex-wrap gap-2 pt-0.5">
@@ -142,9 +174,9 @@ export default function AboutPage() {
               return (
                 <span
                   key={idx}
-                  className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-mono text-zinc-700 dark:text-zinc-300 bg-zinc-200/60 dark:bg-zinc-800/60 border border-zinc-300/60 dark:border-zinc-700/60 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-sans text-zinc-600 dark:text-zinc-400 bg-zinc-100/80 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-800 rounded-md hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-colors"
                 >
-                  <Icon className="w-3.5 h-3.5 text-zinc-700 dark:text-zinc-300" />
+                  <Icon className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
                   {skill.name}
                 </span>
               );
@@ -284,6 +316,41 @@ export default function AboutPage() {
                               </li>
                             ))}
                           </ul>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Awards & Accolades Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-base font-mono font-semibold text-zinc-800 dark:text-zinc-200">
+                      Awards & Accolades
+                    </h3>
+                    <div className="space-y-4 pl-1 border-l-2 border-zinc-200 dark:border-zinc-800 ml-2">
+                      {awardsList.map((award, idx) => (
+                        <motion.div
+                          key={idx}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3, delay: idx * 0.05 }}
+                          className="relative pl-5 space-y-1"
+                        >
+                          <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-zinc-900 dark:bg-zinc-100" />
+                          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
+                            <h4 className="font-mono font-medium text-sm text-foreground">
+                              {award.title}
+                            </h4>
+                            {award.dates && (
+                              <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+                                {award.dates}
+                              </span>
+                            )}
+                          </div>
+                          {award.event && (
+                            <p className="text-xs font-sans text-zinc-600 dark:text-zinc-400">
+                              {award.event}
+                            </p>
+                          )}
                         </motion.div>
                       ))}
                     </div>

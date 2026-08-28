@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import DSiIntro from "@/components/DSiIntro";
+import ObsidianGraphIntro from "@/components/ObsidianGraphIntro";
 
 interface IntroWrapperProps {
   children: React.ReactNode;
@@ -14,9 +14,10 @@ export default function IntroWrapper({ children }: IntroWrapperProps) {
     setShowIntro(false);
   };
 
-  if (showIntro) {
-    return <DSiIntro onComplete={handleIntroComplete} />;
-  }
-
-  return <>{children}</>;
+  return (
+    <>
+      {showIntro && <ObsidianGraphIntro onComplete={handleIntroComplete} />}
+      {children}
+    </>
+  );
 }

@@ -12,7 +12,6 @@ export const siteConfig = {
   ],
   features: {
     enableScreensaver: true,
-    enableIntroAnimation: true,
   },
 };
 

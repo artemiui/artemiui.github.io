@@ -309,7 +309,7 @@ const panelsData: PanelItem[] = [
 
 export default function ProjectsPage() {
   const [openPanels, setOpenPanels] = useState<Record<string, boolean>>({
-    "design-portfolio": true,
+    "design-portfolio": false,
     "developer-portfolio": false,
   });
 
@@ -445,17 +445,15 @@ export default function ProjectsPage() {
                   }`}
                 >
                   <div className="space-y-0.5">
-                    <h2
-                      className={`font-sans font-bold tracking-tight text-zinc-900 dark:text-white drop-shadow-sm transition-all duration-500 ${
-                        isDimmed
-                          ? "text-base sm:text-lg"
-                          : "text-lg sm:text-xl md:text-2xl"
-                      }`}
-                    >
+                    <h2 className="font-sans font-bold tracking-tight text-zinc-900 dark:text-white drop-shadow-sm text-lg sm:text-xl md:text-2xl">
                       {panel.title}
                     </h2>
-                    {panel.subtitle && !isDimmed && (
-                      <p className="font-sans text-xs sm:text-sm text-zinc-700 dark:text-zinc-200/90 drop-shadow-sm">
+                    {panel.subtitle && (
+                      <p
+                        className={`font-sans text-xs sm:text-sm text-zinc-700 dark:text-zinc-200/90 drop-shadow-sm transition-opacity duration-300 ${
+                          isDimmed ? "opacity-0" : "opacity-100"
+                        }`}
+                      >
                         {panel.subtitle}
                       </p>
                     )}
@@ -487,8 +485,8 @@ export default function ProjectsPage() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.25, ease: "easeInOut" }}
-                    className="overflow-hidden space-y-4"
+                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                    className="overflow-hidden space-y-4 antialiased"
                   >
                     {/* Big Featured Video Panel (after parent panel, before subpanels) */}
                     {panel.featuredVideo && (
@@ -499,6 +497,7 @@ export default function ProjectsPage() {
                               panel.featuredVideo.start ? `?start=${panel.featuredVideo.start}` : ""
                             }`}
                             title={panel.featuredVideo.title || "Featured Video"}
+                            loading="lazy"
                             className="w-full h-full border-0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowFullScreen
@@ -509,24 +508,21 @@ export default function ProjectsPage() {
 
                     {/* Sub-panels Grid / List */}
                     <div
-                      className={`pb-2 ${
+                      className={`pb-2 ${!panel.featuredVideo ? "pt-5 sm:pt-6" : ""} ${
                         panel.layout === "grid"
                           ? "grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 sm:gap-x-5 sm:gap-y-6"
                           : "space-y-8"
                       }`}
                     >
-                      {panel.items.map((item, idx) => {
+                      {panel.items.map((item) => {
                         const isSingleRow = panel.layout === "single";
                         const hasGallery = item.gallery && item.gallery.length > 0;
 
                         if (!isSingleRow) {
                           // Design Portfolio: Card with unhindered thumbnail on top, readable text below
                           return (
-                            <motion.div
+                            <div
                               key={item.id}
-                              initial={{ opacity: 0, y: 8 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ duration: 0.25, delay: idx * 0.05 }}
                               onClick={() => hasGallery && openGallery(item)}
                               className={`group flex flex-col text-left ${
                                 hasGallery ? "cursor-pointer" : ""
@@ -559,11 +555,11 @@ export default function ProjectsPage() {
                               {/* Readable Text Below Thumbnail */}
                               <div className="pt-2.5 px-0.5 flex items-start justify-between gap-2">
                                 <div className="space-y-0.5 min-w-0">
-                                  <h3 className="font-sans font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors tracking-tight line-clamp-1">
+                                  <h3 className="font-sans font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors tracking-tight truncate">
                                     {item.title}
                                   </h3>
                                   {item.subtitle && (
-                                    <p className="font-sans text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 line-clamp-1">
+                                    <p className="font-sans text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 truncate">
                                       {item.subtitle}
                                     </p>
                                   )}
@@ -582,7 +578,7 @@ export default function ProjectsPage() {
                                   </a>
                                 )}
                               </div>
-                            </motion.div>
+                            </div>
                           );
                         }
 
@@ -595,11 +591,8 @@ export default function ProjectsPage() {
                         const isYoutube = item.githubUrl?.includes("youtube.com") || !!item.youtubeId;
 
                         return (
-                          <motion.div
+                          <div
                             key={item.id}
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.25, delay: idx * 0.05 }}
                             className="group flex flex-col md:flex-row items-start gap-4 sm:gap-6 text-left w-full"
                           >
                             {/* Left Column: 4:3 YouTube Embed or Figure Preview */}
@@ -720,7 +713,7 @@ export default function ProjectsPage() {
                                 </div>
                               )}
                             </div>
-                          </motion.div>
+                          </div>
                         );
                       })}
                     </div>
