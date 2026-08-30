@@ -112,7 +112,15 @@ const externalLinks: FeedItemType[] = [
     date: "2026-08-21",
     url: "https://doi.org/10.1007/s44204-022-00029-z",
     category: "Knowledge Sharing",
-    description: "What I think to be the initial reading for the Philosophical Society of UP Diliman. I had recently joined regardless of being a major in statistics with my withstanding love for the department and for analytic philosophy in particular.",
+    description: "I had recently joined the Philosophical Society of the University of the Philippines despite being a major in statistics with my withstanding love for the department and for analytic philosophy in particular.",
+  },
+	{
+    title: "tblm-modal-reasoning",
+    date: "2026-08-30",
+    url: "https://github.com/artemiui/tblm-modal-reasoning",
+    description: "Repository of a project I'm working on a submission to the Student-Faculty Conference on Statistical Sciences. I presume that it won't be accepted due to its wild difference to previous papers, but I digress. This seems like a fun project for me as it involves mechanistic interpretability.",
+    category: "Research",
+    tags: ["Interpretability"],
   },
 ];
 
