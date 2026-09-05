@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Github,
   Youtube,
+  ExternalLink,
   Image as ImageIcon,
   Layers,
   X,
@@ -28,6 +29,7 @@ interface SubItem {
   imageSrc?: string;
   gallery?: GalleryImage[];
   githubUrl?: string;
+  liveUrl?: string;
   youtubeId?: string;
 }
 
@@ -303,6 +305,36 @@ const panelsData: PanelItem[] = [
         youtubeId: "sIIJ0w_KTBw",
         githubUrl: "https://www.youtube.com/watch?v=sIIJ0w_KTBw",
       },
+      {
+        id: "dev-3",
+        title: "gödle — Propositional Symbolic Logic Game",
+        subtitle: "Full-Stack Natural Deduction Proof Environment with Svelte, Node.js & SQLite",
+        description:
+          "gödle is a full-stack propositional symbolic logic web game inspired by the precision and pedagogical clarity of classic logic texts.\n\nBuilt on Svelte, Node.js, and SQLite, it implements Irving M. Copi's 19 formal rules of natural deduction—spanning 9 Rules of Inference (such as Modus Ponens, Modus Tollens, and Hypothetical Syllogism) and 10 Rules of Replacement (including De Morgan's Laws, Commutation, and Material Implication).\n\nThe platform features an interactive daily Wordle-style deduction challenge curated across Novice, Adept, and Master difficulty tiers, a timed survival mode (Logic Frenzy), a freeform proof sandbox equipped with an automated breadth-first search (BFS) theorem prover and shareable puzzles, and an interactive Copi rule codex.",
+        imageSrc: "/images/godle-preview-1.png",
+        gallery: [
+          {
+            src: "/images/godle-preview-1.png",
+            title: "Truth Trees Landing & Game Mode Hub",
+            description:
+              "Interactive landing screen featuring minimalist truth-tree typographic background, mode selector, and daily problem tracker.",
+          },
+          {
+            src: "/images/godle-preview-2.png",
+            title: "Daily Natural Deduction Proof Engine",
+            description:
+              "Daily deductive puzzle interface with premise chaining, KaTeX mathematical formula rendering, rule justifications, and step validator.",
+          },
+          {
+            src: "/images/godle-preview-3.png",
+            title: "Prover Sandbox & Copi Problem Library",
+            description:
+              "Freeform sandbox theorem prover with automated BFS derivation solver, community puzzle authoring, and Irving Copi textbook problem sets.",
+          },
+        ],
+        githubUrl: "https://github.com/artemiui/godle-logic-game",
+        liveUrl: "https://godle-logic-game.vercel.app",
+      },
     ],
   },
 ];
@@ -564,19 +596,34 @@ export default function ProjectsPage() {
                                     </p>
                                   )}
                                 </div>
-                                {item.githubUrl && (
-                                  <a
-                                    href={item.githubUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => e.stopPropagation()}
-                                    aria-label="View repository on GitHub"
-                                    title="View GitHub Repository"
-                                    className="p-1.5 rounded-full text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all flex-shrink-0"
-                                  >
-                                    <Github className="w-4 h-4" />
-                                  </a>
-                                )}
+                                <div className="flex items-center gap-1 flex-shrink-0">
+                                  {item.liveUrl && (
+                                    <a
+                                      href={item.liveUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      onClick={(e) => e.stopPropagation()}
+                                      aria-label="View live demo"
+                                      title="View Live Web App"
+                                      className="p-1.5 rounded-full text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all flex-shrink-0"
+                                    >
+                                      <ExternalLink className="w-4 h-4" />
+                                    </a>
+                                  )}
+                                  {item.githubUrl && (
+                                    <a
+                                      href={item.githubUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      onClick={(e) => e.stopPropagation()}
+                                      aria-label="View repository on GitHub"
+                                      title="View GitHub Repository"
+                                      className="p-1.5 rounded-full text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all flex-shrink-0"
+                                    >
+                                      <Github className="w-4 h-4" />
+                                    </a>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           );
@@ -685,23 +732,38 @@ export default function ProjectsPage() {
                                 </div>
 
                                 {/* External / Repository Button */}
-                                {item.githubUrl && (
-                                  <a
-                                    href={item.githubUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => e.stopPropagation()}
-                                    aria-label={isYoutube ? "Watch on YouTube" : "View source repository on GitHub"}
-                                    title={isYoutube ? "Watch on YouTube" : "View GitHub Repository"}
-                                    className="p-2 sm:p-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 shadow-sm border border-zinc-200 dark:border-zinc-700 transition-all flex items-center justify-center flex-shrink-0"
-                                  >
-                                    {isYoutube ? (
-                                      <Youtube className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 dark:text-red-500" />
-                                    ) : (
-                                      <Github className="w-4 h-4 sm:w-5 sm:h-5" />
-                                    )}
-                                  </a>
-                                )}
+                                <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+                                  {item.liveUrl && (
+                                    <a
+                                      href={item.liveUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      onClick={(e) => e.stopPropagation()}
+                                      aria-label="View live web app"
+                                      title="View Live Web App"
+                                      className="p-2 sm:p-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 shadow-sm border border-zinc-200 dark:border-zinc-700 transition-all flex items-center justify-center flex-shrink-0"
+                                    >
+                                      <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5" />
+                                    </a>
+                                  )}
+                                  {item.githubUrl && (
+                                    <a
+                                      href={item.githubUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      onClick={(e) => e.stopPropagation()}
+                                      aria-label={isYoutube ? "Watch on YouTube" : "View source repository on GitHub"}
+                                      title={isYoutube ? "Watch on YouTube" : "View GitHub Repository"}
+                                      className="p-2 sm:p-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 shadow-sm border border-zinc-200 dark:border-zinc-700 transition-all flex items-center justify-center flex-shrink-0"
+                                    >
+                                      {isYoutube ? (
+                                        <Youtube className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 dark:text-red-500" />
+                                      ) : (
+                                        <Github className="w-4 h-4 sm:w-5 sm:h-5" />
+                                      )}
+                                    </a>
+                                  )}
+                                </div>
                               </div>
 
                               {/* Formatted Project Description */}
