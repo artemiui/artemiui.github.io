@@ -63,199 +63,253 @@ const panelsData: PanelItem[] = [
     items: [
       {
         id: "design-1",
-        title: "Placeholder",
-        subtitle: "Placeholder",
+        title: "Merchandise Work",
+        subtitle: "UP Data Science Society",
+        description:
+          "I designed the official merchandise collection for the UP Data Science Society, translating our mission of 'Agham ng Datos Para sa Bayan' into apparel and accessories. The release includes the ASCII Oblation graphic tee, executive corporate polos, die-cast circuit enamel pins, and custom collegiate lanyards.",
         imageSrc: "/images/dssoc-igp-2.png",
         gallery: [
           {
             src: "/images/dssoc-igp-1.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Merchandise Collection Lineup & Overview",
+            description:
+              "A flat-lay showcase of the UP Data Science Society 'mr26' merchandise collection that I designed, highlighting the ASCII Oblation shirt, custom sticker pack with statistical puns ('THAT'S MEAN!', 'NaNstop'), and collegiate lanyards.",
           },
           {
             src: "/images/dssoc-igp-2.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "ASCII Oblation Graphic Tee",
+            description:
+              "I created an ASCII-art rendering of the UP Oblation statue combined with stereonet projections and data pipeline pseudocode, uniting UP heritage with the ethos of 'Agham ng Datos Para sa Bayan'.",
           },
           {
             src: "/images/dssoc-igp-3.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Executive Corporate Polo & Enamel Pins",
+            description:
+              "Official corporate apparel for UP Data Science Society members featuring diagonal chevron color blocking in violet, black, and white, paired with custom die-cast enamel pins modeled after our circuit-arrow emblem.",
           },
           {
             src: "/images/dssoc-igp-4.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Collegiate Lanyards: D4T4 & I?KOLAR",
+            description:
+              "Bespoke lanyards I designed for UP Diliman students: the 'D4T4' ribbon celebrating data science for the nation, and the 'I?KOLAR' band incorporating traditional Baybayin motifs and 'Dangal, Husay, at Serbisyo'.",
           },
         ],
       },
       {
         id: "design-2",
-        title: "Placeholder",
-        subtitle: "Placeholder",
+        title: "Sports Publication",
+        subtitle: "Paddock South",
+        description:
+          "During my time directing creative publication for Paddock South—a premier Southeast Asian motorsport and Formula 1 community—I designed race-week posters, circuit telemetry breakdowns, community milestone celebrations, and retro-themed Grand Prix visual packages.",
         imageSrc: "/images/paddock-south-1.png",
         gallery: [
           {
             src: "/images/paddock-south-1.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "RUSH Community Movie Night Poster",
+            description:
+              "I designed this retro-grain race poster for Paddock South's community screening of 'RUSH' (dir. Ron Howard), depicting the iconic 1976 championship rivalry between Niki Lauda (Scuderia Ferrari) and James Hunt (McLaren) with Nürburgring heritage styling.",
           },
           {
             src: "/images/paddock-south-2.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Canadian GP: Circuit Gilles-Villeneuve Engineering Infographic",
+            description:
+              "Technical race briefing I created breaking down Circuit Gilles-Villeneuve in Montreal, analyzing cornering speeds, DRS zones, asphalt grip, and Pirelli tire compound metrics (C4, C5, C6) powered by Paddock South.",
           },
           {
             src: "/images/paddock-south-3.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Paddock South 2K Members Milestone",
+            description:
+              "Commemorative artwork celebrating Paddock South reaching 2,000 community members, featuring a detailed wireframe 3D CAD schematic of a contemporary Formula 1 ground-effect race car.",
           },
           {
             src: "/images/paddock-south-4.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Austrian GP: Red Bull Ring Race Poster",
+            description:
+              "Race-weekend creative celebrating Oracle Red Bull Racing at their home circuit in Spielberg, highlighting 3-time world champion Max Verstappen, Yuki Tsunoda, and the iconic Red Bull Ring bull monument under @virtualsarili.",
           },
           {
             src: "/images/paddock-south-5.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Silverstone GP: 16-Bit Pixel Special",
+            description:
+              "A nostalgic 16-bit arcade-style publication I illustrated for the British Grand Prix at Silverstone, featuring Mercedes-AMG PETRONAS driver George Russell and his famous cockpit team radio quote.",
           },
         ],
       },
       {
         id: "design-3",
-        title: "Placeholder",
-        subtitle: "Placeholder",
+        title: "UP Fighting Maroons F1 Concept Livery",
+        subtitle: "Personal Project",
+        description:
+          "A personal passion project merging open-wheel Formula 1 motorsport aesthetics with the collegiate identity and activist heritage of the University of the Philippines. I authored and rendered a complete 2026-spec concept livery on the RSS Formula Hybrid chassis in Assetto Corsa.",
         imageSrc: "/images/up-fighting-maroons-1.jpeg",
         gallery: [
           {
             src: "/images/up-fighting-maroons-1.jpeg",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Overhead Cockpit & Halo View",
+            description:
+              "A top-down trackside render I produced in Assetto Corsa, showing the maroon-and-white gradient transitioning smoothly over the titanium Halo protection system and carbon tub.",
           },
           {
             src: "/images/up-fighting-maroons-2.jpeg",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Sidepod Venturi Tunnels & UP Clenched Fist",
+            description:
+              "Side elevation highlighting the sculpted aerodynamic ground-effect sidepods, carrying the UP Fighting Maroons clenched fist emblem and bold university slogans in high contrast.",
           },
           {
             src: "/images/up-fighting-maroons-3.jpeg",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Nosecone #08 & Oblation Silhouette",
+            description:
+              "Front aerodynamic view showcasing racing number #08 with the silhouette of the UP Oblation, front wing carbon dive planes, and yellow Pirelli P-Zero medium compound tires.",
           },
           {
             src: "/images/up-fighting-maroons-4.jpeg",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "High-Speed Panning Shot: 'STATE U'",
+            description:
+              "Dynamic high-speed panning shot down the main straight, accentuating the 'STATE U' engine cowl graphics and traditional Cordillera indigenous textile patterns adorning the rear wing endplates.",
           },
         ],
       },
       {
         id: "design-4",
-        title: "Placeholder",
-        subtitle: "Placeholder",
+        title: "Partner Publications",
+        subtitle: "UP Data Science Society",
+        description:
+          "I spearheaded promotional creative direction and branding publications for UP Data Science Society's corporate and enterprise partnership events, collaborating with industry leaders including GCash (Mynt) and Globe Telecom.",
         imageSrc: "/images/partner-pubs-1.png",
         gallery: [
           {
             src: "/images/partner-pubs-1.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "GCash x UP DSSoc: Building Trust in Fintech",
+            description:
+              "Key visual poster I designed for our collaborative webinar with GCash (Mynt), spotlighting Responsible AI and Data Privacy in the Financial Sector with Lead Software Engineer and Research Scientist JC Diamante.",
           },
           {
             src: "/images/partner-pubs-2.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Speaker Profile: John Christian 'JC' Diamante",
+            description:
+              "Speaker profile card highlighting JC Diamante's work across cloud microservices at GCash, aerial computer vision research at Mapúa University, and open-source civic tech contributions with BetterGov.ph.",
           },
           {
             src: "/images/partner-pubs-3.jpg",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Globe Data Sessions: Beyond AI Adoption",
+            description:
+              "Official event announcement I crafted for Globe Telecom x UP Data Science Society, introducing an industry session on fostering responsible AI adoption across academe and corporate workplaces.",
           },
           {
             src: "/images/partner-pubs-4.jpg",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Speaker Feature: Celso T. Villano Jr. (Globe Telecom)",
+            description:
+              "Detailed speaker feature detailing the academic and professional milestones of Celso T. Villano Jr., MLOps Manager at Globe Telecom and PhD candidate in Data Science at UP Diliman.",
           },
           {
             src: "/images/partner-pubs-5.jpg",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Globe Data Sessions: Broadcast Teaser",
+            description:
+              "Social media countdown and broadcast alert I adapted for multi-channel streaming across Zoom and Facebook Live, adhering strictly to Globe Telecom's modern corporate identity.",
           },
         ],
       },
       {
         id: "design-5",
-        title: "Placeholder",
-        subtitle: "Placeholder",
-        imageSrc: "/images/up-evt-1.png",
+        title: "UP Fighting Maroons Varsity",
+        subtitle: "Office of Athletics and Sports Development",
+        description:
+          "As a graphics and media volunteer for the UP Office of Athletics and Sports Development (OASD) and the UP Esports Varsity Team, I created official roster reveals, post-season Final Four celebration posters, matchday MVP graphics, and team postcards. My work incorporated university varsity sponsors and partners including Acer Predator, Converge FiberX, Nissin Yakisoba, Pulsar Gaming Gears, Nature's Spring, Celest, and Nowhere To Go But UP Foundation.",
+        imageSrc: "/images/up-evt-final-four.png",
         gallery: [
           {
+            src: "/images/up-evt-final-four.png",
+            title: "UAAP Season 88 Esports: Final Four Team Poster",
+            description:
+              "Official UAAP Season 88 Esports post-season celebration poster I designed for the UP Fighting Maroons as the squad advanced into the Final Four, featuring the full varsity roster and partners Celest, Pulsar, and Nowhere To Go But UP Foundation.",
+          },
+          {
             src: "/images/up-evt-1.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "UAAP Season 88 Roster Reveal: Clemente (VALORANT)",
+            description:
+              "Official tournament roster publication I produced featuring varsity athlete Clemente for UAAP S88 at MVP Studios, showcasing official jersey sponsors Acer Predator, Converge FiberX, Nissin Yakisoba, and Nowhere To Go But UP Foundation.",
           },
           {
             src: "/images/up-evt-2.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Matchday MVP: Sicat (Mobile Legends: Bang Bang)",
+            description:
+              "Post-match MVP victory graphic celebrating Sicat's game-winning performance (583 GPM, 72% KP, 01/02/12 KDA) against the FEU Tamaraws. I designed the official template for this matchday series, incorporating Celest and Nowhere To Go But UP branding.",
           },
           {
             src: "/images/up-evt-3.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Matchday MVP: San Gabriel 'ACE' (VALORANT)",
+            description:
+              "Clutch match MVP graphic celebrating San Gabriel's 320 ACS and 27/15/2 KDA performance in a 13-10 victory over FEU Game 2, highlighting tournament partners Pulsar Gaming Gears, Nature's Spring, and Celest.",
+          },
+          {
+            src: "/images/up-tennis-postcards.png",
+            title: "Postcards from the UP Men's Tennis Team",
+            description:
+              "Social media and video feature thumbnail I produced for the UP Office of Athletics and Sports Development (OASD), capturing the UP Men's Tennis Team in live high-intensity training drills on the indoor courts.",
           },
         ],
       },
       {
         id: "design-6",
-        title: "Placeholder",
-        subtitle: "Placeholder",
+        title: "Poster Work",
+        subtitle: "Mixed",
+        description:
+          "A curated collection of poster designs across student leadership, advocacy campaigns, academic initiatives, music events, and scientific risk communication. This anthology features design work produced for the UP Diliman College of Social Sciences and Philosophy (CSSP FSTC / CSSPSC), BetterGov.ph, GeoRisk Philippines, and independent community projects.",
         imageSrc: "/images/poster-1.png",
         gallery: [
           {
             src: "/images/poster-1.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Niña Maria: Rock Nation Champions",
+            description:
+              "Concert victory poster I created for indie rock band Niña Maria after winning Battle of the Bands: Rock Nation at Holy Family School Quezon City, featuring prism light leaks and stage photography.",
           },
           {
             src: "/images/poster-2.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Ang Awit ng Mendiola: State Accountability",
+            description:
+              "Human rights advocacy poster I designed for the UP CSSP FSTC (Freshie, Shiftee, and Transferee Council), commemorating the Mendiola peasant struggle and calling for justice for state violence victims.",
           },
           {
             src: "/images/poster-3.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Sumanib sa Pagkondena: EDSA People Power",
+            description:
+              "Mobilization poster created with the UP Diliman CSSP Student Council (CSSPSC) and CSSP FSTC, invoking the People Power Monument and collective resistance against authoritarian abuses.",
           },
           {
             src: "/images/poster-4.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "UP Data Science Society Ecosystem Primer",
+            description:
+              "Comprehensive organizational primer I laid out for UP DSSoc, highlighting our bootcamps, open-source projects, the Philippine Junior Data Science Challenge, and corporate partners including Thinking Machines, Globe, BPI, and GCash.",
           },
           {
             src: "/images/poster-5.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Huwag Kukurap: Public Procurement Anomaly Detection",
+            description:
+              "ACLE event poster I designed for UP DSSoc and civic tech partner BetterGov.ph, promoting our open-source Python repository for detecting irregularities in government procurement datasets.",
           },
           {
             src: "/images/poster-6.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "AStranghero 2025: CSSP FST Month Events",
+            description:
+              "Event calendar poster for the UP CSSP Freshie, Shiftee, and Transferee Month ('AStranghero 2025'), featuring symbolic portal doors inspired by Makoto Shinkai's Suzume to welcome incoming students.",
           },
           {
             src: "/images/poster-7.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Seismic Hazard Assessment: La Trinidad, Benguet",
+            description:
+              "Disaster risk reduction and geospatial hazard infographic I drafted for La Trinidad, Benguet, incorporating fault lines (Tubao & Mirador Faults) and elevation models via GeoRisk Philippines and HazardHunterPH.",
           },
           {
             src: "/images/poster-8.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "The Red Flags of Electricity & E-Waste",
+            description:
+              "Educational science infographic published under my author citation Arcega (2025), illustrating electrical safety fundamentals, the E-L-E-C-T-R-I-C mnemonic, and responsible e-waste lifecycle stewardship.",
           },
           {
             src: "/images/poster-9.png",
-            title: "Placeholder",
-            description: "Placeholder",
+            title: "Sustainability: Ecological Stewardship & Action",
+            description:
+              "Minimalist environmental advocacy graphic framing community-level climate action around 'Who, How, What' to support reforestation, sustainable development goals, and ecosystem protection.",
           },
         ],
       },
@@ -348,6 +402,7 @@ export default function ProjectsPage() {
   const [activeGalleryItem, setActiveGalleryItem] = useState<SubItem | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [devImageIndex, setDevImageIndex] = useState<Record<string, number>>({});
+  const [canvaViewMode, setCanvaViewMode] = useState<"preview" | "iframe">("preview");
 
   const togglePanel = (id: string) => {
     setOpenPanels((prev) => {
@@ -582,6 +637,12 @@ export default function ProjectsPage() {
                                     </div>
                                   </div>
                                 )}
+                                {hasGallery && (
+                                  <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md text-white text-[10px] font-mono tracking-wider font-medium flex items-center gap-1.5 shadow-sm opacity-90 group-hover:opacity-100 transition-opacity">
+                                    <Layers className="w-3 h-3" />
+                                    <span>{item.gallery!.length} items</span>
+                                  </div>
+                                )}
                               </div>
 
                               {/* Readable Text Below Thumbnail */}
@@ -593,6 +654,11 @@ export default function ProjectsPage() {
                                   {item.subtitle && (
                                     <p className="font-sans text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 truncate">
                                       {item.subtitle}
+                                    </p>
+                                  )}
+                                  {item.description && (
+                                    <p className="font-sans text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 leading-relaxed pt-0.5">
+                                      {item.description}
                                     </p>
                                   )}
                                 </div>
@@ -779,6 +845,112 @@ export default function ProjectsPage() {
                         );
                       })}
                     </div>
+
+                    {/* Canva Archive Portfolio Section (Design Portfolio) */}
+                    {panel.id === "design-portfolio" && (
+                      <div className="mt-10 pt-8 border-t border-zinc-200 dark:border-zinc-800 space-y-4">
+                        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs font-mono font-medium text-red-600 dark:text-red-400">
+                                Archive & Extended Works
+                              </span>
+                            </div>
+                            <h3 className="text-base sm:text-lg font-bold font-sans tracking-tight text-zinc-900 dark:text-zinc-100">
+                              Canva Portfolio Archive
+                            </h3>
+                            <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5 max-w-2xl leading-relaxed">
+                              My foundational portfolio retrospective showcasing freelance client commissions, branding systems, cover artwork, and event publications.
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <a
+                              href="https://artemiui.my.canva.site/portfolio"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-zinc-900 transition-all shadow-sm"
+                            >
+                              <span>Open in New Tab</span>
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </a>
+                          </div>
+                        </div>
+
+                        {/* Interactive Viewport Container */}
+                        <div className="w-full rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-950 shadow-md flex flex-col">
+                          {/* Browser Window Header Bar */}
+                          <div className="px-3.5 py-2.5 bg-zinc-900/90 border-b border-zinc-800/80 flex items-center justify-between gap-3 text-xs">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <div className="flex items-center gap-1.5 flex-shrink-0">
+                                <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
+                                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
+                                <div className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
+                              </div>
+                              <span className="text-[11px] font-mono text-zinc-400 ml-2 hidden sm:inline truncate">
+                                artemiui.my.canva.site/portfolio
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setCanvaViewMode(canvaViewMode === "preview" ? "iframe" : "preview")
+                                }
+                                className="px-2 py-0.5 rounded text-[11px] font-mono text-zinc-300 hover:text-white bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/60 transition-colors"
+                              >
+                                {canvaViewMode === "preview" ? "Try Live Embed" : "Show Snapshot"}
+                              </button>
+                              <a
+                                href="https://artemiui.my.canva.site/portfolio"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Open full site"
+                                className="p-1 rounded text-zinc-400 hover:text-white transition-colors"
+                              >
+                                <ExternalLink className="w-3.5 h-3.5" />
+                              </a>
+                            </div>
+                          </div>
+
+                          {/* Body: Either Live Iframe or High-Res Snapshot with Interactive Overlay */}
+                          {canvaViewMode === "iframe" ? (
+                            <div className="relative w-full h-[600px] sm:h-[750px] bg-black">
+                              <iframe
+                                src="https://artemiui.my.canva.site/portfolio"
+                                title="Artemio Arcega Canva Portfolio"
+                                loading="lazy"
+                                className="w-full h-full border-0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                              />
+                            </div>
+                          ) : (
+                            <a
+                              href="https://artemiui.my.canva.site/portfolio"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="group relative block w-full aspect-[16/9] sm:aspect-[16/8.5] max-h-[600px] overflow-hidden bg-black cursor-pointer"
+                            >
+                              <Image
+                                src="/images/canva-portfolio-preview.png"
+                                alt="Artemio Arcega Canva Portfolio"
+                                fill
+                                className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]"
+                                priority
+                                unoptimized
+                              />
+                              <div className="absolute inset-0 bg-black/25 group-hover:bg-black/10 transition-colors duration-300" />
+                              <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6">
+                                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-black/80 backdrop-blur-md text-white text-xs font-mono font-medium border border-white/20 shadow-xl group-hover:bg-white group-hover:text-black transition-all">
+                                  <span>Explore on Canva</span>
+                                  <ExternalLink className="w-3.5 h-3.5" />
+                                </div>
+                              </div>
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>

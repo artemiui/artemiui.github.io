@@ -28,7 +28,7 @@ html:not(.dark) {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
-  --font-mono: var(--font-space-mono), "Space Mono", monospace;
+  --font-mono: "SpaceMono Nerd Font", "SpaceMono NF", var(--font-space-mono), "Space Mono", monospace;
 }
 
 body {
@@ -44,6 +44,13 @@ body {
   max-width: none;
 }
 
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  scroll-margin-top: 5rem;
+}
+
 .prose h1 {
   @apply text-3xl font-semibold mb-4 mt-8;
 }
@@ -54,6 +61,11 @@ body {
 
 .prose h3 {
   @apply text-xl font-semibold mb-2 mt-4;
+}
+
+.prose img {
+  width: 100%;
+  border-radius: 0.75rem;
 }
 
 .prose p {
