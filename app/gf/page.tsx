@@ -1,7 +1,8 @@
 "use client";
 
-import { Heart } from "lucide-react";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Music, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 
 const asciiFlowers = `                    _
                   _(_)_                          wWWWw   _
@@ -14,72 +15,39 @@ jgs \\|//   \\|///  \\\\\\|//\\\\\\|/// \\|///  \\\\\\|//  \\|//  \\\\\\|//
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^`;
 
 export default function ForYouPage() {
+  const [isMinimized, setIsMinimized] = useState(false);
+
   return (
     <div className="space-y-8">
+      {/* 1. 1:1 Framed Image */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.05 }}
-        className="flex items-center gap-2"
+        className="w-full flex justify-center"
       >
-        <h1 className="text-3xl font-mono font-semibold text-zinc-900 dark:text-zinc-100">
-          happy monthsary, mia principessa
-        </h1>
-        <Heart className="w-5 h-5 text-zinc-700 fill-zinc-700/20 dark:text-zinc-300 dark:fill-zinc-300/20" />
+        <div className="relative aspect-square w-full max-w-[540px] rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-900 overflow-hidden shadow-md group transition-all">
+          <img
+            src="/gf-photo.png"
+            alt="For You"
+            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
+          />
+
+          {/* Subtle Now Playing Badge on Photo */}
+          <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-md text-white text-[11px] font-mono shadow pointer-events-none">
+            <Music className="w-3 h-3 animate-pulse text-zinc-300" />
+            <span className="truncate max-w-[180px] sm:max-w-none">
+              Dance Me to the End of Love
+            </span>
+          </div>
+        </div>
       </motion.div>
 
-      {/* 1. 16:9 Framed Image */}
+      {/* 2. BOTTOM: ASCII Flowers */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.15 }}
-        className="w-full"
-      >
-        <div className="relative aspect-[16/9] w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-900 overflow-hidden shadow-md group transition-all">
-          <img
-            src="/motmot-photo.jpg"
-            alt="Welcome Home"
-            className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
-          />
-        </div>
-      </motion.div>
-
-      {/* Poem Placeholder */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.17 }}
-        className="w-full py-4 text-center text-zinc-600 dark:text-zinc-400 font-serif leading-relaxed"
-      >
-        <p className="whitespace-pre-line text-sm sm:text-base">
-          {`Entropy. All physical objects, may that be a bit of information to a blazing red star, are all in a state of perpetual dissipation to chaos--this is reminiscent to the object of desire, a fundamental idea in Aristotle's ancient physics. My love, we shall rebel. We will not join the cloud of chaos that awaits the entire universe--for we, together, will constitute our own homogeneity. Our own little cloud of chaos. Our love unbound by the categories of the dissipating universe.`}
-        </p>
-      </motion.div>
-
-      {/* 2. Spotify Playlist Embed */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.2 }}
-        className="w-full"
-      >
-        <iframe
-          data-testid="embed-iframe"
-          style={{ borderRadius: "12px" }}
-          src="https://open.spotify.com/embed/playlist/52gp9QLteAL0VLZ9rIecZ4?utm_source=generator&si=94b17393aaf94689"
-          width="100%"
-          height="152"
-          frameBorder="0"
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          loading="lazy"
-        />
-      </motion.div>
-
-      {/* 3. BOTTOM: ASCII Flowers */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.22 }}
         className="pt-4 border-t border-zinc-200 dark:border-zinc-800 flex justify-center"
       >
         <div className="overflow-x-auto w-full max-w-full flex justify-center py-2">
@@ -88,6 +56,79 @@ export default function ForYouPage() {
           </pre>
         </div>
       </motion.div>
+
+      {/* 3. Floating Overlay Player */}
+      <motion.aside
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.35, delay: 0.2 }}
+        aria-label="Audio overlay player"
+        className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 w-[calc(100vw-2.5rem)] sm:w-80 max-w-[340px] bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-2xl p-3 transition-all duration-300"
+      >
+        {/* Overlay Player Header */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            {/* Animated Equalizer Wave */}
+            <div className="flex items-end gap-0.5 h-3.5 w-3.5 flex-shrink-0">
+              <span className="w-1 bg-zinc-800 dark:bg-zinc-200 rounded-full animate-[bounce_0.8s_infinite_ease-in-out_0.1s] h-full" />
+              <span className="w-1 bg-zinc-800 dark:bg-zinc-200 rounded-full animate-[bounce_0.8s_infinite_ease-in-out_0.3s] h-2/3" />
+              <span className="w-1 bg-zinc-800 dark:bg-zinc-200 rounded-full animate-[bounce_0.8s_infinite_ease-in-out_0.2s] h-4/5" />
+            </div>
+
+            <div className="min-w-0">
+              <p className="text-[11px] font-mono font-medium text-foreground truncate leading-tight">
+                Dance Me to the End of Love
+              </p>
+              <p className="text-[10px] font-sans text-zinc-500 dark:text-zinc-400 truncate leading-tight">
+                Leonard Cohen
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <a
+              href="https://www.youtube.com/watch?v=EImVucJO7Ok"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-1 rounded-md text-zinc-500 hover:text-foreground dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              title="Open in YouTube"
+              aria-label="Open in YouTube"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+
+            <button
+              onClick={() => setIsMinimized(!isMinimized)}
+              className="p-1 rounded-md text-zinc-500 hover:text-foreground dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              title={isMinimized ? "Expand player" : "Minimize player"}
+              aria-label={isMinimized ? "Expand player" : "Minimize player"}
+            >
+              {isMinimized ? (
+                <ChevronUp className="w-3.5 h-3.5" />
+              ) : (
+                <ChevronDown className="w-3.5 h-3.5" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Video Frame: stays mounted so audio persists even when minimized */}
+        <div
+          className={`transition-all duration-300 overflow-hidden ${
+            isMinimized ? "max-h-0 opacity-0 mt-0" : "max-h-56 opacity-100 mt-2.5"
+          }`}
+        >
+          <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-black border border-zinc-200/60 dark:border-zinc-800/60 shadow-inner">
+            <iframe
+              src="https://www.youtube.com/embed/EImVucJO7Ok?autoplay=1&enablejsapi=1&playsinline=1"
+              title="Leonard Cohen - Dance Me to the End of Love"
+              className="w-full h-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      </motion.aside>
     </div>
   );
 }
