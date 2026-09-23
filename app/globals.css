@@ -145,3 +145,25 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Animated logo marquee */
+@keyframes logo-marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-logo-marquee {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: logo-marquee 28s linear infinite;
+}
+
+.animate-logo-marquee:hover {
+  animation-play-state: paused;
+}
+

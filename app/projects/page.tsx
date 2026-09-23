@@ -323,6 +323,65 @@ const panelsData: PanelItem[] = [
     items: [
       {
         id: "dev-1",
+        title: "gödle — Propositional Symbolic Logic Game",
+        subtitle: "Full-Stack Natural Deduction Proof Environment with Svelte, Node.js & SQLite",
+        description:
+          "gödle is a full-stack propositional symbolic logic web game inspired by the precision and pedagogical clarity of classic logic texts.\n\nBuilt on Svelte, Node.js, and SQLite, it implements Irving M. Copi's 19 formal rules of natural deduction—spanning 9 Rules of Inference (such as Modus Ponens, Modus Tollens, and Hypothetical Syllogism) and 10 Rules of Replacement (including De Morgan's Laws, Commutation, and Material Implication).\n\nThe platform features an interactive daily Wordle-style deduction challenge curated across Novice, Adept, and Master difficulty tiers, a timed survival mode (Logic Frenzy), a freeform proof sandbox equipped with an automated breadth-first search (BFS) theorem prover and shareable puzzles, and an interactive Copi rule codex.",
+        imageSrc: "/images/godle-preview-1.png",
+        gallery: [
+          {
+            src: "/images/godle-preview-1.png",
+            title: "Truth Trees Landing & Game Mode Hub",
+            description:
+              "Interactive landing screen featuring minimalist truth-tree typographic background, mode selector, and daily problem tracker.",
+          },
+          {
+            src: "/images/godle-preview-2.png",
+            title: "Daily Natural Deduction Proof Engine",
+            description:
+              "Daily deductive puzzle interface with premise chaining, KaTeX mathematical formula rendering, rule justifications, and step validator.",
+          },
+          {
+            src: "/images/godle-preview-3.png",
+            title: "Prover Sandbox & Copi Problem Library",
+            description:
+              "Freeform sandbox theorem prover with automated BFS derivation solver, community puzzle authoring, and Irving Copi textbook problem sets.",
+          },
+        ],
+        githubUrl: "https://github.com/artemiui/godle-logic-game",
+        liveUrl: "https://godle-logic-game.vercel.app",
+      },
+      {
+        id: "dev-2",
+        title: "Philippine Junior Data Science Challenge 2026",
+        subtitle: "Official Competition Web Platform",
+        description:
+          "I designed and developed the official web platform for the Philippine Junior Data Science Challenge 2026 (PJDSC 2026), the premier nationwide inter-collegiate data science competition organized by the UP Data Science Society.\n\nCentered on the theme 'Public Health Analytics: Trace the Pattern, Target the Cure', the platform connects over 600 student participants, mentors, and academic and industry partners across 30+ universities nationwide.\n\nBuilt with Next.js, React, Tailwind CSS, and Framer Motion, the portal features real-time competition phase countdowns, comprehensive challenge primer and timeline modules, track explorations across 10 public health innovation domains, and an interactive particle canvas background simulation.",
+        imageSrc: "/images/pjdsc26-preview-1.png",
+        gallery: [
+          {
+            src: "/images/pjdsc26-preview-1.png",
+            title: "PJDSC 2026 Homepage & Real-Time Countdown",
+            description:
+              "Official web platform homepage featuring dynamic particle canvas background, event registration countdown, and nationwide reach metrics.",
+          },
+          {
+            src: "/images/pjdsc26-preview-2.png",
+            title: "Public Health Analytics & 10 Innovation Tracks",
+            description:
+              "Challenge theme breakdown exploring 10 key public health domains from disease surveillance and epidemiological modeling to digital health systems.",
+          },
+          {
+            src: "/images/pjdsc26-preview-3.png",
+            title: "Event Primer, Rules & Competition Mechanics",
+            description:
+              "Comprehensive documentation hub detailing eligibility, team capacity quotas, registration fees, and multi-stage evaluation criteria.",
+          },
+        ],
+        liveUrl: "https://pjdsc26-website.vercel.app",
+      },
+      {
+        id: "dev-3",
         title: "Pareto Frontier Framework for In-Silico Drug Design",
         subtitle: "Multi-Target Molecular Docking, ADMET AI Profiling & Efficacy-Toxicity Frontier Analysis",
         description:
@@ -351,43 +410,13 @@ const panelsData: PanelItem[] = [
         githubUrl: "https://github.com/artemiui/ds102-pareto-frontier",
       },
       {
-        id: "dev-2",
+        id: "dev-4",
         title: "Classical Toy N-Body Simulation in Python",
         subtitle: "Gravitational Orbital Dynamics & Numerical Integration",
         description:
           "A numerical astrophysics and mechanics simulation modeling the gravitational interactions and orbital trajectories of an N-body celestial system in Python.\n\nImplements classical Newtonian gravitational mechanics and numerical integration to simulate pairwise mutual attraction, velocity vectors, and chaotic many-body orbital paths in real-time.",
         youtubeId: "sIIJ0w_KTBw",
         githubUrl: "https://www.youtube.com/watch?v=sIIJ0w_KTBw",
-      },
-      {
-        id: "dev-3",
-        title: "gödle — Propositional Symbolic Logic Game",
-        subtitle: "Full-Stack Natural Deduction Proof Environment with Svelte, Node.js & SQLite",
-        description:
-          "gödle is a full-stack propositional symbolic logic web game inspired by the precision and pedagogical clarity of classic logic texts.\n\nBuilt on Svelte, Node.js, and SQLite, it implements Irving M. Copi's 19 formal rules of natural deduction—spanning 9 Rules of Inference (such as Modus Ponens, Modus Tollens, and Hypothetical Syllogism) and 10 Rules of Replacement (including De Morgan's Laws, Commutation, and Material Implication).\n\nThe platform features an interactive daily Wordle-style deduction challenge curated across Novice, Adept, and Master difficulty tiers, a timed survival mode (Logic Frenzy), a freeform proof sandbox equipped with an automated breadth-first search (BFS) theorem prover and shareable puzzles, and an interactive Copi rule codex.",
-        imageSrc: "/images/godle-preview-1.png",
-        gallery: [
-          {
-            src: "/images/godle-preview-1.png",
-            title: "Truth Trees Landing & Game Mode Hub",
-            description:
-              "Interactive landing screen featuring minimalist truth-tree typographic background, mode selector, and daily problem tracker.",
-          },
-          {
-            src: "/images/godle-preview-2.png",
-            title: "Daily Natural Deduction Proof Engine",
-            description:
-              "Daily deductive puzzle interface with premise chaining, KaTeX mathematical formula rendering, rule justifications, and step validator.",
-          },
-          {
-            src: "/images/godle-preview-3.png",
-            title: "Prover Sandbox & Copi Problem Library",
-            description:
-              "Freeform sandbox theorem prover with automated BFS derivation solver, community puzzle authoring, and Irving Copi textbook problem sets.",
-          },
-        ],
-        githubUrl: "https://github.com/artemiui/godle-logic-game",
-        liveUrl: "https://godle-logic-game.vercel.app",
       },
     ],
   },

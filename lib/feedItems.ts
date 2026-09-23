@@ -130,6 +130,14 @@ const externalLinks: FeedItemType[] = [
     tags: ["Logic", "Computational"],
     description: "I had started working on gödle, a full-stack propositional symbolic logic web game, a floating idea I've had since taking PHILO12 and PHILO1 of the UP Department of Philosophy. I had initially made a proposition validity checking game for a PHILO1 long exam as a Claude artifact. Now, it has grown to the magnitude of gödle. I hope it helps the many philosopher-students of our time and our nation, especially those interested in the analytic tradition.",
   },
+  {
+    title: "Philippine Junior Data Science Challenge 2026",
+    date: "2026-09-20",
+    url: "https://pjdsc26-website.vercel.app",
+    category: "Knowledge Sharing",
+    tags: ["Data Science", "Web Development"],
+    description: "I designed and developed the official web platform for the Philippine Junior Data Science Challenge 2026 (PJDSC 2026), the flagship nationwide inter-collegiate competition organized by the UP Data Science Society centered on Public Health Analytics.",
+  },
 ];
 
 export async function getFeedItems(): Promise<FeedItemType[]> {
