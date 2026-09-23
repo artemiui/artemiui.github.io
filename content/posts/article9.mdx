@@ -7,54 +7,85 @@ description: Brief notes of proofs and theorems on the definition of a mean \bar
 
 
 # Definition of a Mean
+
 $$\boxed{\bar{X} = \Sigma^n_{i=1} \frac{X_i}{n}}$$
+
 Where:
+
 $i$ is the index term
+
 $\bar{X}$ or $\bar{Y}$ is the mean
+
 $n$ is the upper boundary term of the series summation, total number of observations.
 
 # Theorem. $\bar{X} = \Sigma^n_{i=1} \frac{X_i}{n}$
 
 Proof. 
+
 $$\implies \bar{X} = \frac{1}{n}\Sigma^n_{i=1} X_i$$
+
 $$\implies n\cdot\bar{X} = \frac{n}{n}\Sigma^n_{i=1} X_i$$
+
 $$\boxed{\implies n\bar{X} = \Sigma^n_{i=1} X_i}$$
 
 # Theorem. $\Sigma^n_{i=1} (X_i - \bar{X}) = 0$
 
 Proof.
+
 $$\implies \Sigma^n_{i=1} (X_i - \bar{X})$$
+
 $$\implies \Sigma^n_{i=1} X_i - \Sigma^n_{i=1} \bar{X}$$
+
 $\bar{X}$ is a constant, second term of the form $\Sigma^n_{i=1} c = nc$
+
 $$\implies \Sigma^n_{i=1} X_i - n\bar{X} = 0$$
+
 since $\sigma^n_{i=1} \bar{X} = n\bar{X}$ from the definition of $\bar{X}$;
+
 it follows that $\Sigma^n_{i=1} X_i = n\bar{X}$ so,
+
 $$\boxed{\bar{X} - \bar{X} = 0}$$
 
 # Theorem. $\Sigma^n_{i=1} (X_i - \bar{X})^2 = \Sigma^n_{i=1} X^2_i - n\bar{X}^2$
 
 Expanding the quadratic,
+
 $$\Sigma^n_{i=1} (X_i - \bar{X})^2 = \Sigma^n_{i=1} (X_i - \bar{X})(X_i - \bar{X})$$
+
 $$\implies \Sigma^n_{i=1} (X_i^2 - 2X_i\bar{X} + \bar{X}^2)$$
+
 distributing the summation,
+
 $$\implies \Sigma^n_{i=1} X_i^2 - 2\bar{X} \Sigma^n_{i=1} {X_i} + \Sigma^n_{i=1} \bar{X}^2$$
+
 $$\implies \Sigma^n_{i=1} X_i^2 - 2\bar{X} \Sigma^n_{i=1} {X_i} + n\bar{X}^2$$
+
 $$\implies \Sigma^n_{i=1} X_i^2 - 2\bar{X} n\bar{X} + n\bar{X}^2$$
+
 $$\boxed{\implies \Sigma^n_{i=1} X_i^2 - n\bar{X}^2}$$
 
 
 # Theorem. $\Sigma^n_{i=1} (X_i - \bar{X})(Y_i - \bar{Y}) = \Sigma^n_{i=1} X_i Y_i - n \bar{X} \bar{Y}$
+
 Let $X_i$ and $Y_i$ be two different variables of index $i$
 Expanding the binomial multiplication, 
+
 $$\Sigma^n_{i=1}(X_iY_i-X_i\bar{Y}-Y_i\bar{X}+\bar{X}\bar{Y})$$
+
 distributing the sumation,
+
 $$\implies \Sigma^n_{i=1} X_iY_i - \Sigma^n_{i=1} X_i\bar{Y} - \Sigma^n_{i=1}Y_i\bar{X} + \Sigma^n_{i=1} \bar{X}\bar{Y}$$
 
 $$\implies \Sigma^n_{i=1} X_iY_i - \bar{Y}\Sigma^n_{i=1} X_i - \bar{X} \Sigma^n_{i=1}Y_i + \Sigma^n_{i=1} \bar{X}\bar{Y}$$
+
 $$\implies \Sigma^n_{i=1} X_iY_i - \bar{Y}\Sigma^n_{i=1} X_i - \bar{X} \Sigma^n_{i=1}Y_i + n\bar{X}\bar{Y}$$
+
 $$\implies \Sigma^n_{i=1} X_iY_i - n \bar{Y} \bar{X} - \bar{X} n\bar{Y} + n\bar{X}\bar{Y}$$
+
 $$\implies \Sigma^n_{i=1} X_iY_i - n \bar{X}\bar{Y} -  n\bar{X}\bar{Y} + n\bar{X}\bar{Y}$$
+
 $$\implies \Sigma^n_{i=1} X_iY_i - 2n \bar{X}\bar{Y} + n\bar{X}\bar{Y}$$
+
 $$\boxed{\implies \Sigma^n_{i=1} X_iY_i - n \bar{X}\bar{Y}}$$
 
 
