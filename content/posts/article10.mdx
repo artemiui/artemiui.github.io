@@ -73,10 +73,7 @@ where $L_{\text{bus}} = 12.0\,\text{meters}$. Upstream backups exceeding $150\,\
 
 Dwell times follow the Transit Capacity and Quality of Service Manual (TCQSM) standard, incorporating passenger exchange volumes, door actuation overhead, and interior crowd friction:
 
-$$T_{\text{dwell}} = \begin{cases} 
-0 & \text{if } N_{\text{on}} = 0 \land N_{\text{off}} = 0 \land \neg \text{Terminal} \\
-T_{\text{overhead}} + \max\left(N_{\text{on}} \cdot t_{\text{board}}, N_{\text{off}} \cdot t_{\text{alight}}\right) & \text{otherwise}
-\end{cases}$$
+$$T_{\text{dwell}} = \begin{cases} 0 & \text{if } N_{\text{on}} = 0 \land N_{\text{off}} = 0 \land \neg \text{Terminal} \\ T_{\text{overhead}} + \max\left(N_{\text{on}} \cdot t_{\text{board}}, N_{\text{off}} \cdot t_{\text{alight}}\right) & \text{otherwise} \end{cases}$$
 
 Where:
 - $T_{\text{overhead}} = 4.0\,\text{s}$ (door opening, driver clearance, closing).
