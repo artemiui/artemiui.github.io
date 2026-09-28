@@ -100,6 +100,27 @@ body {
   @apply border-l-4 border-zinc-300 dark:border-zinc-700 pl-4 italic my-4;
 }
 
+/* Markdown tables */
+.prose table {
+  @apply w-full text-left text-sm border-collapse my-6;
+}
+
+.prose thead {
+  @apply bg-zinc-100/75 dark:bg-zinc-900/80 border-b border-zinc-200 dark:border-zinc-800 text-xs font-mono uppercase tracking-wider text-zinc-700 dark:text-zinc-300;
+}
+
+.prose th {
+  @apply px-4 py-3 font-semibold text-zinc-900 dark:text-zinc-100 whitespace-nowrap;
+}
+
+.prose td {
+  @apply px-4 py-2.5 sm:py-3 text-zinc-700 dark:text-zinc-300 align-top leading-relaxed border-t border-zinc-100 dark:border-zinc-800/60;
+}
+
+.prose tr:hover {
+  @apply bg-zinc-50/70 dark:hover:bg-zinc-800/40 transition-colors;
+}
+
 /* Math equations */
 .katex-display {
   @apply my-6 overflow-x-auto py-2;

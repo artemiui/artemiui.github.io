@@ -5,6 +5,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { getPostBySlug, getPostSlugs } from "@/lib/mdx";
 import TableOfContents from "@/components/TableOfContents";
 import AudioPlayer from "@/components/AudioPlayer";
+import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 
 import rehypeKatex from "rehype-katex";
@@ -127,10 +128,37 @@ export default async function BlogPost({ params }: Props) {
           source={post.content}
           components={{
             AudioPlayer,
+            table: ({ children, ...props }) => (
+              <div className="w-full my-6 overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-2xs">
+                <table className="w-full text-left text-sm border-collapse" {...props}>
+                  {children}
+                </table>
+              </div>
+            ),
+            thead: ({ children, ...props }) => (
+              <thead className="bg-zinc-100/75 dark:bg-zinc-900/80 border-b border-zinc-200 dark:border-zinc-800 text-xs font-mono uppercase tracking-wider text-zinc-700 dark:text-zinc-300" {...props}>
+                {children}
+              </thead>
+            ),
+            th: ({ children, ...props }) => (
+              <th className="px-4 py-3 font-semibold text-zinc-900 dark:text-zinc-100 whitespace-nowrap" {...props}>
+                {children}
+              </th>
+            ),
+            td: ({ children, ...props }) => (
+              <td className="px-4 py-2.5 sm:py-3 text-zinc-700 dark:text-zinc-300 align-top leading-relaxed border-t border-zinc-100 dark:border-zinc-800/60" {...props}>
+                {children}
+              </td>
+            ),
+            tr: ({ children, ...props }) => (
+              <tr className="hover:bg-zinc-50/70 dark:hover:bg-zinc-800/40 transition-colors" {...props}>
+                {children}
+              </tr>
+            ),
           }}
           options={{
             mdxOptions: {
-              remarkPlugins: [remarkMath],
+              remarkPlugins: [remarkGfm, remarkMath],
               rehypePlugins: [rehypeKatex],
             },
           }}

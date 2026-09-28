@@ -23,13 +23,16 @@ export function getPostSlugs(): string[] {
     return [];
   }
   return fs.readdirSync(postsDirectory)
-    .filter((file) => file.endsWith(".mdx"))
-    .map((file) => file.replace(/\.mdx$/, ""));
+    .filter((file) => file.endsWith(".mdx") || file.endsWith(".md"))
+    .map((file) => file.replace(/\.mdx?$/, ""));
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   try {
-    const fullPath = path.join(postsDirectory, `${slug}.mdx`);
+    let fullPath = path.join(postsDirectory, `${slug}.mdx`);
+    if (!fs.existsSync(fullPath)) {
+      fullPath = path.join(postsDirectory, `${slug}.md`);
+    }
     if (!fs.existsSync(fullPath)) {
       return null;
     }
