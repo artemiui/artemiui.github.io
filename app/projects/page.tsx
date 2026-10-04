@@ -418,6 +418,14 @@ const panelsData: PanelItem[] = [
         youtubeId: "sIIJ0w_KTBw",
         githubUrl: "https://www.youtube.com/watch?v=sIIJ0w_KTBw",
       },
+      {
+        id: "dev-5",
+        title: "Series Convergence Decision Tree",
+        subtitle: "Interactive Algorithmic & Topological Visualizer for Calculus Convergence Tests",
+        description:
+          "An interactive decision tree and pedagogical theorem inspector for infinite series convergence tests in calculus and real analysis.\n\nBuilt with D3.js and KaTeX, the engine maps out the entire deductive hierarchy of convergence testing—from preliminary divergence checks and special algebraic forms (Geometric, p-Series, Telescoping, Harmonic) to comparison theorems (DCT, LCT), the Leibniz Alternating Series Test (AST), Cauchy and d'Alembert ratio and root tests, and power series intervals of convergence.\n\nFeatures include dual topological projections (hierarchical tree and concentric radial phase-space layouts), orthogonal vs. asymptotic cubic spline routing, ancestral deductive lineage backtracking, real-time formula search, dynamic category filtering, and an integrated theorem inspector with worked examples.",
+        liveUrl: "/series-convergence/",
+      },
     ],
   },
 ];

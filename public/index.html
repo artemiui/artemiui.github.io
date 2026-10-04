@@ -1,0 +1,2609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Series Convergence Decision Tree</title>
+  
+  <!-- KaTeX CSS & JS with explicit auto-render -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  
+  <!-- D3.js v7 -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+
+    <style>
+    /* ==========================================================================
+       MATHEMATICAL CONVERGENCE DECISION TREE
+       Typography: Matched to artemiui.github.io Design System
+       - Sans-Serif: Inter
+       - Monospace: Space Mono
+       - Mathematics: KaTeX Standard (Computer Modern / AMS)
+       ========================================================================== */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+    :root {
+      --bg: #ffffff;
+      --fg: #18181b;
+      --border-color: #18181b;
+      --hover-bg: #f4f4f5;
+      --card-bg: #ffffff;
+      --tooltip-bg: #ffffff;
+      --grid-stroke: #18181b;
+      --node-fill: #ffffff;
+      --node-hover: #f4f4f5;
+      --node-active: #e4e4e7;
+      --font-sans: var(--font-inter, "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
+      --font-mono: var(--font-space-mono, "SpaceMono Nerd Font", "SpaceMono NF", "Space Mono", monospace);
+    }
+
+    html.dark, :root.dark {
+      --bg: #09090b;
+      --fg: #f4f4f5;
+      --border-color: #3f3f46;
+      --hover-bg: #18181b;
+      --card-bg: #121215;
+      --tooltip-bg: #121215;
+      --grid-stroke: #f4f4f5;
+      --node-fill: #09090b;
+      --node-hover: #18181b;
+      --node-active: #27272a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-sans);
+      user-select: none;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    /* Controls Panel */
+    .toolbar {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      z-index: 90;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: transparent;
+      pointer-events: auto;
+    }
+
+    .toolbar-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-group {
+      display: flex;
+      border: 1px solid var(--border-color);
+      background: var(--bg);
+      height: 28px;
+      box-sizing: border-box;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .btn-academic {
+      background: var(--bg);
+      color: var(--fg);
+      border: none;
+      border-right: 1px solid var(--border-color);
+      padding: 0 10px;
+      height: 100%;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.12s ease, color 0.12s ease;
+      white-space: nowrap;
+      box-sizing: border-box;
+    }
+
+    .btn-academic:last-child {
+      border-right: none;
+    }
+
+    .btn-academic.btn-icon {
+      width: 28px;
+      min-width: 28px;
+      max-width: 28px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-academic svg {
+      width: 14px;
+      height: 14px;
+      max-width: 14px;
+      max-height: 14px;
+      display: block;
+      flex-shrink: 0;
+    }
+
+    .btn-academic:hover,
+    .btn-academic.active {
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    /* Search Bar */
+    .search-box {
+      border: 1px solid var(--border-color);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      width: 160px;
+      height: 28px;
+      box-sizing: border-box;
+      border-radius: 2px;
+    }
+
+    .search-box svg {
+      width: 12px;
+      height: 12px;
+      flex-shrink: 0;
+      margin-right: 6px;
+      opacity: 0.7;
+    }
+
+    .search-box input {
+      border: none;
+      outline: none;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      width: 100%;
+      background: transparent;
+      color: var(--fg);
+    }
+
+    .search-box input::placeholder {
+      font-family: var(--font-mono);
+      font-style: normal;
+      color: #888888;
+    }
+
+    /* Canvas */
+    #canvas-container {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      cursor: grab;
+    }
+
+    #canvas-container:active {
+      cursor: grabbing;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Phase Grid */
+    .grid-lines {
+      stroke: var(--grid-stroke);
+      stroke-width: 0.5px;
+      opacity: 0.05;
+    }
+
+    .axis-line {
+      stroke: var(--grid-stroke);
+      stroke-width: 0.8px;
+      opacity: 0.15;
+    }
+
+    /* Edges */
+    .edge-path {
+      fill: none;
+      stroke: var(--fg);
+      stroke-width: 1.2px;
+      transition: stroke-width 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+    }
+
+    .edge-path.highlighted {
+      stroke-width: 2.8px !important;
+      opacity: 1 !important;
+    }
+
+    .edge-path.dimmed {
+      opacity: 0.12 !important;
+    }
+
+    .edge-label-group {
+      transition: opacity 0.2s ease;
+    }
+
+    .edge-label-group.dimmed {
+      opacity: 0.12 !important;
+    }
+
+    .edge-label-group.highlighted .edge-badge {
+      border-width: 1.5px;
+      font-weight: 700;
+      background: var(--card-bg);
+    }
+
+    .edge-label-fo {
+      overflow: visible;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    .edge-label-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .edge-badge {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--fg);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1;
+      padding: 3px 6px;
+      white-space: nowrap;
+      transition: background 0.12s ease, border-width 0.12s ease;
+      display: inline-block;
+      border-radius: 2px;
+    }
+
+    .edge-badge:hover {
+      background: var(--hover-bg);
+    }
+
+    /* Nodes */
+    .node-group {
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .node-shape {
+      fill: var(--node-fill);
+      stroke: var(--fg);
+      stroke-width: 1.4px;
+      transition: stroke-width 0.18s ease, fill 0.18s ease;
+    }
+
+    .node-group:hover .node-shape,
+    .node-group.active .node-shape {
+      fill: var(--node-hover);
+      stroke-width: 2.4px;
+    }
+
+    .node-group.path-highlighted .node-shape {
+      stroke-width: 2.4px;
+      fill: var(--node-hover);
+    }
+
+    .node-group.hovered-target .node-shape {
+      stroke-width: 3px;
+      fill: var(--node-active);
+    }
+
+    .node-group.dimmed {
+      opacity: 0.16 !important;
+    }
+
+    /* Node content inside foreignObject */
+    .node-fo {
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .node-body {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1.15;
+      padding: 0;
+      user-select: none;
+    }
+
+    .node-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+      white-space: nowrap;
+      word-break: keep-all;
+      overflow-wrap: normal;
+      hyphens: none;
+      max-width: 100%;
+    }
+
+    .node-terminal-text {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--fg);
+      white-space: nowrap;
+      word-break: keep-all;
+      overflow-wrap: normal;
+      hyphens: none;
+    }
+
+    .node-math-mini {
+      font-size: 13px;
+      line-height: 1;
+      margin-top: 2px;
+    }
+
+    /* Tooltip / Bounded LaTeX Hover Box */
+    #math-tooltip {
+      position: absolute;
+      display: none;
+      z-index: 1000;
+      pointer-events: none;
+      background: var(--tooltip-bg);
+      border: 1px solid var(--border-color);
+      color: var(--fg);
+      padding: 14px 16px;
+      max-width: 420px;
+      font-family: var(--font-sans);
+      border-radius: 4px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .tooltip-header {
+      font-size: 9.5px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .tooltip-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-family: var(--font-mono);
+    }
+
+    .tooltip-formula {
+      font-size: 13.5px;
+      margin: 8px 0;
+      padding: 6px 0;
+      text-align: center;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .tooltip-condition {
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 6px;
+      font-family: var(--font-sans);
+    }
+
+    .tooltip-path {
+      margin-top: 9px;
+      padding-top: 7px;
+      border-top: 1px dashed var(--border-color);
+      font-size: 10px;
+      line-height: 1.45;
+      font-family: var(--font-mono);
+    }
+
+    /* Theorem Details Panel (Side Inspector) */
+    #details-panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 460px;
+      height: 100%;
+      background: var(--bg);
+      border-left: 1.5px solid var(--border-color);
+      color: var(--fg);
+      z-index: 95;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #details-panel.open {
+      transform: translateX(0);
+    }
+
+    .details-header {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg);
+    }
+
+    .details-header-title {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .details-close {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--fg);
+      width: 24px;
+      height: 24px;
+      font-size: 14px;
+      line-height: 20px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      border-radius: 2px;
+    }
+
+    .details-close:hover {
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    .details-content {
+      padding: 18px 22px;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      font-size: 12.5px;
+      line-height: 1.6;
+      font-family: var(--font-sans);
+    }
+
+    .details-section {
+      border: 1px solid var(--border-color);
+      padding: 12px 14px;
+      position: relative;
+      border-radius: 2px;
+    }
+
+    .details-section-tag {
+      position: absolute;
+      top: -8px;
+      left: 10px;
+      background: var(--bg);
+      color: var(--fg);
+      padding: 0 6px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .details-h1 {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      font-family: var(--font-mono);
+    }
+
+    .details-formula-block {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 10px;
+      text-align: center;
+      margin: 8px 0;
+      overflow-x: auto;
+      border-radius: 2px;
+    }
+
+    .details-list {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    .details-list li {
+      position: relative;
+      padding-left: 18px;
+      margin-bottom: 6px;
+    }
+
+    .details-list li::before {
+      content: "—";
+      position: absolute;
+      left: 0;
+    }
+
+    /* Legend Overlay - Bottom Left */
+    #legend-box {
+      position: absolute;
+      bottom: 18px;
+      left: 18px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--fg);
+      padding: 9px 12px;
+      z-index: 90;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      user-select: none;
+      border-radius: 2px;
+      font-family: var(--font-mono);
+    }
+
+    .legend-title {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 3px;
+      margin-bottom: 2px;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10.5px;
+      font-family: var(--font-mono);
+    }
+
+    .legend-icon {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .legend-icon svg * {
+      stroke: var(--fg);
+      fill: var(--card-bg);
+    }
+
+    .legend-icon svg polygon[points="8,2 15,14 1,14"],
+    .legend-icon svg polygon[points="1,2 15,2 8,14"] {
+      fill: var(--fg);
+    }
+
+    /* Keybinds Overlay - Bottom Right */
+    #keybinds-box {
+      position: absolute;
+      bottom: 18px;
+      right: 18px;
+      z-index: 90;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 9px 12px;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      opacity: 0.85;
+      color: var(--fg);
+      transition: opacity 0.15s ease, border-color 0.15s ease, right 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+      border-radius: 2px;
+      font-family: var(--font-mono);
+    }
+
+    #keybinds-box:hover {
+      opacity: 1;
+    }
+
+    #details-panel.open ~ #keybinds-box {
+      right: 478px;
+    }
+
+    .keybinds-title {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      opacity: 0.75;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 3px;
+      margin-bottom: 2px;
+    }
+
+    .keybind-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      line-height: 1.3;
+    }
+
+    .keybind-row kbd {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border: 1px solid var(--border-color);
+      background: var(--hover-bg);
+      color: var(--fg);
+      min-width: 14px;
+      text-align: center;
+      box-sizing: border-box;
+      border-radius: 2px;
+      line-height: 1.2;
+    }
+
+    .keybind-row span {
+      white-space: nowrap;
+      opacity: 0.85;
+    }
+
+    .reg-mark {
+      position: absolute;
+      pointer-events: none;
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--fg);
+      opacity: 0.45;
+      z-index: 10;
+    }
+
+    /* KaTeX text within equations */
+    .katex .text,
+    .katex .textsf {
+      font-family: var(--font-sans) !important;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+      border-left: 1px solid var(--border-color);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--fg);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Interactive Controls Toolbar -->
+  <div class="toolbar">
+    <!-- Top Row: Navigation Controls & Search -->
+    <div class="toolbar-row">
+      <!-- Return to Portfolio & Theme Toggle -->
+      <div class="toolbar-group">
+        <a href="/" class="btn-academic" title="Return to artemiui.github.io" style="text-decoration:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:12px;height:12px;margin-right:5px;"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <span>artemiui</span>
+        </a>
+        <button class="btn-academic btn-icon" id="btn-toggle-theme" title="Toggle Dark / Light Theme">
+          <svg id="theme-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+      <!-- Zoom & Reset -->
+      <div class="toolbar-group">
+        <button class="btn-academic btn-icon" id="btn-zoom-in" title="Zoom In (+)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+        <button class="btn-academic btn-icon" id="btn-zoom-out" title="Zoom Out (−)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
+        </button>
+        <button class="btn-academic btn-icon" id="btn-reset-view" title="Reset View (0)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        </button>
+      </div>
+
+      <!-- Layout Mode: Tree / Radial -->
+      <div class="toolbar-group">
+        <button class="btn-academic btn-icon active" id="btn-layout-tree" title="Tree Layout (T)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="5" r="3"/><circle cx="6" cy="19" r="3"/><circle cx="18" cy="19" r="3"/><path d="M12 8v4M6 16v-2h12v2"/></svg>
+        </button>
+        <button class="btn-academic btn-icon" id="btn-layout-radial" title="Radial Layout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>
+        </button>
+      </div>
+
+      <!-- Path Curve Style & Theorem Details Panel -->
+      <div class="toolbar-group">
+        <button class="btn-academic btn-icon" id="btn-toggle-spline" title="Toggle Path Curve: Curved / Straight (S)">
+          <svg id="spline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 18c4-10 12-10 16 0"/></svg>
+        </button>
+        <button class="btn-academic btn-icon" id="btn-toggle-details" title="Theorem Details Panel (D)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M15 4v16"/></svg>
+        </button>
+      </div>
+
+      <!-- Search Input -->
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="search-input" placeholder="Search... (/)" />
+      </div>
+    </div>
+
+    <!-- Bottom Row: Simplified Text Category Filter Chips -->
+    <div class="toolbar-group" style="align-self:flex-start;">
+      <button class="btn-academic active filter-chip" data-category="all">All</button>
+      <button class="btn-academic filter-chip" data-category="special">Special</button>
+      <button class="btn-academic filter-chip" data-category="nonneg">Nonnegative</button>
+      <button class="btn-academic filter-chip" data-category="alt">Alternating</button>
+      <button class="btn-academic filter-chip" data-category="ratio_root">Ratio / Root</button>
+      <button class="btn-academic filter-chip" data-category="power">Power Series</button>
+    </div>
+  </div>
+
+  <!-- Legend Overlay - Bottom Left -->
+  <div id="legend-box">
+    <div class="legend-title">LEGEND</div>
+    <div class="legend-row">
+      <div class="legend-icon">
+        <svg width="16" height="16"><circle cx="8" cy="8" r="6" stroke="#000" stroke-width="1.2" fill="#fff"/></svg>
+      </div>
+      <span>Series / Category ($\odot$)</span>
+    </div>
+    <div class="legend-row">
+      <div class="legend-icon">
+        <svg width="16" height="16"><polygon points="8,1 15,8 8,15 1,8" stroke="#000" stroke-width="1.2" fill="#fff"/></svg>
+      </div>
+      <span>Convergence Test ($\lozenge$)</span>
+    </div>
+    <div class="legend-row">
+      <div class="legend-icon">
+        <svg width="16" height="16"><polygon points="8,2 15,14 1,14" stroke="#000" stroke-width="1.2" fill="#fff"/></svg>
+      </div>
+      <span>Converges ($\blacktriangle$)</span>
+    </div>
+    <div class="legend-row">
+      <div class="legend-icon">
+        <svg width="16" height="16"><polygon points="1,2 15,2 8,14" stroke="#000" stroke-width="1.2" fill="#fff"/></svg>
+      </div>
+      <span>Diverges ($\blacktriangledown$)</span>
+    </div>
+    <div class="legend-row">
+      <div class="legend-icon">
+        <svg width="16" height="16"><rect x="1" y="2" width="14" height="11" stroke="#000" stroke-width="1.2" fill="#fff"/></svg>
+      </div>
+      <span>Special Series Form ($\Box$)</span>
+    </div>
+  </div>
+
+  <!-- Canvas -->
+  <div id="canvas-container">
+    <svg id="viz-svg">
+      <defs>
+        <!-- Directional Arrowhead Marker -->
+        <marker id="arrow-academic" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="currentColor" />
+        </marker>
+      </defs>
+      <g id="grid-layer"></g>
+      <g id="graph-layer">
+        <g id="edges-layer"></g>
+        <g id="edge-labels-layer"></g>
+        <g id="nodes-layer"></g>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Hover Tooltip -->
+  <div id="math-tooltip">
+    <div class="tooltip-header">
+      <span id="tooltip-id">CONVERGENCE TEST</span>
+      <span id="tooltip-type">DETAILS</span>
+    </div>
+    <div class="tooltip-title" id="tooltip-title">Theorem Name</div>
+    <div class="tooltip-formula" id="tooltip-formula">$\sum a_n$</div>
+    <div class="tooltip-condition" id="tooltip-condition">Condition details</div>
+    <div class="tooltip-path" id="tooltip-path" style="display:none;"></div>
+  </div>
+
+  <!-- Theorem Details (Side Panel) -->
+  <div id="details-panel">
+    <div class="details-header">
+      <div class="details-header-title" id="details-title">THEOREM DETAILS</div>
+      <button class="details-close" id="details-close-btn" title="Close Panel">✕</button>
+    </div>
+    <div class="details-content" id="details-body">
+      <!-- Injected dynamically on click -->
+    </div>
+  </div>
+
+  <!-- Keybinds Overlay - Bottom Right -->
+  <div id="keybinds-box">
+    <div class="keybinds-title">KEYBINDS</div>
+    <div class="keybind-row"><kbd>T</kbd><span>Tree / Radial</span></div>
+    <div class="keybind-row"><kbd>S</kbd><span>Curved / Straight</span></div>
+    <div class="keybind-row"><kbd>D</kbd><span>Theorem Details</span></div>
+    <div class="keybind-row"><kbd>0</kbd><span>Reset View</span></div>
+    <div class="keybind-row"><kbd>+/-</kbd><span>Zoom In / Out</span></div>
+    <div class="keybind-row"><kbd>/</kbd><span>Search</span></div>
+    <div class="keybind-row"><kbd>Esc</kbd><span>Close / Clear</span></div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       GRAPH & THEOREM DATA DEFINITIONS
+       All LaTeX wrapped in math delimiters ($...$ or $$...$$) for KaTeX.
+       ========================================================================== */
+    const GRAPH_DATA = {
+      nodes: [
+        /* 0. Universal Origin */
+        {
+          id: "root",
+          label: "\\sum a_n",
+          shape: "circle",
+          latex: "\\sum_{n=1}^{+\\infty} a_n",
+          category: "Series Definition",
+          summary: "Arbitrary infinite series of real terms $a_n$.",
+          details: {
+            theorem: "Infinite Series $\\sum a_n$",
+            statement: "Let $\\{a_n\\}_{n=1}^\\infty$ be a sequence of real numbers. The formal expression $\\sum_{n=1}^\\infty a_n$ denotes the limit of its partial sums $\\{S_k\\}$, where $S_k = \\sum_{n=1}^k a_n$. If $\\lim_{k\\to\\infty} S_k = S \\in \\mathbb{R}$, the series converges; otherwise it diverges.",
+            hypotheses: [
+              "General terms $a_n \\in \\mathbb{R}$ for all $n \\ge 1$.",
+              "Examine asymptotic vanishing and algebraic structure of $a_n$."
+            ],
+            decision_rule: "Always evaluate the preliminary limit $\\lim_{n\\to\\infty} a_n$ via the Divergence Test before choosing specialized tests.",
+            example: "\\sum_{n=1}^\\infty \\frac{n}{2n+1} \\implies \\lim_{n\\to\\infty} \\frac{n}{2n+1} = \\frac{1}{2} \\ne 0 \\implies \\text{Diverges}."
+          }
+        },
+
+        /* 1. Preliminary Screening: Divergence Test */
+        {
+          id: "divergence_test",
+          label: "Divergence Test",
+          shape: "diamond",
+          latex: "\\lim_{n \\to \\infty} a_n",
+          category: "Convergence Test",
+          summary: "Calculate $\\lim_{n \\to \\infty} a_n$. If the limit is not zero, the series diverges; if zero, the test is inconclusive.",
+          details: {
+            theorem: "Divergence Test ($n$th-Term Test)",
+            statement: "If $\\lim_{n \\to \\infty} a_n \\ne 0$ (or does not exist), then the series $\\sum a_n$ diverges. If $\\lim_{n \\to \\infty} a_n = 0$, the test is inconclusive.",
+            hypotheses: [
+              "Universal Necessary Condition: $\\sum a_n \\text{ converges} \\implies \\lim_{n\\to\\infty} a_n = 0$.",
+              "Contrapositive: $\\lim_{n\\to\\infty} a_n \\ne 0 \\implies \\sum a_n \\text{ diverges}$.",
+              "Critical Trap: The converse is FALSE! $\\lim_{n\\to\\infty} a_n = 0 \\not\\implies \\sum a_n \\text{ converges}$."
+            ],
+            decision_rule: "Compute $L = \\lim_{n\\to\\infty} a_n$.\n• If $L \\ne 0 \\implies$ Terminal Divergence.\n• If $L = 0 \\implies$ Inconclusive; proceed to structural classification.",
+            example: "\\lim_{n\\to\\infty} \\cos\\left(\\frac{1}{n}\\right) = \\cos(0) = 1 \\ne 0 \\implies \\sum_{n=1}^\\infty \\cos\\left(\\frac{1}{n}\\right) \\text{ diverges immediately}."
+          }
+        },
+
+        {
+          id: "term_div_0",
+          label: "Divergent",
+          shape: "triangle_down",
+          latex: "\\lim_{n\\to\\infty} a_n \\ne 0",
+          category: "Outcome",
+          summary: "Terms fail to vanish asymptotically ($\lim_{n\\to\\infty} a_n \\ne 0$) $\\implies$ sum cannot stabilize.",
+          details: {
+            theorem: "Series Diverges (Divergence Test)",
+            statement: "Because $\\lim_{n\\to\\infty} a_n \\ne 0$ (or does not exist), the partial sums escape to $\\pm\\infty$ or oscillate indefinitely without converging to a finite real number.",
+            hypotheses: ["$\\lim_{n\\to\\infty} a_n \\ne 0$ or the limit does not exist."],
+            decision_rule: "Conclude divergence directly.",
+            example: "\\sum_{n=1}^\\infty (-1)^n \\implies \\lim_{n\\to\\infty} (-1)^n \\text{ DNE} \\implies \\text{Diverges}."
+          }
+        },
+
+        /* 2. Structural Gate */
+        {
+          id: "structural_gate",
+          label: "\\lim a_n = 0",
+          shape: "circle",
+          latex: "\\lim_{n\\to\\infty} a_n = 0",
+          category: "Test Evaluation",
+          summary: "Limit is zero ($\\lim a_n = 0$). The Divergence Test is inconclusive; select an appropriate test.",
+          details: {
+            theorem: "Limit Vanishes (Divergence Test Inconclusive)",
+            statement: "Given $\\lim_{n\\to\\infty} a_n = 0$, dispatch series to its canonical family:\n1. Special Forms: Geometric, p-Series, Harmonic, Telescoping, Constant/Arithmetic.\n2. Nonnegative Terms ($a_n \\ge 0$): Integral Test, Direct Comparison (DCT), Limit Comparison (LCT).\n3. Alternating Series ($(-1)^n b_n$): Leibniz AST.\n4. Arbitrary Signs: Ratio Test, Root Test, Modulus $\\sum |a_n|$.\n5. Power Series ($c_n (x-a)^n$): Interval and Radius of Convergence.",
+            hypotheses: ["Check sign stability and dominant algebraic operators (powers, factorials, rational)."],
+            decision_rule: "Select an appropriate convergence test based on the algebraic form of $a_n$.",
+            example: "\\sum \\frac{1}{n^2} \\to \\text{p-series}; \\quad \\sum \\frac{(-1)^n}{n} \\to \\text{Alternating}; \\quad \\sum \\frac{n!}{2^n} \\to \\text{Ratio Test}."
+          }
+        },
+
+        /* 3. Special Forms Hub & Leaves */
+        {
+          id: "hub_special",
+          label: "Special Forms",
+          shape: "rect",
+          latex: "\\text{Special Forms}",
+          category: "Category",
+          summary: "Standard series forms with known convergence rules (Geometric, p-Series, Harmonic, Telescoping).",
+          details: {
+            theorem: "Special Series Forms",
+            statement: "Series whose convergence status is directly determined by analytical exponents, common ratios, or telescopic cancellations.",
+            hypotheses: ["Direct inspection of formulas."],
+            decision_rule: "Inspect term formula and apply the specialized theorem.",
+            example: "\\text{Geometric, p-Series, Harmonic, Telescoping}."
+          }
+        },
+        {
+          id: "geom_series",
+          label: "Geometric",
+          shape: "diamond",
+          latex: "\\sum_{n=1}^{+\\infty} a r^{n-1}",
+          category: "Series Form",
+          summary: "Geometric Series $\\sum ar^n$. Converges to $\\frac{a}{1-r}$ if $|r| < 1$; diverges if $|r| \\ge 1$.",
+          details: {
+            theorem: "Geometric Series Theorem",
+            statement: "For $a \\ne 0$: $\\sum_{n=1}^{+\\infty} a r^{n-1} = a + ar + ar^2 + \\dots$\n• Converges to $S = \\frac{a}{1 - r} \\iff |r| < 1$.\n• Diverges $\\iff |r| \\ge 1$.",
+            hypotheses: ["Common ratio $r = \\frac{a_{n+1}}{a_n}$ is strictly independent of $n$."],
+            decision_rule: "Identify first term $a$ and common ratio $r$. Check if $|r| < 1$.",
+            example: "\\sum_{n=1}^\\infty 3\\left(\\frac{2}{5}\\right)^n \\implies a = \\frac{6}{5}, r = \\frac{2}{5} < 1 \\implies S = \\frac{6/5}{1 - 2/5} = 2."
+          }
+        },
+        {
+          id: "geom_conv",
+          label: "Converges",
+          shape: "triangle_up",
+          latex: "|r| < 1 \\implies S = \\frac{a}{1-r}",
+          category: "Outcome",
+          summary: "Geometric series converges to $S = \\frac{a}{1-r}$ when $|r| < 1$.",
+          details: {
+            theorem: "Geometric Series Convergence",
+            statement: "Because $|r| < 1$, the partial sums converge to $S = \\frac{a}{1-r}$.",
+            hypotheses: ["$|r| < 1$"],
+            decision_rule: "Terminal convergence.",
+            example: "\\sum_{n=0}^\\infty \\left(\\frac{1}{3}\\right)^n = \\frac{1}{1 - 1/3} = \\frac{3}{2}."
+          }
+        },
+        {
+          id: "geom_div",
+          label: "Diverges",
+          shape: "triangle_down",
+          latex: "|r| \\ge 1 \\implies \\text{Div}",
+          category: "Outcome",
+          summary: "Geometric series diverges when $|r| \\ge 1$.",
+          details: {
+            theorem: "Geometric Series Divergence",
+            statement: "If $|r| \\ge 1$, the terms fail to vanish, causing the series to diverge.",
+            hypotheses: ["$|r| \\ge 1$"],
+            decision_rule: "Terminal divergence.",
+            example: "\\sum_{n=1}^\\infty 2^n \\implies r = 2 \\ge 1 \\implies \\text{Divergent}."
+          }
+        },
+
+        {
+          id: "p_series",
+          label: "p-Series",
+          shape: "diamond",
+          latex: "\\sum_{n=1}^{+\\infty} \\frac{1}{n^p}",
+          category: "Series Form",
+          summary: "p-Series $\\sum \\frac{1}{n^p}$. Converges if $p > 1$; diverges if $0 < p \\le 1$.",
+          details: {
+            theorem: "The p-Series Theorem",
+            statement: "For $p > 0$:\n$\\sum_{n=1}^{+\\infty} \\frac{1}{n^p} = \\frac{1}{1^p} + \\frac{1}{2^p} + \\frac{1}{3^p} + \\dots$\n• Converges if $p > 1$.\n• Diverges if $0 < p \\le 1$.",
+            hypotheses: ["Constant real exponent $p$ with index $n$ in denominator."],
+            decision_rule: "Extract exponent $p$. If $p > 1 \\implies$ Converges; if $p \\le 1 \\implies$ Diverges.",
+            example: "\\sum \\frac{1}{n^4} \\implies p = 4 > 1 \\implies \\text{Converges}."
+          }
+        },
+        {
+          id: "p_conv",
+          label: "Converges",
+          shape: "triangle_up",
+          latex: "p > 1 \\implies \\text{Conv}",
+          category: "Outcome",
+          summary: "p-Series converges because $p > 1$.",
+          details: {
+            theorem: "p-Series Convergence",
+            statement: "$p > 1 \\implies \\sum_{n=1}^\\infty \\frac{1}{n^p} < +\\infty$.",
+            hypotheses: ["$p > 1$"],
+            decision_rule: "Terminal convergence.",
+            example: "\\sum \\frac{1}{n^{3/2}} \\text{ converges}."
+          }
+        },
+        {
+          id: "p_div",
+          label: "Diverges",
+          shape: "triangle_down",
+          latex: "0 < p \\le 1 \\implies \\text{Div}",
+          category: "Outcome",
+          summary: "p-Series diverges because $0 < p \\le 1$.",
+          details: {
+            theorem: "p-Series Divergence",
+            statement: "$0 < p \\le 1 \\implies \\sum_{n=1}^\\infty \\frac{1}{n^p} = +\\infty$.",
+            hypotheses: ["$0 < p \\le 1$"],
+            decision_rule: "Terminal divergence.",
+            example: "\\sum \\frac{1}{\\sqrt{n}} \\text{ diverges } (p=1/2)."
+          }
+        },
+
+        {
+          id: "harmonic_series",
+          label: "Harmonic",
+          shape: "triangle_down",
+          latex: "\\sum_{n=1}^{+\\infty} \\frac{1}{n} = \\infty",
+          category: "Series Form",
+          summary: "Harmonic Series $\\sum \\frac{1}{n}$ ($p=1$). Automatically diverges.",
+          details: {
+            theorem: "Harmonic Series Divergence",
+            statement: "$\\sum_{n=1}^{+\\infty} \\frac{1}{n} = 1 + \\frac{1}{2} + \\frac{1}{3} + \\dots = +\\infty$. Even though $\\lim_{n\\to\\infty} \\frac{1}{n} = 0$, the sum diverges.",
+            hypotheses: ["$p = 1$ boundary case."],
+            decision_rule: "Terminal divergence.",
+            example: "\\sum_{n=1}^\\infty \\frac{7}{n} = 7 \\sum \\frac{1}{n} \\implies \\text{Diverges}."
+          }
+        },
+
+        {
+          id: "telescoping_series",
+          label: "Telescoping",
+          shape: "rect",
+          latex: "\\sum (b_n - b_{n+k})",
+          category: "Series Form",
+          summary: "Telescoping series $\\sum (b_n - b_{n+k})$. Partial sum cancels internally.",
+          details: {
+            theorem: "Telescoping Sum Theorem",
+            statement: "Series in difference form: $\\sum_{n=1}^\\infty (b_n - b_{n+k})$. Partial sums collapse: $S_m = \\sum_{j=1}^k b_j - \\sum_{j=1}^k b_{m+j}$. The series converges iff $\\lim_{m\\to\\infty} b_m$ exists as a finite limit.",
+            hypotheses: ["Commonly produced via partial fractions."],
+            decision_rule: "Decompose into partial fractions, expand $S_k$, cancel intermediate terms, take $\\lim_{k\\to\\infty} S_k$.",
+            example: "\\sum_{n=1}^\\infty \\frac{2}{n(n+2)} = \\sum \\left(\\frac{1}{n} - \\frac{1}{n+2}\\right) = 1 + \\frac{1}{2} = \\frac{3}{2}."
+          }
+        },
+        {
+          id: "telescoping_conv",
+          label: "Converges",
+          shape: "triangle_up",
+          latex: "S = \\lim_{k\\to\\infty} S_k",
+          category: "Outcome",
+          summary: "Telescoping series converges to finite sum $S = \\lim S_k$.",
+          details: {
+            theorem: "Telescoping Convergence",
+            statement: "The finite boundary limits yield exact real sum $S$.",
+            hypotheses: ["Boundary limits exist and are finite."],
+            decision_rule: "Terminal convergence.",
+            example: "\\sum_{n=1}^\\infty \\frac{1}{n(n+1)} = 1."
+          }
+        },
+
+        {
+          id: "arith_const_series",
+          label: "Constant / Arith",
+          shape: "triangle_down",
+          latex: "\\sum c, \\; \\sum(dn+c)",
+          category: "Series Form",
+          summary: "Series of non-zero constants or arithmetic terms always diverge.",
+          details: {
+            theorem: "Constant and Arithmetic Divergence",
+            statement: "1. For $c \\ne 0$, $\\sum_{n=1}^\\infty c$ always diverges.\n2. For $d \\ne 0$, $\\sum (dn+c)$ always diverges.",
+            hypotheses: ["Terms do not approach zero."],
+            decision_rule: "Terminal divergence.",
+            example: "\\sum_{n=1}^\\infty (2n+1) = +\\infty."
+          }
+        },
+
+        /* 4. Nonnegative Terms Hub & Leaves */
+        {
+          id: "hub_nonneg",
+          label: "Nonnegative",
+          shape: "circle",
+          latex: "a_n \\ge 0",
+          category: "Category",
+          summary: "Nonnegative terms ($a_n \\ge 0$). Tests: Integral Test, Direct Comparison, Limit Comparison.",
+          details: {
+            theorem: "Series with Nonnegative Terms ($a_n \\ge 0$)",
+            statement: "When $a_n \\ge 0$, partial sums $S_k = \\sum_{n=1}^k a_n$ satisfy $S_{k+1} \\ge S_k$. By the Monotone Convergence Theorem, $\\sum a_n$ converges iff $\\{S_k\\}$ is bounded above.",
+            hypotheses: ["$a_n \\ge 0$ for all $n \\ge k$."],
+            decision_rule: "Select Integral Test, Direct Comparison (DCT), or Limit Comparison (LCT).",
+            example: "\\sum \\frac{1}{n^2+1}, \\quad \\sum \\frac{n}{n^3+5}."
+          }
+        },
+        {
+          id: "integral_test",
+          label: "Integral Test",
+          shape: "diamond",
+          latex: "\\int_n^{+\\infty} a_x \\, dx",
+          category: "Convergence Test",
+          summary: "Integral Test: For continuous, positive, decreasing $f(x)$, evaluate $\\int_n^{+\\infty} a_x \\, dx$.",
+          details: {
+            theorem: "The Cauchy Integral Test",
+            statement: "Let $a_n = f(n)$ where $f(x)$ is continuous, positive-valued ($f(x) > 0$), and decreasing ($f'(x) \\le 0$) on $[n, +\\infty)$. Then $\\sum a_n$ converges $\\iff \\int_n^{+\\infty} a_x \\, dx < +\\infty$.",
+            hypotheses: [
+              "Prerequisites MUST be verified: Continuous, Positive, Decreasing.",
+              "Remainder bound: $\\int_{N+1}^\\infty f(x)\\,dx \\le R_N \\le \\int_N^\\infty f(x)\\,dx$."
+            ],
+            decision_rule: "Integrate $\\int_n^\\infty a_x \\, dx$. If finite $\\implies$ Converges; if infinite $\\implies$ Diverges.",
+            example: "\\sum_{n=2}^\\infty \\frac{1}{n\\ln n} \\implies \\int_2^\\infty \\frac{dx}{x\\ln x} = [\\ln(\\ln x)]_2^\\infty = \\infty \\implies \\text{Diverges}."
+          }
+        },
+        {
+          id: "integral_conv",
+          label: "Converges",
+          shape: "triangle_up",
+          latex: "\\int < \\infty \\implies \\text{Conv}",
+          category: "Outcome",
+          summary: "Improper integral evaluates to finite real number $\\implies$ series converges.",
+          details: {
+            theorem: "Integral Test Convergence",
+            statement: "$\\int_n^\\infty a_x \\, dx < \\infty \\implies \\sum a_n < \\infty$.",
+            hypotheses: ["Finite improper integral."],
+            decision_rule: "Terminal convergence.",
+            example: "\\int_1^\\infty \\frac{1}{x^2}dx = 1 < \\infty \\implies \\sum \\frac{1}{n^2} \\text{ converges}."
+          }
+        },
+        {
+          id: "integral_div",
+          label: "Diverges",
+          shape: "triangle_down",
+          latex: "\\int = \\infty \\implies \\text{Div}",
+          category: "Outcome",
+          summary: "Improper integral diverges to infinity $\\implies$ series diverges.",
+          details: {
+            theorem: "Integral Test Divergence",
+            statement: "$\\int_n^\\infty a_x \\, dx = \\infty \\implies \\sum a_n = \\infty$.",
+            hypotheses: ["Infinite improper integral."],
+            decision_rule: "Terminal divergence.",
+            example: "\\int_1^\\infty \\frac{1}{x}dx = [\\ln x]_1^\\infty = \\infty \\implies \\sum \\frac{1}{n} \\text{ diverges}."
+          }
+        },
+
+        {
+          id: "dct",
+          label: "Direct Comp.",
+          shape: "diamond",
+          latex: "a_n \\le b_n \\lor a_n \\ge b_n",
+          category: "Convergence Test",
+          summary: "Direct Comparison Test: If $a_n \\le b_n$ and $b_n$ converges $\\implies a_n$ converges; if $a_n \\ge b_n$ and $b_n$ diverges $\\implies a_n$ diverges.",
+          details: {
+            theorem: "Direct Comparison Test (DCT)",
+            statement: "Let $a_n, b_n \\ge 0$ for all $n \\ge k$:\n1. If $a_n \\le b_n$ and $\\sum b_n$ converges $\\implies \\sum a_n$ converges.\n2. If $a_n \\ge b_n$ and $\\sum b_n$ diverges $\\implies \\sum a_n$ diverges.",
+            hypotheses: [
+              "Requires valid term-by-term inequality for all $n \\ge k$.",
+              "If the inequality points the wrong way, the test is INCONCLUSIVE."
+            ],
+            decision_rule: "Establish inequality against benchmark $b_n$ (usually p-series or geometric).",
+            example: "\\frac{1}{n^2+5} \\le \\frac{1}{n^2}. \\text{ Since } \\sum \\frac{1}{n^2} \\text{ converges } (p=2), \\sum \\frac{1}{n^2+5} \\text{ converges}."
+          }
+        },
+        {
+          id: "dct_conv",
+          label: "Converges",
+          shape: "triangle_up",
+          latex: "a_n \\le b_n < \\infty",
+          category: "Outcome",
+          summary: "$a_n \\le b_n$ and $\\sum b_n$ converges $\\implies \\sum a_n$ converges.",
+          details: {
+            theorem: "Direct Comparison: Converges",
+            statement: "$a_n \\le b_n$ and $\\sum b_n < \\infty \\implies \\sum a_n < \\infty$.",
+            hypotheses: ["Upper bound is convergent."],
+            decision_rule: "Terminal convergence.",
+            example: "\\sum \\frac{1}{n^3+n} \\le \\sum \\frac{1}{n^3} < \\infty \\implies \\text{Converges}."
+          }
+        },
+        {
+          id: "dct_div",
+          label: "Diverges",
+          shape: "triangle_down",
+          latex: "a_n \\ge b_n = \\infty",
+          category: "Outcome",
+          summary: "$a_n \\ge b_n$ and $\\sum b_n$ diverges $\\implies \\sum a_n$ diverges.",
+          details: {
+            theorem: "Direct Comparison: Diverges",
+            statement: "$a_n \\ge b_n$ and $\\sum b_n = \\infty \\implies \\sum a_n = \\infty$.",
+            hypotheses: ["Lower bound is divergent."],
+            decision_rule: "Terminal divergence.",
+            example: "\\sum \\frac{1}{\\sqrt{n}-1} \\ge \\sum \\frac{1}{\\sqrt{n}} = \\infty \\implies \\text{Diverges}."
+          }
+        },
+
+        {
+          id: "lct",
+          label: "Limit Comp.",
+          shape: "diamond",
+          latex: "\\lim_{n \\to \\infty} \\frac{a_n}{b_n} = L",
+          category: "Convergence Test",
+          summary: "Limit Comparison Test: Evaluate $\\lim_{n \\to \\infty} \\frac{a_n}{b_n} = L$. If $L \\in \\mathbb{R}^+$, both series share the same convergence behavior.",
+          details: {
+            theorem: "Limit Comparison Test (LCT)",
+            statement: "Let $a_n > 0$ and $b_n > 0$. Compute $L = \\lim_{n\\to\\infty} \\frac{a_n}{b_n}$:\n1. If $0 < L < \\infty$ ($L \\in \\mathbb{R}^+$): Both $\\sum a_n$ and $\\sum b_n$ share identical convergence behavior.\n2. If $L = 0$ and $\\sum b_n$ converges $\\implies \\sum a_n$ converges.\n3. If $L = +\\infty$ and $\\sum b_n$ diverges $\\implies \\sum a_n$ diverges.",
+            hypotheses: ["Eliminates messy algebraic inequalities by examining dominant power ratios."],
+            decision_rule: "Form $b_n$ by keeping highest-order powers of numerator and denominator.",
+            example: "\\sum \\frac{n+2}{n^3-4} \\to \\text{compare to } b_n = \\frac{1}{n^2}. \\quad L = 1 \\in \\mathbb{R}^+ \\implies \\text{Converges}."
+          }
+        },
+        {
+          id: "lct_conv",
+          label: "Converges",
+          shape: "triangle_up",
+          latex: "L \\in \\mathbb{R}^+, \\sum b_n < \\infty",
+          category: "Outcome",
+          summary: "$L \\in \\mathbb{R}^+$ and benchmark $\\sum b_n$ converges $\\implies \\sum a_n$ converges.",
+          details: {
+            theorem: "Limit Comparison: Converges",
+            statement: "$0 < L < \\infty$ and $\\sum b_n$ converges $\\implies \\sum a_n$ converges.",
+            hypotheses: ["$L \\in (0, \\infty)$"],
+            decision_rule: "Terminal convergence.",
+            example: "\\sum \\frac{3n+1}{n^3-2} \\sim \\sum \\frac{3}{n^2} < \\infty \\implies \\text{Converges}."
+          }
+        },
+        {
+          id: "lct_div",
+          label: "Diverges",
+          shape: "triangle_down",
+          latex: "L \\in \\mathbb{R}^+, \\sum b_n = \\infty",
+          category: "Outcome",
+          summary: "$L \\in \\mathbb{R}^+$ and benchmark $\\sum b_n$ diverges $\\implies \\sum a_n$ diverges.",
+          details: {
+            theorem: "Limit Comparison: Diverges",
+            statement: "$0 < L < \\infty$ and $\\sum b_n$ diverges $\\implies \\sum a_n$ diverges.",
+            hypotheses: ["$L \\in (0, \\infty)$"],
+            decision_rule: "Terminal divergence.",
+            example: "\\sum \\frac{1}{2n-1} \\sim \\sum \\frac{1}{2n} = \\infty \\implies \\text{Diverges}."
+          }
+        },
+
+        /* 5. Alternating Series Hub & Leaves */
+        {
+          id: "hub_alt",
+          label: "Alternating",
+          shape: "circle",
+          latex: "\\sum (-1)^n b_n",
+          category: "Category",
+          summary: "Alternating series $\\sum (-1)^n b_n$ with $b_n > 0$. Evaluated via the Alternating Series Test.",
+          details: {
+            theorem: "Alternating Series",
+            statement: "Series of form $\\sum (-1)^n b_n$ or $\\sum (-1)^{n-1} b_n$ where $b_n > 0$ for all $n$. Oscillates across zero axis, enabling cancellation.",
+            hypotheses: ["$b_n > 0$."],
+            decision_rule: "Extract positive sequence $b_n$ and test via Leibniz Alternating Series Test.",
+            example: "\\sum_{n=1}^\\infty \\frac{(-1)^{n-1}}{n} = 1 - \\frac{1}{2} + \\frac{1}{3} - \\dots = \\ln 2."
+          }
+        },
+        {
+          id: "ast",
+          label: "Leibniz (AST)",
+          shape: "diamond",
+          latex: "b_{n+1} \\le b_n \\land \\lim b_n = 0",
+          category: "Convergence Test",
+          summary: "Alternating Series Test: Converges if $b_n$ is ultimately decreasing ($b_{n+1} \\le b_n$) and $\\lim_{n \\to \\infty} b_n = 0$.",
+          details: {
+            theorem: "Alternating Series Test (Leibniz)",
+            statement: "For $\\sum (-1)^{n-1} b_n$ with $b_n > 0$, if:\n1. $\\{b_n\\}$ is ultimately decreasing: $b_{n+1} \\le b_n$ for all $n \\ge k$.\n2. $\\lim_{n\\to\\infty} b_n = 0$.\nThen the series CONVERGES.\nError Bound: $|R_n| = |S - S_n| \\le b_{n+1}$.",
+            hypotheses: [
+              "Verify decreasing: check $f'(x) \\le 0$ or $\\frac{b_{n+1}}{b_n} \\le 1$.",
+              "If $\\lim b_n \\ne 0$, series diverges by the Divergence Test."
+            ],
+            decision_rule: "Verify decrease and zero limit. Conclude conditional vs absolute convergence.",
+            example: "\\sum \\frac{(-1)^n}{\\sqrt{n}}: \\quad b_n = \\frac{1}{\\sqrt{n}} \\to 0 \\text{ decreasing} \\implies \\text{Converges}."
+          }
+        },
+        {
+          id: "ast_conv_cond",
+          label: "Cond. Conv.",
+          shape: "triangle_up",
+          latex: "\\text{Conditionally Conv}",
+          category: "Outcome",
+          summary: "Converges via AST cancellation, but $\\sum |a_n|$ diverges $\\implies$ Conditionally Convergent.",
+          details: {
+            theorem: "Alternating Series: Converges",
+            statement: "$\\sum a_n$ converges, but $\\sum |a_n| = +\\infty$. The series converges conditionally.",
+            hypotheses: ["Rearrangement of terms can alter the sum (Riemann Rearrangement)."],
+            decision_rule: "Terminal classification.",
+            example: "\\sum_{n=1}^\\infty \\frac{(-1)^{n-1}}{n} = \\ln 2, \\quad \\sum_{n=1}^\\infty \\frac{1}{n} = \\infty \\implies \\text{Cond. Conv}."
+          }
+        },
+        {
+          id: "ast_div",
+          label: "Diverges",
+          shape: "triangle_down",
+          latex: "\\lim b_n \\ne 0 \\implies \\text{Div}",
+          category: "Outcome",
+          summary: "Terms fail to vanish ($\lim_{n\\to\\infty} b_n \\ne 0$) $\\implies$ diverges by Divergence Test.",
+          details: {
+            theorem: "Alternating Series: Diverges",
+            statement: "If $\\lim_{n\\to\\infty} b_n \\ne 0$, the series oscillates unboundedly and diverges by the Divergence Test.",
+            hypotheses: ["$\\lim b_n \\ne 0$."],
+            decision_rule: "Terminal divergence.",
+            example: "\\sum (-1)^n \\frac{n}{n+1} \\implies \\lim b_n = 1 \\ne 0 \\implies \\text{Diverges}."
+          }
+        },
+
+        /* 6. Absolute vs Conditional (Ratio & Root) */
+        {
+          id: "hub_abs",
+          label: "Ratio / Root",
+          shape: "circle",
+          latex: "\\sum |a_n|",
+          category: "Category",
+          summary: "Ratio and Root tests. Based on absolute values $|a_n|$; ideal for factorials and exponential powers.",
+          details: {
+            theorem: "Ratio & Root Tests (Absolute Convergence)",
+            statement: "If $\\sum |a_n|$ converges, then $\\sum a_n$ converges. Essential for factorials ($n!$) and exponential powers ($c^n$).",
+            hypotheses: ["Permits arbitrary rearrangement of terms."],
+            decision_rule: "Deploy Ratio Test for factorials/products, or Root Test for powers.",
+            example: "\\sum \\frac{(-1)^n}{n^2} \\to \\sum \\frac{1}{n^2} < \\infty \\implies \\text{Abs. Convergent}."
+          }
+        },
+        {
+          id: "ratio_test",
+          label: "Ratio Test",
+          shape: "diamond",
+          latex: "L = \\lim_{n \\to \\infty} \\left| \\frac{a_{n+1}}{a_n} \\right|",
+          category: "Convergence Test",
+          summary: "Ratio Test: Evaluate $L = \\lim_{n \\to \\infty} \\left| \\frac{a_{n+1}}{a_n} \\right|$. Absolutely convergent if $L < 1$; divergent if $L > 1$; inconclusive if $L = 1$.",
+          details: {
+            theorem: "The Ratio Test (d'Alembert)",
+            statement: "For non-zero terms, evaluate $L = \\lim_{n\\to\\infty} \\left|\\frac{a_{n+1}}{a_n}\\right|$:\n1. If $L < 1 \\implies$ Absolutely Convergent.\n2. If $L > 1$ or $L = +\\infty \\implies$ Divergent.\n3. If $L = 1 \\implies$ INCONCLUSIVE (use Integral, Comparison, etc.).",
+            hypotheses: [
+              "Fails ($L = 1$) for all rational fractions and p-series.",
+              "Primary engine for Power Series radius of convergence."
+            ],
+            decision_rule: "Compute quotient limit $L$. Check trichotomy $L < 1$, $L > 1$, $L = 1$.",
+            example: "\\sum \\frac{2^n}{n!} \\implies L = \\lim \\frac{2}{n+1} = 0 < 1 \\implies \\text{Abs. Convergent}."
+          }
+        },
+        {
+          id: "ratio_conv",
+          label: "Abs. Conv.",
+          shape: "triangle_up",
+          latex: "L < 1 \\implies \\text{Abs Conv}",
+          category: "Outcome",
+          summary: "Ratio Test: $L < 1 \\implies$ Absolutely Convergent.",
+          details: {
+            theorem: "Ratio Test: Converges Absolutely",
+            statement: "$L < 1 \\implies$ The series converges absolutely.",
+            hypotheses: ["$L < 1$"],
+            decision_rule: "Terminal convergence.",
+            example: "\\sum \\frac{n}{3^n} \\implies L = 1/3 < 1 \\implies \\text{Converges}."
+          }
+        },
+        {
+          id: "ratio_inconc",
+          label: "Inconclusive",
+          shape: "diamond",
+          latex: "L = 1 \\implies \\text{Inconcl.}",
+          category: "Outcome",
+          summary: "Ratio Test: $L = 1 \\implies$ Inconclusive. Deploy alternative test.",
+          details: {
+            theorem: "Ratio Test: Inconclusive ($L = 1$)",
+            statement: "When $L = 1$, the test fails. Must deploy Integral Test, Comparison Tests, or AST.",
+            hypotheses: ["$L = 1$"],
+            decision_rule: "Reroute to Integral Test or Comparison Test.",
+            example: "\\sum \\frac{1}{n^2} \\to L = 1 \\implies \\text{Use p-series } (p=2>1)."
+          }
+        },
+        {
+          id: "ratio_div",
+          label: "Diverges",
+          shape: "triangle_down",
+          latex: "L > 1 \\implies \\text{Div}",
+          category: "Outcome",
+          summary: "Ratio Test: $L > 1$ or $L = \\infty \\implies$ Divergent.",
+          details: {
+            theorem: "Ratio Test: Diverges",
+            statement: "$L > 1$ or $L = \\infty \\implies$ Diverges.",
+            hypotheses: ["$L > 1$"],
+            decision_rule: "Terminal divergence.",
+            example: "\\sum \\frac{4^n}{n^2} \\implies L = 4 > 1 \\implies \\text{Diverges}."
+          }
+        },
+
+        {
+          id: "root_test",
+          label: "Root Test",
+          shape: "diamond",
+          latex: "L = \\lim_{n \\to \\infty} |a_n|^{1/n}",
+          category: "Convergence Test",
+          summary: "Root Test: Evaluate $L = \\lim_{n \\to \\infty} |a_n|^{1/n}$. Absolutely convergent if $L < 1$; divergent if $L > 1$; inconclusive if $L = 1$.",
+          details: {
+            theorem: "The Root Test (Cauchy)",
+            statement: "Evaluate $L = \\lim_{n\\to\\infty} \\sqrt[n]{|a_n|} = \\lim_{n\\to\\infty} |a_n|^{1/n}$:\n1. If $L < 1 \\implies$ Absolutely Convergent.\n2. If $L > 1$ or $L = +\\infty \\implies$ Divergent.\n3. If $L = 1 \\implies$ INCONCLUSIVE.",
+            hypotheses: ["Specially suited for $(g(n))^n$ expressions."],
+            decision_rule: "Take nth root, evaluate limit $L$.",
+            example: "\\sum \\left(\\frac{2n+3}{3n+2}\\right)^n \\implies L = \\frac{2}{3} < 1 \\implies \\text{Abs. Convergent}."
+          }
+        },
+        {
+          id: "root_conv",
+          label: "Abs. Conv.",
+          shape: "triangle_up",
+          latex: "L < 1 \\implies \\text{Abs Conv}",
+          category: "Outcome",
+          summary: "Root Test: $L < 1 \\implies$ Absolutely Convergent.",
+          details: {
+            theorem: "Root Test: Converges Absolutely",
+            statement: "$L < 1 \\implies$ Absolutely convergent.",
+            hypotheses: ["$L < 1$"],
+            decision_rule: "Terminal convergence.",
+            example: "\\sum \\left(\\frac{n}{2n+1}\\right)^n \\implies L = 1/2 < 1 \\implies \\text{Convergent}."
+          }
+        },
+        {
+          id: "root_inconc",
+          label: "Inconclusive",
+          shape: "diamond",
+          latex: "L = 1 \\implies \\text{Inconcl.}",
+          category: "Outcome",
+          summary: "Root Test: $L = 1 \\implies$ Inconclusive. Deploy alternative test.",
+          details: {
+            theorem: "Root Test: Inconclusive ($L = 1$)",
+            statement: "$L = 1 \\implies$ Inconclusive.",
+            hypotheses: ["$L = 1$"],
+            decision_rule: "Deploy alternative test.",
+            example: "\\sum \\left(1 + \\frac{1}{n}\\right)^n \\to \\lim a_n = e \\ne 0 \\implies \\text{Divergence Test}."
+          }
+        },
+        {
+          id: "root_div",
+          label: "Diverges",
+          shape: "triangle_down",
+          latex: "L > 1 \\implies \\text{Div}",
+          category: "Outcome",
+          summary: "Root Test: $L > 1$ or $L = \\infty \\implies$ Divergent.",
+          details: {
+            theorem: "Root Test: Diverges",
+            statement: "$L > 1$ or $L = \\infty \\implies$ Divergent.",
+            hypotheses: ["$L > 1$"],
+            decision_rule: "Terminal divergence.",
+            example: "\\sum \\left(\\frac{4n-1}{3n+5}\\right)^n \\implies L = 4/3 > 1 \\implies \\text{Divergent}."
+          }
+        },
+
+        /* 7. Power Series & Taylor/Maclaurin */
+        {
+          id: "hub_power",
+          label: "Power Series",
+          shape: "rect",
+          latex: "\\sum_{n=0}^{+\\infty} c_n(x-a)^n",
+          category: "Category",
+          summary: "Power series centered at $x=a$. Evaluated for Radius and Interval of Convergence.",
+          details: {
+            theorem: "Power Series",
+            statement: "Series with variable $x$: $\\sum_{n=0}^\\infty c_n(x-a)^n$. Exactly ONE holds:\n1. Converges ONLY at $x=a \\implies R=0, \\text{IoC}=\\{a\\}$.\n2. Converges absolutely on $\\mathbb{R} \\implies R=\\infty, \\text{IoC}=(-\\infty, +\\infty)$.\n3. Converges if $|x-a| < R$ and diverges if $|x-a| > R$. Endpoints $x = a \\pm R$ must be tested individually!",
+            hypotheses: ["IoC is never empty because it converges at center $x=a$."],
+            decision_rule: "Apply Ratio Test to compute radius $R$, then test endpoints separately.",
+            example: "\\sum \\frac{x^n}{n} \\implies R = 1. \\text{ Endpoints: } x=1 \\text{ div, } x=-1 \\text{ conv} \\implies \\text{IoC} = [-1, 1)."
+          }
+        },
+        {
+          id: "ioc_roc",
+          label: "Radius & IoC",
+          shape: "diamond",
+          latex: "R = \\lim_{n\\to\\infty} \\left|\\frac{c_n}{c_{n+1}}\\right|",
+          category: "Convergence Test",
+          summary: "Radius of Convergence $R$ extraction via Ratio Test and endpoint validation.",
+          details: {
+            theorem: "Radius & Interval of Convergence",
+            statement: "Compute $R = \\lim \\left|\\frac{c_n}{c_{n+1}}\\right|$. Test endpoints $x = a-R$ and $x = a+R$ with standard series tests.",
+            hypotheses: ["IoC can be $(a-R, a+R)$, $[a-R, a+R)$, $(a-R, a+R]$, or $[a-R, a+R]$."],
+            decision_rule: "Calculate $R$, substitute endpoints, determine bracket type `[` or `(`.",
+            example: "\\sum \\frac{(x-3)^n}{n^2} \\implies R = 1, \\text{ endpoints conv} \\implies \\text{IoC} = [2, 4]."
+          }
+        },
+        {
+          id: "power_ioc",
+          label: "Convergent",
+          shape: "triangle_up",
+          latex: "x \\in \\text{IoC} \\subseteq \\mathbb{R}",
+          category: "Outcome",
+          summary: "Power series converges for all $x$ within its Interval of Convergence.",
+          details: {
+            theorem: "Interval of Convergence Determined",
+            statement: "The set of all real $x$ for which the power series converges.",
+            hypotheses: ["Endpoint behavior verified."],
+            decision_rule: "Terminal conclusion.",
+            example: "\\text{IoC} = [-1, 1)."
+          }
+        },
+
+        {
+          id: "taylor_series",
+          label: "Taylor Series",
+          shape: "rect",
+          latex: "\\sum_{n=0}^{+\\infty} \\frac{f^{(n)}(a)}{n!}(x-a)^n",
+          category: "Series Form",
+          summary: "Taylor & Maclaurin series expansion of infinitely differentiable function $f(x)$.",
+          details: {
+            theorem: "Taylor and Maclaurin Series",
+            statement: "If $f(x)$ is infinitely differentiable at $a$, its Taylor series is $\\sum_{n=0}^\\infty \\frac{f^{(n)}(a)}{n!}(x-a)^n$. When $a=0$, it is the Maclaurin series.\nCanonical Bases:\n• $e^x = \\sum \\frac{x^n}{n!} \\; (R=\\infty)$\n• $\\sin x = \\sum \\frac{(-1)^n x^{2n+1}}{(2n+1)!} \\; (R=\\infty)$\n• $\\cos x = \\sum \\frac{(-1)^n x^{2n}}{(2n)!} \\; (R=\\infty)$\n• $\\frac{1}{1-x} = \\sum x^n \\; (R=1)$\n• $\\tan^{-1} x = \\sum \\frac{(-1)^n x^{2n+1}}{2n+1} \\; (R=1)$",
+            hypotheses: ["$f(x)$ has continuous derivatives of all orders."],
+            decision_rule: "Compute derivatives $f^{(n)}(a)$, form coefficients $c_n = \\frac{f^{(n)}(a)}{n!}$.",
+            example: "P_2(x) \\text{ for } \\cos x \\text{ at } 0 = 1 - \\frac{x^2}{2}."
+          }
+        },
+        {
+          id: "taylor_analytic",
+          label: "Analytic",
+          shape: "triangle_up",
+          latex: "f(x) = \\lim_{k\\to\\infty} P_k(x)",
+          category: "Outcome",
+          summary: "Taylor series converges analytically to function $f(x)$ on its interval of validity.",
+          details: {
+            theorem: "Taylor Series Representation",
+            statement: "The series equals $f(x)$ on its interval of validity.",
+            hypotheses: ["Remainder $R_n(x) \\to 0$."],
+            decision_rule: "Terminal conclusion.",
+            example: "e^x = 1 + x + \\frac{x^2}{2!} + \\dots"
+          }
+        }
+      ],
+
+      edges: [
+        /* 0 -> 1 */
+        { from: "root", to: "divergence_test", condition: "\\text{Evaluate } \\lim a_n" },
+        { from: "divergence_test", to: "term_div_0", condition: "L \\ne 0 \\lor \\text{DNE}" },
+        { from: "divergence_test", to: "structural_gate", condition: "L = 0" },
+
+        /* 2 -> Hubs */
+        { from: "structural_gate", to: "hub_special", condition: "\\text{Special Forms}" },
+        { from: "structural_gate", to: "hub_nonneg", condition: "a_n \\ge 0" },
+        { from: "structural_gate", to: "hub_alt", condition: "(-1)^n b_n" },
+        { from: "structural_gate", to: "hub_abs", condition: "\\text{Factorial/Powers}" },
+        { from: "structural_gate", to: "hub_power", condition: "\\text{Variable } x" },
+
+        /* Special Forms Tree */
+        { from: "hub_special", to: "geom_series", condition: "a r^{n-1}" },
+        { from: "hub_special", to: "p_series", condition: "1/n^p" },
+        { from: "hub_special", to: "harmonic_series", condition: "1/n" },
+        { from: "hub_special", to: "telescoping_series", condition: "b_n - b_{n+k}" },
+        { from: "hub_special", to: "arith_const_series", condition: "c, dn+c" },
+
+        { from: "geom_series", to: "geom_conv", condition: "|r| < 1" },
+        { from: "geom_series", to: "geom_div", condition: "|r| \\ge 1" },
+
+        { from: "p_series", to: "p_conv", condition: "p > 1" },
+        { from: "p_series", to: "p_div", condition: "0 < p \\le 1" },
+
+        { from: "telescoping_series", to: "telescoping_conv", condition: "\\lim S_k < \\infty" },
+
+        /* Nonnegative Terms Tree */
+        { from: "hub_nonneg", to: "integral_test", condition: "\\text{Integrable } f(x)" },
+        { from: "hub_nonneg", to: "dct", condition: "a_n \\lessgtr b_n" },
+        { from: "hub_nonneg", to: "lct", condition: "\\lim \\frac{a_n}{b_n}" },
+
+        { from: "integral_test", to: "integral_conv", condition: "\\int < \\infty" },
+        { from: "integral_test", to: "integral_div", condition: "\\int = \\infty" },
+
+        { from: "dct", to: "dct_conv", condition: "a_n \\le b_n < \\infty" },
+        { from: "dct", to: "dct_div", condition: "a_n \\ge b_n = \\infty" },
+
+        { from: "lct", to: "lct_conv", condition: "\\sum b_n < \\infty" },
+        { from: "lct", to: "lct_div", condition: "\\sum b_n = \\infty" },
+
+        /* Alternating Tree */
+        { from: "hub_alt", to: "ast", condition: "\\text{Leibniz Conditions}" },
+        { from: "ast", to: "ast_conv_cond", condition: "b_n \\downarrow 0" },
+        { from: "ast", to: "ast_div", condition: "\\lim b_n \\ne 0" },
+        { from: "ast", to: "hub_abs", condition: "\\text{Check } \\sum |a_n|" },
+
+        /* Ratio & Root Tree */
+        { from: "hub_abs", to: "ratio_test", condition: "n!, c^n" },
+        { from: "hub_abs", to: "root_test", condition: "(u_n)^n" },
+
+        { from: "ratio_test", to: "ratio_conv", condition: "L < 1" },
+        { from: "ratio_test", to: "ratio_inconc", condition: "L = 1" },
+        { from: "ratio_test", to: "ratio_div", condition: "L > 1" },
+
+        { from: "root_test", to: "root_conv", condition: "L < 1" },
+        { from: "root_test", to: "root_inconc", condition: "L = 1" },
+        { from: "root_test", to: "root_div", condition: "L > 1" },
+
+        /* Power Series Tree */
+        { from: "hub_power", to: "ioc_roc", condition: "\\text{Find Radius } R" },
+        { from: "hub_power", to: "taylor_series", condition: "f^{(n)}(a)/n!" },
+        { from: "ioc_roc", to: "power_ioc", condition: "\\text{Endpoints Checked}" },
+        { from: "taylor_series", to: "taylor_analytic", condition: "R_n \\to 0" }
+      ]
+    };
+
+    /* ==========================================================================
+       NON-OVERLAPPING GEOMETRIC SPATIAL LAYOUT COORDINATES
+       Strictly calculated to guarantee zero node overlap and zero crossing lines!
+       ========================================================================== */
+
+    const TREE_COORDS = {
+      /* Origin & Divergence Test */
+      root:                 { x: 2070, y: 70 },
+      divergence_test:      { x: 2070, y: 190 },
+      term_div_0:           { x: 2340, y: 190 },
+      structural_gate:      { x: 2070, y: 330 },
+
+      /* Tier 3: The 5 Major Category Hubs */
+      hub_special:          { x: 580,  y: 470 },
+      hub_nonneg:           { x: 1530, y: 470 },
+      hub_alt:              { x: 2120, y: 470 },
+      hub_abs:              { x: 2710, y: 470 },
+      hub_power:            { x: 3410, y: 470 },
+
+      /* Branch 1: Special Forms */
+      geom_series:          { x: 160,  y: 630 },
+      geom_conv:            { x: 90,   y: 790 },
+      geom_div:             { x: 230,  y: 790 },
+
+      p_series:             { x: 450,  y: 630 },
+      p_conv:               { x: 380,  y: 790 },
+      p_div:                { x: 520,  y: 790 },
+
+      harmonic_series:      { x: 670,  y: 630 },
+
+      telescoping_series:   { x: 840,  y: 630 },
+      telescoping_conv:     { x: 840,  y: 790 },
+
+      arith_const_series:   { x: 1010, y: 630 },
+
+      /* Branch 2: Nonnegative Terms */
+      integral_test:        { x: 1270, y: 630 },
+      integral_conv:        { x: 1200, y: 790 },
+      integral_div:         { x: 1340, y: 790 },
+
+      dct:                  { x: 1530, y: 630 },
+      dct_conv:             { x: 1460, y: 790 },
+      dct_div:              { x: 1600, y: 790 },
+
+      lct:                  { x: 1790, y: 630 },
+      lct_conv:             { x: 1705, y: 790 },
+      lct_div:              { x: 1875, y: 790 },
+
+      /* Branch 3: Alternating Series */
+      ast:                  { x: 2120, y: 630 },
+      ast_conv_cond:        { x: 2035, y: 790 },
+      ast_div:              { x: 2205, y: 790 },
+
+      /* Branch 4: Ratio & Root Tests */
+      ratio_test:           { x: 2500, y: 630 },
+      ratio_conv:           { x: 2360, y: 790 },
+      ratio_inconc:         { x: 2500, y: 790 },
+      ratio_div:            { x: 2640, y: 790 },
+
+      root_test:            { x: 2920, y: 630 },
+      root_conv:            { x: 2780, y: 790 },
+      root_inconc:          { x: 2920, y: 790 },
+      root_div:             { x: 3060, y: 790 },
+
+      /* Branch 5: Power Series & Analytic */
+      ioc_roc:              { x: 3300, y: 630 },
+      power_ioc:            { x: 3300, y: 790 },
+
+      taylor_series:        { x: 3520, y: 630 },
+      taylor_analytic:      { x: 3520, y: 790 }
+    };
+
+    /* Radial Phase-Space Layout (Concentric, non-overlapping with staggered radial shells) */
+    const RADIAL_COORDS = (() => {
+      const cx = 1300, cy = 800;
+
+      function pol(r, deg) {
+        const rad = deg * Math.PI / 180;
+        return { x: Math.round(cx + r * Math.cos(rad)), y: Math.round(cy + r * Math.sin(rad)) };
+      }
+
+      return {
+        root:                 { x: cx, y: cy },
+        divergence_test:      pol(180, -90),
+        term_div_0:           pol(250, -45),
+        structural_gate:      pol(340, -90),
+
+        hub_special:          pol(520, 210),
+        hub_nonneg:           pol(520, 145),
+        hub_alt:              pol(520, 90),
+        hub_abs:              pol(520, 35),
+        hub_power:            pol(520, -25),
+
+        geom_series:          pol(720, 225),
+        geom_conv:            pol(900, 222),
+        geom_div:             pol(1040, 230),
+
+        p_series:             pol(720, 205),
+        p_conv:               pol(900, 202),
+        p_div:                pol(1040, 210),
+
+        harmonic_series:      pol(720, 185),
+
+        telescoping_series:   pol(720, 168),
+        telescoping_conv:     pol(900, 168),
+
+        arith_const_series:   pol(720, 150),
+
+        integral_test:        pol(720, 135),
+        integral_conv:        pol(900, 131),
+        integral_div:         pol(1040, 139),
+
+        dct:                  pol(720, 118),
+        dct_conv:             pol(900, 114),
+        dct_div:              pol(1040, 122),
+
+        lct:                  pol(720, 100),
+        lct_conv:             pol(900, 96),
+        lct_div:              pol(1040, 104),
+
+        ast:                  pol(720, 82),
+        ast_conv_cond:        pol(900, 78),
+        ast_div:              pol(1040, 86),
+
+        ratio_test:           pol(720, 48),
+        ratio_conv:           pol(900, 42),
+        ratio_inconc:         pol(1040, 50),
+        ratio_div:            pol(900, 58),
+
+        root_test:            pol(720, 22),
+        root_conv:            pol(900, 15),
+        root_inconc:          pol(1040, 23),
+        root_div:             pol(900, 31),
+
+        ioc_roc:              pol(720, -10),
+        power_ioc:            pol(900, -10),
+
+        taylor_series:        pol(720, -35),
+        taylor_analytic:      pol(900, -35)
+      };
+    })();
+
+    let currentLayout = "tree";
+    let splineMode = "asymptotic";
+    let selectedNodeId = null;
+    let nodeCoordinates = {};
+
+    function updateCoordinates() {
+      const source = currentLayout === "tree" ? TREE_COORDS : RADIAL_COORDS;
+      nodeCoordinates = {};
+      GRAPH_DATA.nodes.forEach(n => {
+        nodeCoordinates[n.id] = { ...source[n.id] };
+      });
+    }
+    updateCoordinates();
+
+    /* ==========================================================================
+       D3 RENDERING ENGINE
+       ========================================================================== */
+
+    const svg = d3.select("#viz-svg");
+    const graphLayer = d3.select("#graph-layer");
+    const edgesLayer = d3.select("#edges-layer");
+    const edgeLabelsLayer = d3.select("#edge-labels-layer");
+    const nodesLayer = d3.select("#nodes-layer");
+    const gridLayer = d3.select("#grid-layer");
+
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    // Zoom setup
+    const zoomBehavior = d3.zoom()
+      .scaleExtent([0.2, 3.5])
+      .on("zoom", (event) => {
+        graphLayer.attr("transform", event.transform);
+        gridLayer.attr("transform", event.transform);
+      });
+
+    svg.call(zoomBehavior);
+
+    // Initial Zoom Transform: Center on root
+    const initialTransform = d3.zoomIdentity.translate(width / 2 - 2070 * 0.52, 30).scale(0.52);
+    svg.call(zoomBehavior.transform, initialTransform);
+
+    // Academic Grid
+    function renderGrid() {
+      gridLayer.selectAll("*").remove();
+      const gridSize = 100;
+      const minX = -1000, maxX = 5000, minY = -1000, maxY = 3500;
+
+      for (let x = minX; x <= maxX; x += gridSize) {
+        gridLayer.append("line")
+          .attr("class", "grid-lines")
+          .attr("x1", x).attr("y1", minY)
+          .attr("x2", x).attr("y2", maxY);
+      }
+      for (let y = minY; y <= maxY; y += gridSize) {
+        gridLayer.append("line")
+          .attr("class", "grid-lines")
+          .attr("x1", minX).attr("y1", y)
+          .attr("x2", maxX).attr("y2", y);
+      }
+
+      gridLayer.append("line")
+        .attr("class", "axis-line")
+        .attr("x1", 2070).attr("y1", minY)
+        .attr("x2", 2070).attr("y2", maxY);
+      gridLayer.append("line")
+        .attr("class", "axis-line")
+        .attr("x1", minX).attr("y1", 330)
+        .attr("x2", maxX).attr("y2", 330);
+    }
+    renderGrid();
+
+    // Spline path generator
+    function generatePath(s, t) {
+      if (splineMode === "orthogonal") {
+        const midY = s.y + (t.y - s.y) * 0.5;
+        return `M ${s.x} ${s.y} L ${s.x} ${midY} L ${t.x} ${midY} L ${t.x} ${t.y}`;
+      } else {
+        const dx = t.x - s.x;
+        const dy = t.y - s.y;
+        const cx1 = s.x + dx * 0.05;
+        const cy1 = s.y + dy * 0.55;
+        const cx2 = t.x - dx * 0.05;
+        const cy2 = t.y - dy * 0.45;
+        return `M ${s.x} ${s.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${t.x} ${t.y}`;
+      }
+    }
+
+    // Render Edges & Condition Labels
+    function renderEdges() {
+      const edges = edgesLayer.selectAll(".edge-path")
+        .data(GRAPH_DATA.edges, d => `${d.from}->${d.to}`);
+
+      edges.enter()
+        .append("path")
+        .attr("class", "edge-path")
+        .attr("marker-end", "url(#arrow-academic)")
+        .merge(edges)
+        .transition().duration(600).ease(d3.easeCubicInOut)
+        .attr("d", d => {
+          const s = nodeCoordinates[d.from];
+          const t = nodeCoordinates[d.to];
+          return generatePath(s, t);
+        });
+
+      edges.exit().remove();
+
+      // HTML Edge Labels via foreignObject with precise centering to avoid clipping
+      const foWidth = 140;
+      const foHeight = 28;
+
+      const labels = edgeLabelsLayer.selectAll(".edge-label-fo")
+        .data(GRAPH_DATA.edges, d => `${d.from}->${d.to}`);
+
+      const labelEnter = labels.enter()
+        .append("foreignObject")
+        .attr("class", "edge-label-fo")
+        .attr("width", foWidth)
+        .attr("height", foHeight)
+        .on("mouseenter", (event, d) => showEdgeTooltip(event, d))
+        .on("mouseleave", () => hideTooltip());
+
+      labelEnter.append("xhtml:div")
+        .attr("class", "edge-label-wrapper")
+        .html(d => `<span class="edge-badge">$${d.condition}$</span>`);
+
+      const labelMerge = labelEnter.merge(labels);
+
+      // Calculate collision-free staggered edge label coordinates
+      function getEdgeLabelCoordinates(d, nodeCoords) {
+        const s = nodeCoords[d.from];
+        const t = nodeCoords[d.to];
+        if (!s || !t) return { x: 0, y: 0 };
+
+        const siblings = GRAPH_DATA.edges.filter(e => e.from === d.from);
+        let param = 0.50;
+
+        if (siblings.length === 2) {
+          const sorted = [...siblings].sort((a, b) => nodeCoords[a.to].x - nodeCoords[b.to].x);
+          const idx = sorted.findIndex(e => e.to === d.to);
+          param = idx === 0 ? 0.38 : 0.62;
+        } else if (siblings.length === 3) {
+          const sorted = [...siblings].sort((a, b) => nodeCoords[a.to].x - nodeCoords[b.to].x);
+          const idx = sorted.findIndex(e => e.to === d.to);
+          param = idx === 0 ? 0.35 : (idx === 1 ? 0.50 : 0.65);
+        }
+
+        let lx = s.x + (t.x - s.x) * param;
+        let ly = s.y + (t.y - s.y) * param;
+
+        if (splineMode === "orthogonal") {
+          ly = s.y + (t.y - s.y) * param;
+        }
+
+        return { x: lx, y: ly };
+      }
+
+      labelMerge.transition().duration(600).ease(d3.easeCubicInOut)
+        .attr("x", d => {
+          const pos = getEdgeLabelCoordinates(d, nodeCoordinates);
+          return pos.x - foWidth / 2;
+        })
+        .attr("y", d => {
+          const pos = getEdgeLabelCoordinates(d, nodeCoordinates);
+          return pos.y - foHeight / 2;
+        });
+
+      labels.exit().remove();
+    }
+
+    // Render Geometric Nodes with Strict Text Boundaries
+    function renderNodes() {
+      const nodes = nodesLayer.selectAll(".node-group")
+        .data(GRAPH_DATA.nodes, d => d.id);
+
+      const nodeEnter = nodes.enter()
+        .append("g")
+        .attr("class", "node-group")
+        .attr("id", d => `node-${d.id}`)
+        .on("mouseenter", (event, d) => handleNodeMouseEnter(event, d))
+        .on("mouseleave", () => handleNodeMouseLeave())
+        .on("click", (event, d) => handleNodeClick(event, d));
+
+      nodeEnter.each(function(d) {
+        const g = d3.select(this);
+
+        // 1. CIRCLE NODES (Origin & Category Hubs)
+        if (d.shape === "circle") {
+          const isOrigin = (d.id === "root" || d.id === "structural_gate");
+          const r = isOrigin ? 44 : 54;
+          
+          g.append("circle")
+            .attr("class", "node-shape")
+            .attr("r", r);
+
+          const fo = g.append("foreignObject")
+            .attr("class", "node-fo")
+            .attr("x", -r)
+            .attr("y", -24)
+            .attr("width", r * 2)
+            .attr("height", 48);
+
+          const mathContent = d.label.startsWith("\\") ? `$${d.label}$` : d.label;
+
+          fo.append("xhtml:div")
+            .attr("class", "node-body circle")
+            .html(`
+              <div class="node-title">${mathContent}</div>
+            `);
+
+        // 2. DIAMOND NODES (Decision Tests)
+        } else if (d.shape === "diamond") {
+          const rx = 85;
+          const ry = 42;
+
+          g.append("polygon")
+            .attr("class", "node-shape")
+            .attr("points", `0,${-ry} ${rx},0 0,${ry} ${-rx},0`);
+
+          // Inscribed text container centered in diamond
+          const fo = g.append("foreignObject")
+            .attr("class", "node-fo")
+            .attr("x", -60)
+            .attr("y", -20)
+            .attr("width", 120)
+            .attr("height", 40);
+
+          fo.append("xhtml:div")
+            .attr("class", "node-body diamond")
+            .html(`
+              <div class="node-title">${d.label}</div>
+            `);
+
+        // 3. UPWARD TRIANGLE NODES (Convergence Terminals)
+        } else if (d.shape === "triangle_up") {
+          g.append("polygon")
+            .attr("class", "node-shape")
+            .attr("points", `0,-36 62,30 -62,30`);
+
+          // Text placed in the wide lower half of triangle
+          const fo = g.append("foreignObject")
+            .attr("class", "node-fo")
+            .attr("x", -50)
+            .attr("y", -2)
+            .attr("width", 100)
+            .attr("height", 30);
+
+          fo.append("xhtml:div")
+            .attr("class", "node-body triangle-up")
+            .html(`
+              <div class="node-terminal-text">${d.label}</div>
+            `);
+
+        // 4. DOWNWARD TRIANGLE NODES (Divergence Terminals)
+        } else if (d.shape === "triangle_down") {
+          g.append("polygon")
+            .attr("class", "node-shape")
+            .attr("points", `-62,-30 62,-30 0,36`);
+
+          // Text placed in the wide upper half of triangle
+          const fo = g.append("foreignObject")
+            .attr("class", "node-fo")
+            .attr("x", -50)
+            .attr("y", -26)
+            .attr("width", 100)
+            .attr("height", 30);
+
+          fo.append("xhtml:div")
+            .attr("class", "node-body triangle-down")
+            .html(`
+              <div class="node-terminal-text">${d.label}</div>
+            `);
+
+        // 5. CARTOUCHE RECTANGLES (Special Forms & Expansions)
+        } else {
+          const w = 154;
+          const h = 56;
+
+          g.append("rect")
+            .attr("class", "node-shape")
+            .attr("x", -w / 2)
+            .attr("y", -h / 2)
+            .attr("width", w)
+            .attr("height", h);
+
+          const fo = g.append("foreignObject")
+            .attr("class", "node-fo")
+            .attr("x", -w / 2 + 4)
+            .attr("y", -h / 2 + 4)
+            .attr("width", w - 8)
+            .attr("height", h - 8);
+
+          fo.append("xhtml:div")
+            .attr("class", "node-body cartouche")
+            .html(`
+              <div class="node-title">${d.label}</div>
+            `);
+        }
+      });
+
+      const nodeMerge = nodeEnter.merge(nodes);
+
+      nodeMerge.transition().duration(600).ease(d3.easeCubicInOut)
+        .attr("transform", d => `translate(${nodeCoordinates[d.id].x}, ${nodeCoordinates[d.id].y})`);
+
+      nodes.exit().remove();
+    }
+
+    function refreshGraph() {
+      updateCoordinates();
+      renderEdges();
+      renderNodes();
+      setTimeout(renderKaTeX, 60);
+    }
+
+    /* ==========================================================================
+       KATEX RENDERING ENGINE
+       ========================================================================== */
+
+    function renderKaTeX(targetElement) {
+      const root = targetElement || document.body;
+      if (window.renderMathInElement) {
+        renderMathInElement(root, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+            { left: "\\[", right: "\\]", display: true },
+            { left: "\\(", right: "\\)", display: false }
+          ],
+          throwOnError: false,
+          errorColor: "#000000"
+        });
+      }
+    }
+
+    // Trigger initial render
+    window.addEventListener("DOMContentLoaded", () => {
+      refreshGraph();
+      renderKaTeX();
+      setTimeout(renderKaTeX, 300);
+      setTimeout(renderKaTeX, 900);
+    });
+
+    /* ==========================================================================
+       INTERACTION: TOOLTIP & THEOREM DETAILS PANEL
+       With Ancestor Lineage Highlighting
+       ========================================================================== */
+
+    const tooltip = document.getElementById("math-tooltip");
+    const tooltipPath = document.getElementById("tooltip-path");
+    const detailsPanel = document.getElementById("details-panel");
+    const detailsBody = document.getElementById("details-body");
+    const detailsTitle = document.getElementById("details-title");
+    const detailsIndicator = document.getElementById("details-indicator");
+
+    function getNodeTypeBadge(d) {
+      if (d.id === "root") return "START";
+      if (d.shape === "diamond") return "TEST";
+      if (d.shape === "rect") return "SERIES FORM";
+      if (d.shape === "triangle" || d.shape === "invtriangle") return "OUTCOME";
+      return "CATEGORY";
+    }
+
+    // Compute all preceding ancestor nodes and edges leading to targetId
+    function getPrecedingLineage(targetId) {
+      const nodeIds = new Set([targetId]);
+      const edgeKeys = new Set();
+      const queue = [targetId];
+
+      while (queue.length > 0) {
+        const curr = queue.shift();
+        GRAPH_DATA.edges.forEach(e => {
+          if (e.to === curr) {
+            edgeKeys.add(`${e.from}->${e.to}`);
+            if (!nodeIds.has(e.from)) {
+              nodeIds.add(e.from);
+              queue.push(e.from);
+            }
+          }
+        });
+      }
+
+      return { nodeIds, edgeKeys };
+    }
+
+    // Get clean deductive path names from root to targetId using BFS
+    function getDerivationPath(targetId) {
+      const { nodeIds } = getPrecedingLineage(targetId);
+      const queue = [['root']];
+      const visited = new Set(['root']);
+
+      while (queue.length > 0) {
+        const path = queue.shift();
+        const curr = path[path.length - 1];
+        if (curr === targetId) {
+          return path.map(id => {
+            const n = GRAPH_DATA.nodes.find(node => node.id === id);
+            return n ? (n.label.includes('\\') ? `$${n.label}$` : n.label) : id;
+          });
+        }
+        const nextEdges = GRAPH_DATA.edges.filter(e => e.from === curr && nodeIds.has(e.to));
+        for (const e of nextEdges) {
+          if (!visited.has(e.to)) {
+            visited.add(e.to);
+            queue.push([...path, e.to]);
+          }
+        }
+      }
+      return [];
+    }
+
+    function handleNodeMouseEnter(event, d) {
+      const isOutcome = d.category === "Outcome" || d.shape === "triangle" || d.shape === "invtriangle";
+      
+      // Calculate ancestral lineage (how did we reach this node/outcome)
+      const { nodeIds, edgeKeys } = getPrecedingLineage(d.id);
+
+      // If not a terminal outcome, also illuminate direct outgoing edges and target nodes
+      if (!isOutcome) {
+        GRAPH_DATA.edges.forEach(e => {
+          if (e.from === d.id) {
+            edgeKeys.add(`${e.from}->${e.to}`);
+            nodeIds.add(e.to);
+          }
+        });
+      }
+
+      // Edges: highlight those in the lineage, dim all other paths
+      edgesLayer.selectAll(".edge-path")
+        .classed("highlighted", e => edgeKeys.has(`${e.from}->${e.to}`))
+        .classed("dimmed", e => !edgeKeys.has(`${e.from}->${e.to}`));
+
+      // Edge labels: highlight badges on the lineage path
+      edgeLabelsLayer.selectAll(".edge-label-group")
+        .classed("highlighted", e => edgeKeys.has(`${e.from}->${e.to}`))
+        .classed("dimmed", e => !edgeKeys.has(`${e.from}->${e.to}`));
+
+      // Nodes: highlight all preceding terms, mark hovered node, dim unrelated nodes
+      nodesLayer.selectAll(".node-group")
+        .classed("path-highlighted", n => nodeIds.has(n.id) && n.id !== d.id)
+        .classed("hovered-target", n => n.id === d.id)
+        .classed("dimmed", n => !nodeIds.has(n.id));
+
+      // Tooltip content
+      document.getElementById("tooltip-id").innerText = getNodeTypeBadge(d);
+      document.getElementById("tooltip-type").innerText = d.details.theorem ? "THEOREM" : "STEP";
+      document.getElementById("tooltip-title").innerText = d.details.theorem || d.label;
+      document.getElementById("tooltip-formula").innerHTML = `$$${d.latex}$$`;
+      document.getElementById("tooltip-condition").innerHTML = d.summary;
+
+      // Show deductive path in tooltip when available
+      if (tooltipPath) {
+        const pathSteps = getDerivationPath(d.id);
+        if (pathSteps.length > 1) {
+          tooltipPath.style.display = "block";
+          tooltipPath.innerHTML = `<strong>Deductive Path:</strong> ${pathSteps.join(" &rarr; ")}`;
+        } else {
+          tooltipPath.style.display = "none";
+        }
+      }
+
+      tooltip.style.display = "block";
+      positionTooltip(event);
+      renderKaTeX(tooltip);
+    }
+
+    function handleNodeMouseLeave() {
+      edgesLayer.selectAll(".edge-path").classed("highlighted", false).classed("dimmed", false);
+      edgeLabelsLayer.selectAll(".edge-label-group").classed("highlighted", false).classed("dimmed", false);
+      nodesLayer.selectAll(".node-group").classed("path-highlighted", false).classed("hovered-target", false).classed("dimmed", false);
+      tooltip.style.display = "none";
+    }
+
+    function positionTooltip(event) {
+      let x = event.clientX + 16;
+      let y = event.clientY + 16;
+      const rect = tooltip.getBoundingClientRect();
+      if (x + rect.width > window.innerWidth - 10) x = event.clientX - rect.width - 16;
+      if (y + rect.height > window.innerHeight - 10) y = event.clientY - rect.height - 16;
+      tooltip.style.left = `${x}px`;
+      tooltip.style.top = `${y}px`;
+    }
+
+    window.addEventListener("mousemove", (e) => {
+      if (tooltip.style.display === "block") positionTooltip(e);
+    });
+
+    function showEdgeTooltip(event, d) {
+      const sourceNode = GRAPH_DATA.nodes.find(n => n.id === d.from);
+      const targetNode = GRAPH_DATA.nodes.find(n => n.id === d.to);
+      const sourceName = sourceNode?.label || d.from;
+      const targetName = targetNode?.label || d.to;
+
+      edgesLayer.selectAll(".edge-path")
+        .classed("highlighted", e => e === d)
+        .classed("dimmed", e => e !== d);
+
+      edgeLabelsLayer.selectAll(".edge-label-group")
+        .classed("highlighted", e => e === d)
+        .classed("dimmed", e => e !== d);
+
+      nodesLayer.selectAll(".node-group")
+        .classed("path-highlighted", n => n.id === d.from || n.id === d.to)
+        .classed("dimmed", n => n.id !== d.from && n.id !== d.to);
+
+      document.getElementById("tooltip-id").innerText = "PATH CONDITION";
+      document.getElementById("tooltip-type").innerText = "PATH";
+      document.getElementById("tooltip-title").innerText = `${sourceName} → ${targetName}`;
+      document.getElementById("tooltip-formula").innerHTML = `$$${d.condition}$$`;
+      document.getElementById("tooltip-condition").innerText = `Requirement for this path: ${d.condition}`;
+
+      if (tooltipPath) tooltipPath.style.display = "none";
+
+      tooltip.style.display = "block";
+      positionTooltip(event);
+      renderKaTeX(tooltip);
+    }
+
+    function hideTooltip() {
+      edgesLayer.selectAll(".edge-path").classed("highlighted", false).classed("dimmed", false);
+      edgeLabelsLayer.selectAll(".edge-label-group").classed("highlighted", false).classed("dimmed", false);
+      nodesLayer.selectAll(".node-group").classed("path-highlighted", false).classed("hovered-target", false).classed("dimmed", false);
+      tooltip.style.display = "none";
+    }
+
+    // Smooth Pan/Zoom Focus to Node
+    function focusOnNode(nodeId) {
+      const node = GRAPH_DATA.nodes.find(n => n.id === nodeId);
+      if (!node) return;
+      const coords = nodeCoordinates[nodeId];
+      if (!coords) return;
+
+      const targetTransform = d3.zoomIdentity
+        .translate(width / 2 - coords.x * 1.05, height / 2 - coords.y * 1.05)
+        .scale(1.05);
+      svg.transition().duration(600).ease(d3.easeCubicOut).call(zoomBehavior.transform, targetTransform);
+
+      handleNodeClick(null, node);
+    }
+
+    // Node Click -> Open Theorem Details Panel
+    function handleNodeClick(event, d) {
+      selectedNodeId = d.id;
+      nodesLayer.selectAll(".node-group").classed("active", n => n.id === d.id);
+
+      detailsTitle.innerText = d.details.theorem || d.label;
+
+      let hypoHtml = d.details.hypotheses.map(h => `<li>${h}</li>`).join("");
+
+      const precedingEdges = GRAPH_DATA.edges.filter(e => e.to === d.id);
+      const succeedingEdges = GRAPH_DATA.edges.filter(e => e.from === d.id);
+
+      const precedingLinks = precedingEdges.length 
+        ? precedingEdges.map(e => `<button class="btn-academic" style="padding:3px 9px; font-size:10px; border:1px solid var(--border-color); font-family:var(--font-mono);" onclick="focusOnNode('${e.from}')">← ${GRAPH_DATA.nodes.find(n => n.id === e.from)?.label || e.from}</button>`).join(" ")
+        : "<span style='font-style:italic;'>None (Starting Series)</span>";
+
+      const succeedingLinks = succeedingEdges.length
+        ? succeedingEdges.map(e => `<button class="btn-academic" style="padding:3px 9px; font-size:10px; border:1px solid var(--border-color); font-family:var(--font-mono);" onclick="focusOnNode('${e.to}')">→ ${GRAPH_DATA.nodes.find(n => n.id === e.to)?.label || e.to}</button>`).join(" ")
+        : "<span style='font-style:italic;'>Terminal Outcome</span>";
+
+      detailsBody.innerHTML = `
+        <div class="details-section">
+          <div class="details-section-tag">Overview</div>
+          <div class="details-h1">${d.details.theorem}</div>
+          <div style="font-family:var(--font-mono); font-size:10.5px; margin-top:3px; opacity:0.75;">${d.category}</div>
+        </div>
+
+        <div class="details-section">
+          <div class="details-section-tag">Formula</div>
+          <div class="details-formula-block">
+            $$${d.latex}$$
+          </div>
+        </div>
+
+        <div class="details-section">
+          <div class="details-section-tag">Theorem Statement</div>
+          <p style="white-space:pre-line;">${d.details.statement}</p>
+        </div>
+
+        <div class="details-section">
+          <div class="details-section-tag">Conditions & Requirements</div>
+          <ul class="details-list">
+            ${hypoHtml}
+          </ul>
+        </div>
+
+        <div class="details-section">
+          <div class="details-section-tag">Test Procedure</div>
+          <p style="white-space:pre-line;">${d.details.decision_rule}</p>
+        </div>
+
+        <div class="details-section">
+          <div class="details-section-tag">Worked Example</div>
+          <div class="details-formula-block">
+            $$${d.details.example}$$
+          </div>
+        </div>
+
+        <div class="details-section" style="border-top:1px solid var(--border-color);">
+          <div class="details-section-tag">Connected Tests</div>
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:11px;">
+            <div>
+              <div style="margin-bottom:3px; font-weight:600;">Previous step:</div>
+              <div style="display:flex; flex-wrap:wrap; gap:4px;">${precedingLinks}</div>
+            </div>
+            <div>
+              <div style="margin-bottom:3px; font-weight:600;">Next step:</div>
+              <div style="display:flex; flex-wrap:wrap; gap:4px;">${succeedingLinks}</div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      detailsPanel.classList.add("open");
+      document.getElementById("btn-toggle-details").classList.add("active");
+      if (detailsIndicator) detailsIndicator.innerText = "[–]";
+      renderKaTeX(detailsBody);
+    }
+
+    // Close Details Panel
+    document.getElementById("details-close-btn").addEventListener("click", () => {
+      detailsPanel.classList.remove("open");
+      document.getElementById("btn-toggle-details").classList.remove("active");
+      if (detailsIndicator) detailsIndicator.innerText = "[+]";
+      nodesLayer.selectAll(".node-group").classed("active", false);
+    });
+
+    document.getElementById("btn-toggle-details").addEventListener("click", () => {
+      if (detailsPanel.classList.contains("open")) {
+        detailsPanel.classList.remove("open");
+        detailsIndicator.innerText = "[+]";
+      } else {
+        if (!selectedNodeId) {
+          handleNodeClick(null, GRAPH_DATA.nodes[0]);
+        } else {
+          detailsPanel.classList.add("open");
+          detailsIndicator.innerText = "[–]";
+        }
+      }
+    });
+
+    /* ==========================================================================
+       TOOLBAR & HOTKEY CONTROLS
+       ========================================================================== */
+
+    document.getElementById("btn-zoom-in").addEventListener("click", () => {
+      svg.transition().duration(250).call(zoomBehavior.scaleBy, 1.3);
+    });
+
+    document.getElementById("btn-zoom-out").addEventListener("click", () => {
+      svg.transition().duration(250).call(zoomBehavior.scaleBy, 1 / 1.3);
+    });
+
+    document.getElementById("btn-reset-view").addEventListener("click", () => {
+      svg.transition().duration(500).call(zoomBehavior.transform, initialTransform);
+    });
+
+    function setLayout(mode) {
+      currentLayout = mode;
+      if (mode === "tree") {
+        document.getElementById("btn-layout-tree").classList.add("active");
+        document.getElementById("btn-layout-radial").classList.remove("active");
+      } else {
+        document.getElementById("btn-layout-radial").classList.add("active");
+        document.getElementById("btn-layout-tree").classList.remove("active");
+      }
+      refreshGraph();
+    }
+
+    document.getElementById("btn-layout-tree").addEventListener("click", () => setLayout("tree"));
+    document.getElementById("btn-layout-radial").addEventListener("click", () => setLayout("radial"));
+
+    function toggleSpline() {
+      splineMode = splineMode === "asymptotic" ? "orthogonal" : "asymptotic";
+      const btn = document.getElementById("btn-toggle-spline");
+      if (btn) {
+        btn.title = splineMode === "asymptotic" 
+          ? "Toggle Path Curve: Curved (S)" 
+          : "Toggle Path Curve: Straight (S)";
+        const svgIcon = document.getElementById("spline-svg-icon");
+        if (svgIcon) {
+          svgIcon.innerHTML = splineMode === "asymptotic"
+            ? '<path d="M4 18c4-10 12-10 16 0"/>'
+            : '<path d="M4 20V12h16V4"/>';
+        }
+      }
+      renderEdges();
+    }
+    document.getElementById("btn-toggle-spline").addEventListener("click", toggleSpline);
+
+    // Category Filter Chips
+    const categoryNodeMap = {
+      all: null,
+      special: ["hub_special", "geom_series", "geom_conv", "geom_div", "p_series", "p_conv", "p_div", "harmonic_series", "telescoping_series", "telescoping_conv", "arith_const_series"],
+      nonneg: ["hub_nonneg", "integral_test", "integral_conv", "integral_div", "dct", "dct_conv", "dct_div", "lct", "lct_conv", "lct_div"],
+      alt: ["hub_alt", "ast", "ast_conv_cond", "ast_div", "hub_abs"],
+      ratio_root: ["hub_abs", "ratio_test", "ratio_conv", "ratio_inconc", "ratio_div", "root_test", "root_conv", "root_inconc", "root_div"],
+      power: ["hub_power", "ioc_roc", "power_ioc", "taylor_series", "taylor_analytic"]
+    };
+
+    document.querySelectorAll(".filter-chip").forEach(chip => {
+      chip.addEventListener("click", function() {
+        document.querySelectorAll(".filter-chip").forEach(c => c.classList.remove("active"));
+        this.classList.add("active");
+        const cat = this.getAttribute("data-category");
+        const allowedNodes = categoryNodeMap[cat];
+
+        if (!allowedNodes) {
+          nodesLayer.selectAll(".node-group").classed("dimmed", false);
+          edgesLayer.selectAll(".edge-path").classed("dimmed", false);
+          edgeLabelsLayer.selectAll(".edge-label-fo").classed("dimmed", false);
+        } else {
+          nodesLayer.selectAll(".node-group").classed("dimmed", d => !allowedNodes.includes(d.id));
+          edgesLayer.selectAll(".edge-path").classed("dimmed", e => !(allowedNodes.includes(e.from) && allowedNodes.includes(e.to)));
+          edgeLabelsLayer.selectAll(".edge-label-fo").classed("dimmed", e => !(allowedNodes.includes(e.from) && allowedNodes.includes(e.to)));
+        }
+      });
+    });
+
+    // Search input
+    const searchInput = document.getElementById("search-input");
+    searchInput.addEventListener("input", function(e) {
+      const q = e.target.value.toLowerCase().trim();
+      if (!q) {
+        nodesLayer.selectAll(".node-group").classed("dimmed", false);
+        return;
+      }
+
+      let matchedNode = null;
+      nodesLayer.selectAll(".node-group").each(function(d) {
+        const text = (d.label + " " + d.summary + " " + d.details.theorem + " " + d.latex).toLowerCase();
+        const matches = text.includes(q);
+        d3.select(this).classed("dimmed", !matches);
+        if (matches && !matchedNode) matchedNode = d;
+      });
+
+      if (matchedNode) {
+        focusOnNode(matchedNode.id);
+      }
+    });
+
+    // Global Keyboard Shortcuts
+    window.addEventListener("keydown", (e) => {
+      if (document.activeElement === searchInput) {
+        if (e.key === "Escape") {
+          searchInput.value = "";
+          searchInput.blur();
+          nodesLayer.selectAll(".node-group").classed("dimmed", false);
+        }
+        return;
+      }
+
+      if (e.key === "/" || e.key === "f" || e.key === "F") {
+        e.preventDefault();
+        searchInput.focus();
+        searchInput.select();
+      } else if (e.key === "0") {
+        svg.transition().duration(400).call(zoomBehavior.transform, initialTransform);
+      } else if (e.key === "+" || e.key === "=") {
+        svg.transition().duration(250).call(zoomBehavior.scaleBy, 1.25);
+      } else if (e.key === "-" || e.key === "_") {
+        svg.transition().duration(250).call(zoomBehavior.scaleBy, 1 / 1.25);
+      } else if (e.key === "t" || e.key === "T") {
+        setLayout(currentLayout === "tree" ? "radial" : "tree");
+      } else if (e.key === "s" || e.key === "S") {
+        toggleSpline();
+      } else if (e.key === "d" || e.key === "D") {
+        document.getElementById("btn-toggle-details").click();
+      } else if (e.key === "Escape") {
+        document.getElementById("details-close-btn").click();
+        hideTooltip();
+        nodesLayer.selectAll(".node-group").classed("dimmed", false);
+      }
+    });
+
+    window.addEventListener("resize", () => renderGrid());
+
+  
+    /* ==========================================================================
+       THEME SYNCHRONIZATION WITH ARTEMIUI WEBSITE
+       ========================================================================== */
+    function updateThemeIcon() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const icon = document.getElementById('theme-toggle-icon');
+      if (icon) {
+        icon.innerHTML = isDark
+          ? '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>'
+          : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+      }
+    }
+
+    function initTheme() {
+      try {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === 'dark' || (!saved && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        updateThemeIcon();
+      } catch (e) {}
+    }
+
+    initTheme();
+
+    const btnTheme = document.getElementById('btn-toggle-theme');
+    if (btnTheme) {
+      btnTheme.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        try {
+          localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        } catch (e) {}
+        updateThemeIcon();
+        renderGrid();
+      });
+    }
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'theme') {
+        initTheme();
+        renderGrid();
+      }
+    });
+
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.theme) {
+        if (e.data.theme === 'dark') document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
+        updateThemeIcon();
+        renderGrid();
+      }
+    });
+</script>
+</body>
+</html>

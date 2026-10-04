@@ -5,6 +5,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { getPostBySlug, getPostSlugs } from "@/lib/mdx";
 import TableOfContents from "@/components/TableOfContents";
 import AudioPlayer from "@/components/AudioPlayer";
+import InteractiveDiagram from "@/components/InteractiveDiagram";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 
@@ -128,6 +129,7 @@ export default async function BlogPost({ params }: Props) {
           source={post.content}
           components={{
             AudioPlayer,
+            InteractiveDiagram,
             table: ({ children, ...props }) => (
               <div className="w-full my-6 overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-2xs">
                 <table className="w-full text-left text-sm border-collapse" {...props}>

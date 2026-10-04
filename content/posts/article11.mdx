@@ -1,0 +1,141 @@
+---
+title: "Series Convergence Decision Tree"
+date: 2026-10-04
+category: Knowledge Sharing
+description: An interactive topological decision tree for infinite series convergence tests made for Elementary Analysis II.
+---
+
+## Overview
+
+As an interactive means of reviewing for Elementary Analysis II of the Institute of Mathematics, University of the Philippines - Diliman
+
+<InteractiveDiagram src="/series-convergence/index.html" title="Series Convergence Decision Tree" />
+
+---
+
+## Divergence Test
+
+As preliminary, every series must undergo preliminary screening via the $n$th-Term Divergence Test:
+
+$$\lim_{n \to \infty} a_n$$
+
+- If $\sum_{n=1}^\infty a_n$ converges, then necessarily $\lim_{n \to \infty} a_n = 0$.
+- If $\lim_{n \to \infty} a_n \ne 0$ or the limit does not exist, the series **diverges immediately**.
+- ($(p \rightarrow q) \neq (q \rightarrow p)$ The converse is *strictly false*. The condition $\lim_{n \to \infty} a_n = 0$ is merely necessary, not sufficient (e.g., the harmonic series $\lim \frac{1}{n} = 0$, yet $\sum \frac{1}{n} = \infty$). When the limit vanishes, the test is inconclusive and the series must pass through the structural dispatch gate.
+
+---
+
+## Special Series Forms
+
+Certain canonical series possess closed-form algebraic expressions whose convergence behavior is completely characterized by special cases. Such are the following:
+
+### Geometric Series
+$$\sum_{n=1}^\infty a r^{n-1} = a + ar + ar^2 + \dots$$
+- **Convergence Criterion**: $|r| < 1$, converging analytically to the sum:
+  $$S = \frac{a}{1 - r}$$
+- **Divergence Criterion**: $|r| \ge 1$.
+
+### p-Series
+$$\sum_{n=1}^\infty \frac{1}{n^p} = \frac{1}{1^p} + \frac{1}{2^p} + \frac{1}{3^p} + \dots$$
+- **Convergence**: $p > 1$.
+- **Divergence**: $0 < p \le 1$.
+- **Harmonic Series ($p = 1$)**: $\sum_{n=1}^\infty \frac{1}{n} = \infty$.
+
+### Telescoping Sums
+$$\sum_{n=1}^\infty (b_n - b_{n+k})$$
+- Evaluated by partial fraction decomposition and intermediate cancellation of terms in the sequence of partial sums $S_m = \sum_{j=1}^k b_j - \sum_{j=1}^k b_{m+j}$, converging if and only if $\lim_{m \to \infty} b_m$ exists as a finite real limit.
+
+---
+
+## Nonnegative Terms ($a_n \ge 0$)
+
+When terms are strictly nonnegative, the sequence of partial sums $\{S_k\}$ is monotonically non-decreasing ($S_{k+1} \ge S_k$). By the Monotone Convergence Theorem, convergence is equivalent to boundedness above.
+
+### Cauchy Integral Test
+Let $a_n = f(n)$, where $f(x)$ is continuous, positive, and decreasing on $[k, \infty)$:
+$$\int_k^\infty f(x) \, dx < \infty \iff \sum_{n=k}^\infty a_n < \infty$$
+
+### Direct Comparison Test (DCT)
+Let $0 \le a_n \le b_n$ for all $n \ge k$:
+- If $\sum b_n$ converges, then $\sum a_n$ converges.
+- If $\sum a_n$ diverges, then $\sum b_n$ diverges.
+
+### Limit Comparison Test (LCT)
+For $a_n > 0$ and $b_n > 0$, evaluate the asymptotic ratio:
+$$L = \lim_{n \to \infty} \frac{a_n}{b_n}$$
+- If $0 < L < \infty$, then both series $\sum a_n$ and $\sum b_n$ share identical convergence status.
+- If $L = 0$ and $\sum b_n$ converges, then $\sum a_n$ converges.
+- If $L = \infty$ and $\sum b_n$ diverges, then $\sum a_n$ diverges.
+
+---
+
+## Alternating Series
+
+### Leibniz Alternating Series Test (AST)
+For series of the form $\sum_{n=1}^\infty (-1)^{n-1} b_n$ with $b_n > 0$:
+1. $\{b_n\}$ is ultimately monotonically decreasing: $b_{n+1} \le b_n$ for all $n \ge k$.
+2. $\lim_{n \to \infty} b_n = 0$.
+
+If both hypotheses are satisfied, the series **converges**, with truncation error bounded by the magnitude of the first neglected term:
+$$|R_n| = |S - S_n| \le b_{n+1}$$
+
+---
+
+## Absolute Convergence Ratio & Root Tests
+
+### Conditional vs. Absolute Convergence
+- **Absolute Convergence**: $\sum |a_n| < \infty \implies \sum a_n < \infty$. Absolute convergence permits arbitrary rearrangement of terms without altering the sum (Dirichlet's Theorem).
+- **Conditional Convergence**: $\sum a_n$ converges via sign cancellation, but $\sum |a_n| = \infty$. By the Riemann Series Theorem, conditional series can be rearranged to converge to any arbitrary real number or diverge.
+
+
+### d'Alembert Ratio Test
+Ideal for terms containing factorials ($n!$) and exponential bases ($c^n$):
+$$L = \lim_{n \to \infty} \left| \frac{a_{n+1}}{a_n} \right|$$
+- $L < 1 \implies$ **Absolutely Convergent**.
+- $L > 1$ or $L = \infty \implies$ **Divergent**.
+- $L = 1 \implies$ **Inconclusive** (fails for all rational expressions and $p$-series).
+
+### Cauchy Root Test
+Ideal for terms containing nested $n$th powers $(g(n))^n$:
+$$L = \lim_{n \to \infty} \sqrt[n]{|a_n|} = \lim_{n \to \infty} |a_n|^{1/n}$$
+- $L < 1 \implies$ **Absolutely Convergent**.
+- $L > 1$ or $L = \infty \implies$ **Divergent**.
+- $L = 1 \implies$ **Inconclusive**.
+
+---
+
+## Power Series & Analytic Expansions
+
+### Radius ($R$) and Interval of Convergence (IoC)
+For a power series centered at $x = a$:
+$$\sum_{n=0}^\infty c_n (x - a)^n$$
+
+The radius of convergence $R$ is extracted via the Ratio or Cauchy-Hadamard formula:
+$$R = \lim_{n \to \infty} \left| \frac{c_n}{c_{n+1}} \right| \quad \text{or} \quad \frac{1}{R} = \limsup_{n \to \infty} \sqrt[n]{|c_n|}$$
+
+- The series converges absolutely on $(a - R, a + R)$ and diverges on $|x - a| > R$.
+- The endpoints $x = a - R$ and $x = a + R$ must be tested individually using non-power tests to determine inclusive brackets (`[` or `]`).
+
+### Taylor & Maclaurin Series
+$$\sum_{n=0}^\infty \frac{f^{(n)}(a)}{n!} (x - a)^n$$
+A function $f(x)$ is analytic on $(a-R, a+R)$ if its Taylor remainder vanishes asymptotically:
+$$\lim_{k \to \infty} R_k(x) = 0$$
+
+---
+
+## Decision Matrix Reference
+
+We summarize the ideas in this article and diagram through the following decision matrix.
+
+| Test Name | Typical Form / Target | Convergence Condition | Divergence Condition | Inconclusive Boundary |
+| :--- | :--- | :--- | :--- | :--- |
+| **Divergence Test** | Any general series $\sum a_n$ | — (Never proves convergence) | $\lim_{n \to \infty} a_n \ne 0$ or DNE | $\lim_{n \to \infty} a_n = 0$ |
+| **Geometric Series** | $\sum a r^{n-1}$ | $\|r\| < 1 \implies S = \frac{a}{1-r}$ | $\|r\| \ge 1$ | None |
+| **$p$-Series** | $\sum \frac{1}{n^p}$ | $p > 1$ | $0 < p \le 1$ | None |
+| **Integral Test** | Continuous, positive, decreasing $f(x)$ | $\int_k^\infty f(x)\,dx < \infty$ | $\int_k^\infty f(x)\,dx = \infty$ | Non-monotonic or oscillatory $f(x)$ |
+| **Direct Comparison** | Nonnegative $a_n, b_n \ge 0$ | $a_n \le b_n$ and $\sum b_n < \infty$ | $a_n \ge b_n$ and $\sum b_n = \infty$ | Wrong inequality orientation |
+| **Limit Comparison** | Positive rational / algebraic terms | $0 < \lim \frac{a_n}{b_n} < \infty$ and $\sum b_n < \infty$ | $0 < \lim \frac{a_n}{b_n} < \infty$ and $\sum b_n = \infty$ | $L = 0$ (with div $b_n$) or $L = \infty$ (with conv $b_n$) |
+| **Alternating (AST)** | $\sum (-1)^{n-1} b_n$ ($b_n > 0$) | $b_{n+1} \le b_n$ and $\lim b_n = 0$ | $\lim b_n \ne 0$ | Non-monotonic vanishing $b_n$ |
+| **Ratio Test** | Factorials ($n!$) & exponentials ($c^n$) | $L = \lim \left\|\frac{a_{n+1}}{a_n}\right\| < 1$ | $L > 1$ or $L = \infty$ | $L = 1$ |
+| **Root Test** | Nested $n$th powers $(g(n))^n$ | $L = \lim \sqrt[n]{\|a_n\|} < 1$ | $L > 1$ or $L = \infty$ | $L = 1$ |
+| **Power Series** | $\sum c_n (x-a)^n$ | $\|x - a\| < R$ | $\|x - a\| > R$ | Endpoints $x = a \pm R$ require testing |
