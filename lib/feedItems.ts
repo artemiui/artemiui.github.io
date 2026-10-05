@@ -45,7 +45,7 @@ const externalLinks: FeedItemType[] = [
 		url: "https://philosophy.upd.edu.ph/wp-content/uploads/2026/04/On-the-Formal-Isomorphism-and-the-Asymptotic-Limits-of-Digital-Twins.pdf",
 		category: "Research",
 		tags: ["Ontology"],
-		description: "I had recently presented a paper in the Emmanuel Q. Fernando Undergraduate Seminar of the UP Diliman Department of Philosophy under the Philosophy of Science category.",
+		description: "Winning conference paper presented in the Emmanuel Q. Fernando Undergraduate Seminar of the UP Diliman Department of Philosophy under the Philosophy of Science category.",
 	},
   {
     title: "Machine-Assisted Proofs & Syntactic Manipulation",
@@ -53,7 +53,7 @@ const externalLinks: FeedItemType[] = [
     url: "https://docs.google.com/document/d/1iLC1HqmGHEscmIxUqmyQZJktXe3-s1YwE1GtCQozVKM/edit?usp=sharing",
     category: "Research",
     tags: ["Interpretability"],
-    description: "I show why it is unlikely the case that such lone syntactic manipulation is the correct interpretation of the origin of such proofs, and that the novel autonomous proof showcases the case that we are seeing the rise of Strong AI.",
+    description: "Paper submission for Department of Philosophy course Philosophic Questions, PHILO197. I show why it is unlikely the case that such lone syntactic manipulation is the correct interpretation of the origin of such proofs, and that the novel autonomous proof showcases the case that we are seeing the rise of Strong AI.",
   },
   {
 		title: "Public Knowledge and Attitudes on Microplastic Contamination of Aquaculture and Fisheries Products in CAMANAVA ",
@@ -118,7 +118,7 @@ const externalLinks: FeedItemType[] = [
     title: "tblm-modal-reasoning",
     date: "2026-08-30",
     url: "https://github.com/artemiui/tblm-modal-reasoning",
-    description: "Repository of a project I'm working on a submission to the Student-Faculty Conference on Statistical Sciences. I presume that it won't be accepted due to its wild difference to previous papers, but I digress. This seems like a fun project for me as it involves mechanistic interpretability.",
+    description: "Repository for UP Data Science Society Research-track Course, DS 103, on Modal Reasoning of Transformer Language Models",
     category: "Research",
     tags: ["Interpretability"],
   },
@@ -127,7 +127,6 @@ const externalLinks: FeedItemType[] = [
     date: "2026-09-05",
     url: "https://godle-logic-game.vercel.app",
     category: "Knowledge Sharing",
-    tags: ["Logic", "Computational"],
     description: "I had started working on gödle, a full-stack propositional symbolic logic web game, a floating idea I've had since taking PHILO12 and PHILO1 of the UP Department of Philosophy. I had initially made a proposition validity checking game for a PHILO1 long exam as a Claude artifact. Now, it has grown to the magnitude of gödle. I hope it helps the many philosopher-students of our time and our nation, especially those interested in the analytic tradition.",
   },
   {
@@ -135,7 +134,6 @@ const externalLinks: FeedItemType[] = [
     date: "2026-09-20",
     url: "https://pjdsc26-website.vercel.app",
     category: "Knowledge Sharing",
-    tags: ["Data Science", "Web Development"],
     description: "I designed and developed the official web platform for the Philippine Junior Data Science Challenge 2026 (PJDSC 2026), the flagship nationwide inter-collegiate competition organized by the UP Data Science Society centered on Public Health Analytics.",
   },
 ];
