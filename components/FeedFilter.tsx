@@ -2,14 +2,14 @@
 
 import { motion } from "framer-motion";
 
-export type Category = "All" | "Research" | "Knowledge Sharing" | "Culture" | "Commentary";
+export type Category = "All" | "Papers" | "Research" | "Knowledge Sharing" | "Culture" | "Commentary";
 
 type FeedFilterProps = {
   activeCategory: Category;
   onCategoryChange: (category: Category) => void;
 };
 
-const categories: Category[] = ["All", "Research", "Knowledge Sharing", "Culture", "Commentary"];
+const categories: Category[] = ["All", "Papers", "Knowledge Sharing", "Culture", "Commentary"];
 
 export default function FeedFilter({
   activeCategory,

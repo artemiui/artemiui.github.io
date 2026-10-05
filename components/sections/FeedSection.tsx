@@ -36,10 +36,12 @@ export default function FeedSection({
     loadFeedItems();
   }, []);
 
-  // Compute available tags for Research category
+  // Compute available tags for Papers category
   const availableTags = useMemo(() => {
-    if (activeCategory !== "Research") return [];
-    const categoryItems = feedItems.filter((item) => item.category === "Research");
+    if (activeCategory !== "Papers" && activeCategory !== "Research") return [];
+    const categoryItems = feedItems.filter(
+      (item) => item.category === "Papers" || item.category === "Research"
+    );
 
     const tagsSet = new Set<string>();
     categoryItems.forEach((item) => {
@@ -52,9 +54,17 @@ export default function FeedSection({
     let items =
       activeCategory === "All"
         ? feedItems
-        : feedItems.filter((item) => item.category === activeCategory);
+        : feedItems.filter(
+            (item) =>
+              item.category === activeCategory ||
+              (activeCategory === "Papers" && item.category === "Research") ||
+              (activeCategory === "Research" && item.category === "Papers")
+          );
 
-    if (activeCategory === "Research" && selectedTag) {
+    if (
+      (activeCategory === "Papers" || activeCategory === "Research") &&
+      selectedTag
+    ) {
       items = items.filter((item) => item.tags?.includes(selectedTag));
     }
     return items;
@@ -82,7 +92,7 @@ export default function FeedSection({
         activeCategory={activeCategory}
         onCategoryChange={setActiveCategory}
       />
-      {activeCategory === "Research" && availableTags.length > 0 && (
+      {(activeCategory === "Papers" || activeCategory === "Research") && availableTags.length > 0 && (
         <div className="flex items-center gap-2 mb-6 pb-2 -mt-4 overflow-x-auto sm:overflow-x-visible scrollbar-hide">
           <span className="text-xs font-sans text-zinc-500 dark:text-zinc-400 flex-shrink-0">
             Topic:

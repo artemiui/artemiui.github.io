@@ -11,7 +11,7 @@ export type FeedItemType = {
   date: string;
   slug?: string;
   url?: string;
-  category: "Research" | "Knowledge Sharing" | "Culture" | "Commentary";
+  category: "Papers" | "Research" | "Knowledge Sharing" | "Culture" | "Commentary";
   tags?: string[];
 };
 

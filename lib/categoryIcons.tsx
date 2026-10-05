@@ -4,6 +4,9 @@ export const categoryIcons = {
   Research: (props: { className?: string }) => (
     <img src="/design.svg" alt="Research" className={props.className} />
   ),
+  Papers: (props: { className?: string }) => (
+    <img src="/design.svg" alt="Papers" className={props.className} />
+  ),
   "Knowledge Sharing": (props: { className?: string }) => (
     <img src="/knowledge.svg" alt="Knowledge Sharing" className={props.className} />
   ),
