@@ -19,6 +19,7 @@ interface GalleryImage {
   src: string;
   title?: string;
   description: string;
+  url?: string;
 }
 
 interface SubItem {
@@ -50,8 +51,8 @@ interface PanelItem {
 
 const panelsData: PanelItem[] = [
   {
-    id: "design-portfolio",
-    title: "Design Portfolio",
+    id: "media-portfolio",
+    title: "Media Portfolio",
     imageSrc: "/images/dssoc-design-header.png",
     layout: "grid", // 2 per row for landscape/16:9, 1 per row for portrait/9:16
     featuredVideo: {
@@ -313,6 +314,45 @@ const panelsData: PanelItem[] = [
           },
         ],
       },
+      {
+        id: "design-7",
+        title: "UP OASD Media Coverage & Interviews",
+        subtitle: "Office for Athletics and Sports Development",
+        description:
+          "Sideline videography, athlete interviews, and social reels produced for the UP Office for Athletics and Sports Development (UP OASD) across UAAP Season 88 and Season 89.",
+        imageSrc: "/images/up-oasd-coverage-header.jpg",
+        liveUrl: "https://www.facebook.com/reel/1406007901680381",
+        gallery: [
+          {
+            src: "/images/up-oasd-reel-1.jpg",
+            title: "UP Women's Football Team: Road to #UAAPSeason89 First Win",
+            description:
+              "Sideline interview capturing the UP Women's Football Team's post-match energy and tactical momentum heading into their final Round 1 fixture. Produced for UP OASD. 🎥: Art Arcega & Kirsten Hiwatig",
+            url: "https://www.facebook.com/reel/1406007901680381",
+          },
+          {
+            src: "/images/up-oasd-reel-2.jpg",
+            title: "International Women's Month: What Makes Women Athletes Powerful?",
+            description:
+              "International Women's Month athlete feature highlighting the courage, discipline, and grit of the UP Fighting Maroons women athletes. Produced for UP OASD. 🎥: Art Arcega, Misha Daquila, Kirsten Hiwatig, & Pat Yapit",
+            url: "https://www.facebook.com/reel/935340148903024",
+          },
+          {
+            src: "/images/up-oasd-reel-3.jpg",
+            title: "Dennis Trillo: Sports Parent Mode Activated (UAAP S88 Fencing)",
+            description:
+              "Exclusive sideline interview with award-winning actor Dennis Trillo at the UAAP Season 88 Fencing Tournament, cheering on his son Calix Ho to a gold-medal finish. Produced for UP OASD. 🎥: Art Arcega",
+            url: "https://www.facebook.com/reel/779513934881128",
+          },
+          {
+            src: "/images/up-oasd-reel-4.jpg",
+            title: "Debunking Fencing Misconceptions with the UP Fencing Team",
+            description:
+              "Engaging interview and sport feature debunking common misconceptions about competitive collegiate fencing with the UP Fencing Team. Produced for UP OASD. 🎥/💻: Art Arcega | ✍️: Louise Pili",
+            url: "https://www.facebook.com/reel/958814873309930",
+          },
+        ],
+      },
     ],
   },
   {
@@ -424,6 +464,27 @@ const panelsData: PanelItem[] = [
         subtitle: "Interactive Algorithmic & Topological Visualizer for Calculus Convergence Tests",
         description:
           "An interactive decision tree and pedagogical theorem inspector for infinite series convergence tests in calculus and real analysis.\n\nBuilt with D3.js and KaTeX, the engine maps out the entire deductive hierarchy of convergence testing—from preliminary divergence checks and special algebraic forms (Geometric, p-Series, Telescoping, Harmonic) to comparison theorems (DCT, LCT), the Leibniz Alternating Series Test (AST), Cauchy and d'Alembert ratio and root tests, and power series intervals of convergence.\n\nFeatures include dual topological projections (hierarchical tree and concentric radial phase-space layouts), orthogonal vs. asymptotic cubic spline routing, ancestral deductive lineage backtracking, real-time formula search, dynamic category filtering, and an integrated theorem inspector with worked examples.",
+        imageSrc: "/images/series-tree-preview-1.png",
+        gallery: [
+          {
+            src: "/images/series-tree-preview-1.png",
+            title: "Full Hierarchical Decision Tree Topology",
+            description:
+              "Complete deductive architecture spanning all 5 testing categories, preliminary nth-term divergence check, 12 convergence theorems, and terminal convergence classifications.",
+          },
+          {
+            src: "/images/series-tree-preview-2.png",
+            title: "Concentric Radial Phase-Space Projection",
+            description:
+              "Dual topological projection laying out test classifications into concentric radial shells around the series origin for compact non-linear theorem exploration.",
+          },
+          {
+            src: "/images/series-tree-preview-3.png",
+            title: "Core Comparison & Alternating Series Tests",
+            description:
+              "Focused inspection of non-negative comparison theorems (Integral, DCT, LCT), the Leibniz Alternating Series Test (AST), and Cauchy/d'Alembert ratio and root tests with KaTeX math rendering.",
+          },
+        ],
         liveUrl: "/series-convergence/",
       },
     ],
@@ -432,7 +493,7 @@ const panelsData: PanelItem[] = [
 
 export default function ProjectsPage() {
   const [openPanels, setOpenPanels] = useState<Record<string, boolean>>({
-    "design-portfolio": false,
+    "media-portfolio": false,
     "developer-portfolio": false,
   });
 
@@ -445,7 +506,7 @@ export default function ProjectsPage() {
     setOpenPanels((prev) => {
       const wasOpen = !!prev[id];
       return {
-        "design-portfolio": false,
+        "media-portfolio": false,
         "developer-portfolio": false,
         [id]: !wasOpen,
       };
@@ -883,32 +944,24 @@ export default function ProjectsPage() {
                       })}
                     </div>
 
-                    {/* Canva Archive Portfolio Section (Design Portfolio) */}
-                    {panel.id === "design-portfolio" && (
+                    {/* Canva Archive Portfolio Section (Media Portfolio) */}
+                    {panel.id === "media-portfolio" && (
                       <div className="mt-10 pt-8 border-t border-zinc-200 dark:border-zinc-800 space-y-4">
-                        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+                        <div className="flex items-center justify-between gap-3">
                           <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-xs font-mono font-medium text-red-600 dark:text-red-400">
-                                Archive & Extended Works
-                              </span>
-                            </div>
                             <h3 className="text-base sm:text-lg font-bold font-sans tracking-tight text-zinc-900 dark:text-zinc-100">
-                              Canva Portfolio Archive
+                              Old Canva-based Portfolio
                             </h3>
-                            <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5 max-w-2xl leading-relaxed">
-                              My foundational portfolio retrospective showcasing freelance client commissions, branding systems, cover artwork, and event publications.
-                            </p>
                           </div>
                           <div className="flex items-center gap-2 flex-shrink-0">
                             <a
                               href="https://artemiui.my.canva.site/portfolio"
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-zinc-900 transition-all shadow-sm"
+                              aria-label="Open Old Canva-based Portfolio in new tab"
+                              className="inline-flex items-center justify-center p-2 rounded-lg text-xs font-mono font-medium bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-zinc-900 transition-all shadow-sm"
                             >
-                              <span>Open in New Tab</span>
-                              <ExternalLink className="w-3.5 h-3.5" />
+                              <ExternalLink className="w-4 h-4" />
                             </a>
                           </div>
                         </div>
@@ -1084,6 +1137,19 @@ export default function ProjectsPage() {
                   <p className="font-sans text-xs sm:text-sm text-zinc-200/90 leading-relaxed drop-shadow-md max-w-3xl">
                     {activeGalleryItem.gallery[currentImageIndex].description}
                   </p>
+                  {activeGalleryItem.gallery[currentImageIndex].url && (
+                    <div className="pt-1.5 flex justify-center sm:justify-start">
+                      <a
+                        href={activeGalleryItem.gallery[currentImageIndex].url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-white/15 hover:bg-white text-white hover:text-black transition-colors backdrop-blur-md border border-white/20 shadow-sm"
+                      >
+                        <span>Watch on Facebook</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    </div>
+                  )}
                 </div>
 
                 {/* Seamless Indicator Dots */}
