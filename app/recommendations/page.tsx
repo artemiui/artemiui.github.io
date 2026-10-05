@@ -12,6 +12,14 @@ type Book = {
   description?: string;
 };
 
+type WatchItem = {
+  title: string;
+  creator: string;
+  link?: string;
+  coverUrl: string;
+  description?: string;
+};
+
 type Games = {
   title: string;
   coverUrl: string;
@@ -112,6 +120,34 @@ const books: Book[] = [
   },
 ];
 
+const watchItems: WatchItem[] = [
+  {
+    title: "Steins;Gate",
+    creator: "White Fox",
+    coverUrl: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx9253-tIUXF2gfU8Sg.jpg",
+  },
+  {
+    title: "Attack on Titan",
+    creator: "WIT Studio / MAPPA",
+    coverUrl: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-buvcRTBx4NSm.jpg",
+  },
+  {
+    title: "Star Wars",
+    creator: "George Lucas",
+    coverUrl: "https://image.tmdb.org/t/p/w500/6FfCtAuVAW8XJjZ7eWeLibRLWTw.jpg",
+  },
+  {
+    title: "Mekakucity Actors",
+    creator: "Shaft",
+    coverUrl: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20541-vEenrRZqApRn.jpg",
+  },
+  {
+    title: "The Amazing Spider-Man 2",
+    creator: "Marc Webb",
+    coverUrl: "https://a.ltrbxd.com/resized/sm/upload/fs/xh/ms/hx/9HFdUfEuvbsaBfroPZNeDiA9W9-0-230-0-345-crop.jpg?v=4bb266c754",
+  },
+];
+
 const youtubeVideos: YouTubeVideo[] = [
   {
     title: "How Liberty Dies: The Politics of Star Wars",
@@ -203,6 +239,121 @@ export default function RecommendationsPage() {
         Recommendations
       </motion.h1>
 
+      {/* To Watch Section */}
+      {(watchItems.length > 0 || youtubeVideos.length > 0) && (
+        <section className="space-y-8">
+          <motion.h2
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+            className="text-xl font-mono font-semibold text-foreground"
+          >
+            To Watch
+          </motion.h2>
+
+          {/* Watch Items Grid */}
+          {watchItems.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+              {watchItems.map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  className="group relative flex flex-col space-y-3"
+                  whileHover={{ y: -5 }}
+                >
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block relative aspect-[2/3] bg-zinc-100 dark:bg-zinc-800 rounded-md overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300 border border-zinc-200/60 dark:border-zinc-800/60"
+                  >
+                    <img
+                      src={item.coverUrl}
+                      alt={item.title}
+                      className="object-cover w-full h-full"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                  </a>
+
+                  <div className="space-y-1">
+                    <h3 className="font-medium text-foreground leading-tight group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+                      {item.link ? (
+                        <a
+                          href={item.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1"
+                        >
+                          <span className="line-clamp-2">{item.title}</span>
+                        </a>
+                      ) : (
+                        <span className="line-clamp-2">{item.title}</span>
+                      )}
+                    </h3>
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400">{item.creator}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+
+          {/* YouTube Videos List */}
+          {youtubeVideos.length > 0 && (
+            <div className="space-y-6 pt-4">
+              {youtubeVideos.map((video, index) => {
+                const thumbnail = getYouTubeThumbnail(video.url);
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    className="py-4 border-b border-zinc-200 dark:border-zinc-800"
+                  >
+                    <a
+                      href={video.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group block"
+                    >
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        {thumbnail && (
+                          <div className="relative w-full sm:w-48 aspect-video flex-shrink-0 overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/60 dark:border-zinc-800/60">
+                            <img
+                              src={thumbnail}
+                              alt={video.title}
+                              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start gap-2 mb-1">
+                            <h3 className="font-medium text-foreground group-hover:opacity-70 transition-opacity break-words leading-snug">
+                              {video.title}
+                            </h3>
+                            <ExternalLink className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0 mt-0.5" />
+                          </div>
+                          <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+                            {video.channel}
+                          </p>
+                          {video.description && (
+                            <p className="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2">
+                              {video.description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </a>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      )}
+
       {/* Books Section */}
       {books.length > 0 && (
         <section className="space-y-6">
@@ -257,69 +408,6 @@ export default function RecommendationsPage() {
                 </div>
               </motion.div>
             ))}
-          </div>
-        </section>
-      )}
-
-      {/* YouTube Videos Section */}
-      {youtubeVideos.length > 0 && (
-        <section className="space-y-6">
-          <motion.h2
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
-            className="text-xl font-mono font-semibold mb-6 text-foreground"
-          >
-            To Watch
-          </motion.h2>
-          <div className="space-y-6">
-            {youtubeVideos.map((video, index) => {
-              const thumbnail = getYouTubeThumbnail(video.url);
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="py-4 border-b border-zinc-200 dark:border-zinc-800"
-                >
-                  <a
-                    href={video.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group block"
-                  >
-                    <div className="flex flex-col sm:flex-row gap-4">
-                      {thumbnail && (
-                        <div className="relative w-full sm:w-48 aspect-video flex-shrink-0 overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/60 dark:border-zinc-800/60">
-                          <img
-                            src={thumbnail}
-                            alt={video.title}
-                            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                          />
-                        </div>
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start gap-2 mb-1">
-                          <h3 className="font-medium text-foreground group-hover:opacity-70 transition-opacity break-words leading-snug">
-                            {video.title}
-                          </h3>
-                          <ExternalLink className="w-3.5 h-3.5 text-zinc-400 flex-shrink-0 mt-0.5" />
-                        </div>
-                        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
-                          {video.channel}
-                        </p>
-                        {video.description && (
-                          <p className="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2">
-                            {video.description}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </a>
-                </motion.div>
-              );
-            })}
           </div>
         </section>
       )}
