@@ -110,34 +110,17 @@ function PokemonDialogue({ onUnlocked }: { onUnlocked: () => void }) {
 
   return (
     <div className="w-full flex items-center justify-center p-2 sm:p-4">
-      {/* Retro Gameboy dialogue container */}
       <div className="w-full max-w-lg font-mono select-none">
-        {/* Gameboy retro frame */}
-        <div className="relative bg-[#9bbc0f]/15 dark:bg-[#1f2416] border-4 border-[#8bac0f] dark:border-[#9bbc0f] rounded-lg p-5 sm:p-6 shadow-[0_0_30px_rgba(155,188,15,0.25)] text-[#0f380f] dark:text-[#9bbc0f]">
-          {/* Subtle Scanlines effect */}
-          <div
-            className="pointer-events-none absolute inset-0 opacity-15 rounded-md"
-            style={{
-              backgroundImage:
-                "repeating-linear-gradient(0deg, rgba(0,0,0,0.4), rgba(0,0,0,0.4) 1px, transparent 1px, transparent 2px)",
-            }}
-          />
-
-          {/* Dialogue Header Badge */}
-          <div className="flex items-center justify-between mb-4 border-b-2 border-dashed border-[#8bac0f]/50 dark:border-[#9bbc0f]/40 pb-2 text-[11px] uppercase tracking-widest text-[#306230] dark:text-[#8bac0f]">
-            <span>★ WILD ENCOUNTER ★</span>
-            <span className="animate-pulse">LV. 99</span>
-          </div>
-
+        <div className="p-4 sm:p-6 text-foreground">
           {/* Text Message with blinking cursor */}
-          <div className="min-h-[75px] text-sm sm:text-base leading-relaxed tracking-wide font-bold">
+          <div className="min-h-[75px] text-sm sm:text-base leading-relaxed tracking-wide font-medium">
             <span>{displayedText}</span>
-            <span className="inline-block w-2 h-4 ml-1 bg-[#0f380f] dark:bg-[#9bbc0f] animate-pulse align-middle" />
+            <span className="inline-block w-2 h-4 ml-1 bg-current animate-pulse align-middle" />
           </div>
 
-          {/* Retro Choice Box */}
-          <div className="mt-5 pt-4 border-t-2 border-[#8bac0f] dark:border-[#9bbc0f] flex justify-end">
-            <div className="inline-flex flex-col bg-[#8bac0f]/20 dark:bg-[#0f380f]/60 border-2 border-[#8bac0f] dark:border-[#9bbc0f] rounded p-2.5 min-w-[130px] space-y-1.5 shadow-inner">
+          {/* Choice Box */}
+          <div className="mt-6 flex justify-end">
+            <div className="inline-flex flex-col min-w-[120px] space-y-2">
               {currentDialogue.options.map((opt) => {
                 const isCurrent = selectedOption === opt;
                 return (
@@ -145,21 +128,18 @@ function PokemonDialogue({ onUnlocked }: { onUnlocked: () => void }) {
                     key={opt}
                     onClick={() => handleSelect(opt)}
                     onMouseEnter={() => setSelectedOption(opt as "YES" | "NO")}
-                    className="flex items-center text-left text-xs sm:text-sm font-bold tracking-wider hover:opacity-100 transition-opacity"
+                    className="flex items-center text-left text-xs sm:text-sm font-semibold tracking-wider hover:opacity-100 transition-opacity text-zinc-600 dark:text-zinc-400 hover:text-foreground"
                   >
-                    <span className="w-4 text-xs font-black">
+                    <span className="w-4 text-xs font-bold text-foreground">
                       {isCurrent ? "▶" : " "}
                     </span>
-                    <span className="ml-1 uppercase">{opt}</span>
+                    <span className={`ml-1 uppercase ${isCurrent ? "text-foreground font-bold" : ""}`}>
+                      {opt}
+                    </span>
                   </button>
                 );
               })}
             </div>
-          </div>
-
-          {/* Bottom subtle instruction */}
-          <div className="mt-3 text-[10px] text-center tracking-wider text-[#306230] dark:text-[#8bac0f]/70 uppercase">
-            Press [YES] to proceed
           </div>
         </div>
       </div>
