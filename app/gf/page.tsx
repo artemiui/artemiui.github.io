@@ -44,7 +44,7 @@ const poemParagraphs = [
   "I want to walk inside your mind. Understand how it came to settling with me. Because frankly, I'll always be the lucky one.",
   "The lucky one you taught how to love truly.",
   "The lucky one you taught how to not take myself too seriously.",
-  "The lucky one you taught that I can take breaks.",
+  "The lucky one you taught can take breaks.",
   "The lucky one you loved.",
   "Lucky me,\n\nlucky me..",
 ];
