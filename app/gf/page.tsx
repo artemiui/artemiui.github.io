@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Music, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
+import { motion } from "framer-motion";
+import { ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 
 const photos = [
   {
@@ -31,32 +31,19 @@ const photos = [
   },
 ];
 
-const poemStanzas = [
-  [
-    "Take as many pictures as you can; especially of the things that matter.",
-  ],
-  [
-    "But how exactly do you do something like that when that something that's important when the person you're looking at is the most important person to ever grace your eyes?",
-  ],
-  [
-    "That a photo only captures the minute details of an infinitely beautiful, continuous being. The one that reminded me that love isn't supposed to be being stabbed in the chest every waking day.",
-  ],
-  [
-    "The one that showed me that love can be fun, not cannibalistic. The one that showed me that to truly cannibalize is to feed into each other, not parasitically.",
-  ],
-  [
-    "Because, frankly, I never thought I'd find you. And there hasn't been a single day of my life since I met you that I've never been scared of losing you.",
-    "You're too perfect. I have no idea how you stumbled upon me. You're too intelligent. I have no idea how you stumbled upon a pea-brain like me who can't discern right from wrong.",
-  ],
-  [
-    "I want to walk inside your mind. Understand how it came to settling with me. Because frankly, I'll always be the lucky one.",
-    "The lucky one you taught how to love truly.",
-    "The lucky one you taught how to not take myself too seriously.",
-    "The lucky one you taught that I can take breaks.",
-    "The lucky one you loved.",
-    "Lucky me,",
-    "lucky me..",
-  ],
+const poemParagraphs = [
+  "Take as many pictures as you can; especially of the things that matter.",
+  "But how exactly do you do something like that when that something that's important when the person you're looking at is the most important person to ever grace your eyes?",
+  "That a photo only captures the minute details of an infinitely beautiful, continuous being. The one that reminded me that love isn't supposed to be being stabbed in the chest every waking day.",
+  "The one that showed me that love can be fun, not cannibalistic. The one that showed me that to truly cannibalize is to feed into each other, not parasitically.",
+  "Because, frankly, I never thought I'd find you. And there hasn't been a single day of my life since I met you that I've never been scared of losing you.",
+  "You're too perfect. I have no idea how you stumbled upon me. You're too intelligent. I have no idea how you stumbled upon a pea-brain like me who can't discern right from wrong.",
+  "I want to walk inside your mind. Understand how it came to settling with me. Because frankly, I'll always be the lucky one.",
+  "The lucky one you taught how to love truly.",
+  "The lucky one you taught how to not take myself too seriously.",
+  "The lucky one you taught that I can take breaks.",
+  "The lucky one you loved.",
+  "Lucky me,\n\nlucky me..",
 ];
 
 const asciiFlowers = `                    _
@@ -70,29 +57,37 @@ jgs \\|//   \\|///  \\\\\\|//\\\\\\|/// \\|///  \\\\\\|//  \\|//  \\\\\\|//
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^`;
 
 export default function ForYouPage() {
-  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
+  const [activeParagraphIndex, setActiveParagraphIndex] = useState(0);
   const [isMinimized, setIsMinimized] = useState(false);
+
+  // Map each paragraph index smoothly to one of the photos
+  const activePhotoIndex = Math.min(
+    photos.length - 1,
+    Math.floor((activeParagraphIndex / (poemParagraphs.length - 1)) * photos.length)
+  );
 
   useEffect(() => {
     const handleScroll = () => {
-      // Find the stanza closest to the center-third of the viewport
-      const viewportCenter = window.scrollY + window.innerHeight * 0.45;
+      // Find the paragraph currently in view target
+      // Target area is roughly 60% down the screen, below the sticky photo preview
+      const targetY = window.innerHeight * 0.62;
       let closestIdx = 0;
       let minDistance = Infinity;
 
-      poemStanzas.forEach((_, idx) => {
-        const el = document.getElementById(`poem-stanza-${idx}`);
+      poemParagraphs.forEach((_, idx) => {
+        const el = document.getElementById(`poem-para-${idx}`);
         if (el) {
           const rect = el.getBoundingClientRect();
-          const elementAbsCenter = window.scrollY + rect.top + rect.height / 2;
-          const dist = Math.abs(viewportCenter - elementAbsCenter);
+          const paraCenter = rect.top + rect.height / 2;
+          const dist = Math.abs(targetY - paraCenter);
           if (dist < minDistance) {
             minDistance = dist;
             closestIdx = idx;
           }
         }
       });
-      setActivePhotoIndex(closestIdx);
+
+      setActiveParagraphIndex(closestIdx);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -101,7 +96,7 @@ export default function ForYouPage() {
   }, []);
 
   return (
-    <div className="space-y-16 pb-24">
+    <div className="space-y-16 pb-32">
       {/* Sticky Photo Frame Showcase */}
       <div className="sticky top-6 z-20 flex justify-center py-2 pointer-events-none">
         <motion.div
@@ -142,34 +137,39 @@ export default function ForYouPage() {
         </motion.div>
       </div>
 
-      {/* Scrolling Poem Content */}
-      <div className="max-w-xl mx-auto space-y-40 px-4 pt-12 sm:pt-16 relative z-10 font-sans">
-        {poemStanzas.map((stanza, sIdx) => {
-          const isActive = sIdx === activePhotoIndex;
+      {/* Scrolling Poem Content: Separate highlights per paragraph */}
+      <div className="max-w-xl mx-auto space-y-36 px-4 pt-16 sm:pt-20 relative z-10 font-sans">
+        {poemParagraphs.map((paragraph, pIdx) => {
+          const isActive = pIdx === activeParagraphIndex;
+          const isLuckyMe = paragraph.includes("Lucky me");
+          const isOpening = pIdx === 0;
+
           return (
             <div
-              key={sIdx}
-              id={`poem-stanza-${sIdx}`}
-              className={`transition-all duration-700 space-y-4 text-center cursor-default ${
+              key={pIdx}
+              id={`poem-para-${pIdx}`}
+              className={`transition-all duration-500 min-h-[90px] flex items-center justify-center text-center cursor-default ${
                 isActive
-                  ? "opacity-100 scale-100 filter-none text-zinc-900 dark:text-zinc-100"
-                  : "opacity-40 scale-[0.98] blur-[0.4px] text-zinc-500 dark:text-zinc-400"
+                  ? "opacity-100 scale-100 text-zinc-900 dark:text-zinc-100 font-normal"
+                  : "opacity-35 scale-[0.98] text-zinc-400 dark:text-zinc-500"
               }`}
             >
-              {stanza.map((line, lIdx) => (
-                <p
-                  key={lIdx}
-                  className={`leading-relaxed tracking-wide ${
-                    sIdx === 0
-                      ? "text-lg sm:text-xl font-medium italic text-zinc-800 dark:text-zinc-200"
-                      : line.startsWith("Lucky me") || line.startsWith("lucky me")
-                      ? "text-base sm:text-lg italic font-medium pt-2 text-zinc-700 dark:text-zinc-300"
-                      : "text-base sm:text-lg"
-                  }`}
-                >
-                  {line}
-                </p>
-              ))}
+              <div className="space-y-2 max-w-lg">
+                {paragraph.split("\n\n").map((line, lIdx) => (
+                  <p
+                    key={lIdx}
+                    className={`leading-relaxed tracking-wide ${
+                      isOpening
+                        ? "text-lg sm:text-xl font-medium"
+                        : isLuckyMe
+                        ? "text-base sm:text-lg italic font-medium"
+                        : "text-base sm:text-lg"
+                    }`}
+                  >
+                    {line}
+                  </p>
+                ))}
+              </div>
             </div>
           );
         })}
@@ -180,7 +180,7 @@ export default function ForYouPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.15 }}
-        className="pt-12 border-t border-zinc-200 dark:border-zinc-800 flex justify-center relative z-10"
+        className="pt-16 border-t border-zinc-200 dark:border-zinc-800 flex justify-center relative z-10"
       >
         <div className="overflow-x-auto w-full max-w-full flex justify-center py-2">
           <pre className="font-mono text-[10px] sm:text-xs text-zinc-700 dark:text-zinc-300 leading-none select-none whitespace-pre tracking-normal">
