@@ -75,17 +75,24 @@ export default function ForYouPage() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + window.innerHeight * 0.45;
+      // Find the stanza closest to the center-third of the viewport
+      const viewportCenter = window.scrollY + window.innerHeight * 0.45;
+      let closestIdx = 0;
+      let minDistance = Infinity;
+
       poemStanzas.forEach((_, idx) => {
         const el = document.getElementById(`poem-stanza-${idx}`);
         if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height + 100) {
-            setActivePhotoIndex(idx);
+          const rect = el.getBoundingClientRect();
+          const elementAbsCenter = window.scrollY + rect.top + rect.height / 2;
+          const dist = Math.abs(viewportCenter - elementAbsCenter);
+          if (dist < minDistance) {
+            minDistance = dist;
+            closestIdx = idx;
           }
         }
       });
+      setActivePhotoIndex(closestIdx);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -101,7 +108,7 @@ export default function ForYouPage() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="relative aspect-square w-full max-w-[420px] sm:max-w-[480px] rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md overflow-hidden shadow-2xl pointer-events-auto"
+          className="relative aspect-video w-full max-w-[560px] sm:max-w-[640px] rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md overflow-hidden shadow-2xl pointer-events-auto"
         >
           {/* Photos with smooth crossfade */}
           {photos.map((photo, index) => (
@@ -110,9 +117,9 @@ export default function ForYouPage() {
               initial={false}
               animate={{
                 opacity: index === activePhotoIndex ? 1 : 0,
-                scale: index === activePhotoIndex ? 1 : 1.05,
+                scale: index === activePhotoIndex ? 1 : 1.04,
               }}
-              transition={{ duration: 0.8, ease: "easeInOut" }}
+              transition={{ duration: 0.7, ease: "easeInOut" }}
               className="absolute inset-0 w-full h-full"
             >
               <img
@@ -126,16 +133,8 @@ export default function ForYouPage() {
           {/* Vignette / subtle gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
 
-          {/* Now Playing Badge */}
-          <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-md text-white text-[11px] font-mono shadow pointer-events-none z-10">
-            <Music className="w-3 h-3 animate-pulse text-zinc-300" />
-            <span className="truncate max-w-[180px] sm:max-w-none">
-              Your Universe - Rico Blanco
-            </span>
-          </div>
-
           {/* Photo Pagination Indicator */}
-          <div className="absolute bottom-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-md text-white text-[10px] font-mono z-10">
+          <div className="absolute bottom-3 right-3 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-mono z-10 shadow">
             <span>{activePhotoIndex + 1}</span>
             <span className="text-zinc-400">/</span>
             <span className="text-zinc-400">{photos.length}</span>
@@ -144,7 +143,7 @@ export default function ForYouPage() {
       </div>
 
       {/* Scrolling Poem Content */}
-      <div className="max-w-xl mx-auto space-y-36 px-4 pt-10 sm:pt-14 relative z-10 font-serif">
+      <div className="max-w-xl mx-auto space-y-40 px-4 pt-12 sm:pt-16 relative z-10 font-sans">
         {poemStanzas.map((stanza, sIdx) => {
           const isActive = sIdx === activePhotoIndex;
           return (
