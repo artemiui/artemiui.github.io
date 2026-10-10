@@ -33,7 +33,7 @@ const photos = [
 
 const poemParagraphs = [
   "Take as many pictures as you can; especially of the things that matter.",
-  "But how exactly do you do something like that when that something that's important when the person you're looking at is the most important person to ever grace your eyes?",
+  "But how exactly do you do something like that when that 'thing that matters' is the most beautiful person to ever grace your eyes?",
   "That a photo only captures the minute details of an infinitely beautiful, continuous being. The one that reminded me that love isn't supposed to be being stabbed in the chest every waking day.",
   "The one that showed me that love can be fun, not cannibalistic. The one that showed me that to truly cannibalize is to feed into each other, not parasitically.",
   "Because, frankly, I never thought I'd find you. And there hasn't been a single day of my life since I met you that I've never been scared of losing you.",
