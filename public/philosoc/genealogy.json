@@ -1,0 +1,957 @@
+{
+  "department": "University of the Philippines Diliman Department of Philosophy",
+  "location": "2/F Palma Hall Pavilion 2, Quirino Avenue, UP Diliman, Quezon City",
+  "official_website": "https://philosophy.upd.edu.ph",
+  "founded": 1910,
+  "status": "Prototype // Subject to ongoing academic assessment and revision",
+  "disclaimer": "This academic genealogy dataset is a research prototype. Information presented is preliminary, undergoing continuous archival verification, and subject to change.",
+  "student_organizations": [
+    {
+      "id": "org_philosoc",
+      "name": "UP Philosophical Society (UP PhiloSoc)",
+      "type": "Student Organization",
+      "founded": "1960s (58+ years of existence)",
+      "base": "University-wide, CSSP-based",
+      "description": "True to its 58 years of existence, UP PhiloSoc is not only a haven for liberal philosophical learning, but a breeding ground for effective, critical, and responsible leaders and thinkers of society in whatever field they may be a part of. Members pursue professions such as law, public governance, journalism, research, and education. Organizes philosophical discussions, lecture series, and philosophy tutorials.",
+      "facebook": "https://www.facebook.com/UPPhiloSoc",
+      "instagram": "https://www.instagram.com/upphilosoc/"
+    },
+    {
+      "id": "org_kapitas",
+      "name": "UP Kabataang Pilosopo Tasyo (UP KAPITAS)",
+      "type": "Student Organization",
+      "founded": "CSSP, UP Diliman",
+      "base": "Department-based socio-academic",
+      "description": "Isang sosyo-akademikong samahan para sa mga mag-aaral ng Kagawaran ng Pilosopiya sa Unibersidad ng Pilipinas Diliman. Layunin nito na paunlarin ang pilosopiyang Pilipino na angkop at makabuluhan sa lipunang Pilipino; humubog ng mga Pilipinong palaisip na nais paglingkuran ang sambayanan; magbigay ng espasyo para sa mga gawaing pilosopikal; at isulong ang pilosopiya bilang isang disiplina.",
+      "facebook": "https://www.facebook.com/updkapitas",
+      "instagram": "https://www.instagram.com/up_kapitas/"
+    },
+    {
+      "id": "org_apeiron",
+      "name": "Apeiron Core Group",
+      "type": "Student Volunteer Arm",
+      "founded": "UP Diliman Department of Philosophy",
+      "base": "Official Department Volunteer Arm",
+      "description": "Serves as the official student volunteer arm of the UP Diliman Department of Philosophy. Committed to addressing Department needs and concerns, delivering basic student services, and forwarding relevant university and national campaigns.",
+      "facebook": "https://www.facebook.com/ApeironUPD"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "townsend_henry",
+      "name": "Henry S. Townsend",
+      "role": "Inaugural Department Head (1910–1918, UP Manila)",
+      "rank_level": "external",
+      "institution": "University of Chicago / Des Moines College",
+      "phd_year": 1910,
+      "tradition": "Early Pragmatism, Logic, Educational Philosophy",
+      "dissertation": "Educational and Philosophical Foundations in the Philippine Islands",
+      "bio": "First Head of the joint Department of Philosophy and Psychology established in 1910 at the University of the Philippines Manila campus (Padre Faura); oversaw the initial curriculum of philosophical and psychological studies during the American occupation before the post-war transfer to Diliman.",
+      "is_upd_faculty": true,
+      "campus": "UP Manila (1910–1918)"
+    },
+    {
+      "id": "frege_gottlob",
+      "name": "Friedrich Ludwig Gottlob Frege",
+      "role": "Professor of Mathematics & Logic",
+      "rank_level": "external",
+      "institution": "University of Göttingen",
+      "phd_year": 1873,
+      "tradition": "Mathematical Logic, Philosophy of Language",
+      "dissertation": "Über eine geometrische Darstellung der imaginären Gebilde in der Ebene",
+      "bio": "Foundational figure in modern mathematical logic and analytic philosophy; intellectual predecessor whose lectures and works shaped Rudolf Carnap at the University of Jena.",
+      "is_upd_faculty": false,
+      "campus": "Global Predecessor"
+    },
+    {
+      "id": "carnap_rudolf",
+      "name": "Rudolf Carnap",
+      "role": "Professor of Philosophy",
+      "rank_level": "external",
+      "institution": "University of Jena",
+      "phd_year": 1921,
+      "tradition": "Logical Positivism, Semantics, Philosophy of Science",
+      "dissertation": "Der Raum: Ein Beitrag zur Wissenschaftslehre",
+      "bio": "Pivotal member of the Vienna Circle and major proponent of logical empiricism; professor at the University of Chicago where he supervised Ricardo R. Pascual's doctoral dissertation.",
+      "is_upd_faculty": false,
+      "campus": "Global Predecessor"
+    },
+    {
+      "id": "morris_charles",
+      "name": "Charles W. Morris",
+      "role": "Professor of Philosophy",
+      "rank_level": "external",
+      "institution": "University of Chicago",
+      "phd_year": 1925,
+      "tradition": "Pragmatism, Semiotics, Logical Empiricism",
+      "dissertation": "Symbolism and Reality",
+      "bio": "American semiotician and pragmatist at the University of Chicago; co-advisor and collaborator on the International Encyclopedia of Unified Science alongside Carnap, mentoring Ricardo Pascual.",
+      "is_upd_faculty": false,
+      "campus": "Global Predecessor"
+    },
+    {
+      "id": "skinner_bf",
+      "name": "B. F. Skinner",
+      "role": "Edgar Pierce Professor of Psychology",
+      "rank_level": "external",
+      "institution": "Harvard University",
+      "phd_year": 1931,
+      "tradition": "Radical Behaviorism, Epistemology of Science",
+      "dissertation": "The Concept of the Reflex in the Description of Behavior",
+      "bio": "Renowned Harvard epistemologist of behavior and experimental psychologist; doctoral dissertation supervisor of Alfredo V. Lagmay at Harvard University.",
+      "is_upd_faculty": false,
+      "campus": "Global Predecessor"
+    },
+    {
+      "id": "parry_william",
+      "name": "William Tuthill Parry",
+      "role": "Professor of Philosophy",
+      "rank_level": "external",
+      "institution": "Harvard University",
+      "phd_year": 1932,
+      "tradition": "Analytic Logic, Modal Logic, Epistemology",
+      "dissertation": "Implication and the Principles of Deductive Systems",
+      "bio": "American logician known for the theory of analytic implication; supervised Armando F. Bonifacio's doctoral dissertation at the State University of New York at Buffalo.",
+      "is_upd_faculty": false,
+      "campus": "Global Predecessor"
+    },
+    {
+      "id": "evans_donald",
+      "name": "Donald Evans",
+      "role": "Professor of Medical Ethics",
+      "rank_level": "external",
+      "institution": "University of Wales Swansea",
+      "phd_year": 1980,
+      "tradition": "Bioethics, Medical Jurisprudence, Moral Philosophy",
+      "dissertation": "Ethics and Medical Practice",
+      "bio": "Director of the Centre for Philosophy and Health Care at the University of Wales Swansea; primary doctoral supervisor of Leonardo D. de Castro.",
+      "is_upd_faculty": false,
+      "campus": "Global Predecessor"
+    },
+    {
+      "id": "pascual_ricardo",
+      "name": "Ricardo R. Pascual",
+      "role": "Founding Department Chair & Professor",
+      "rank_level": "emeritus",
+      "institution": "University of Chicago",
+      "phd_year": 1939,
+      "tradition": "Logical Positivism, Epistemology, Philippine Thought",
+      "dissertation": "Logical Analysis",
+      "bio": "Pioneer of Anglo-American analytic philosophy in the Philippines. First Filipino to earn a PhD in philosophy; spearheaded the establishment of an independent UP Department of Philosophy in Diliman after WWII; cultivated the celebrated 'Pasky Boys'.",
+      "is_upd_faculty": true,
+      "campus": "UP Manila (BA/MA) → UP Diliman Transfer (1949)"
+    },
+    {
+      "id": "lagmay_alfredo",
+      "name": "Alfredo V. Lagmay",
+      "role": "Former Instructor in Philosophy & Alumnus (Ph.B., M.A.)",
+      "rank_level": "lecturer",
+      "institution": "Harvard University",
+      "phd_year": 1955,
+      "tradition": "Logic, Epistemology, Philosophy of Mind",
+      "dissertation": "A Logical Analysis of the Concept of Mind and Conditioning",
+      "bio": "Alumnus and former faculty member of the UP Department of Philosophy. Earned his Ph.B. (1947, cum laude) and M.A. in Philosophy (1951) under Dr. Ricardo R. Pascual. Served as an Instructor in Philosophy handling logic and philosophical analysis during the post-war Padre Faura and early Diliman periods before pursuing doctoral studies at Harvard. Did not become a professor of philosophy; his teaching and academic appointment in the department were as an instructor and alumnus.",
+      "is_upd_faculty": true,
+      "campus": "UP Manila → UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "majul_cesar",
+      "name": "Cesar Adib Majul",
+      "role": "Assistant Head of Philosophy (1959) & Dean of Arts and Sciences",
+      "rank_level": "full_prof",
+      "institution": "Cornell University",
+      "phd_year": 1957,
+      "tradition": "Islamic Philosophy, Political Thought, Historiography",
+      "dissertation": "The Political and Constitutional Ideas of the Philippine Revolution",
+      "bio": "Seminal Philippine political philosopher and historian; served as Assistant Head of the Department of Philosophy in 1959 under Ricardo Pascual. Later served as Dean of University College (1961–1966), Dean of the College of Arts and Sciences (1969–1971), and designated University Professor (1979). Not an emeritus of the department.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "bonifacio_armando",
+      "name": "Armando F. Bonifacio",
+      "role": "Professor Emeritus",
+      "rank_level": "emeritus",
+      "institution": "State University of New York at Buffalo",
+      "phd_year": 1969,
+      "tradition": "Analytic Philosophy, Epistemology, Philosophy of Education",
+      "dissertation": "The Concept of Obligation",
+      "bio": "Foundational figure in modern analytic philosophy at UP Diliman; served as Department Chairperson for eighteen years (1968–1986); conferred Professor Emeritus in 1987; shaped generations of Filipino philosophers.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "de_castro_leonardo",
+      "name": "Leonardo D. de Castro",
+      "role": "Centennial Professor & Former Chair",
+      "rank_level": "emeritus",
+      "institution": "University of Wales, Swansea",
+      "phd_year": 1991,
+      "tradition": "Bioethics, Applied Ethics, Ethical Theory",
+      "dissertation": "The Concept of Rules",
+      "bio": "Pioneer of Bioethics in Asia; Centennial Professor and long-time Chair of the UP Diliman Department of Philosophy; Editor-in-Chief of Asian Bioethics Review; Vice-Chair of the UNESCO International Bioethics Committee.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "lee_zosimo",
+      "name": "Zosimo E. Lee",
+      "role": "Former Dean (CSSP) & Professor",
+      "rank_level": "emeritus",
+      "institution": "State University of New York at Buffalo",
+      "phd_year": 1990,
+      "tradition": "Social & Political Philosophy, Rawlsian Liberalism, P4C",
+      "dissertation": "Autonomy, Rationality, and the Public Sphere in Political Liberalism",
+      "bio": "Affectionately remembered as the 'Walking Dean'; Dean of the College of Social Sciences and Philosophy (2004–2010); introduced Philosophy for Children (P4C) to the Philippines; prominent Rawlsian scholar.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "fronda_earl_stanley",
+      "name": "Earl Stanley B. Fronda",
+      "role": "Professor & Former Chair",
+      "rank_level": "full_prof",
+      "institution": "University of Wales Lampeter",
+      "phd_year": 2005,
+      "tradition": "Philosophy of Religion, Wittgenstein, Analytic Epistemology",
+      "dissertation": "Wittgenstein's Philosophy of Religion: Faith, Reason, and Form of Life",
+      "bio": "Professor and former department chairperson; authority on Ludwig Wittgenstein, philosophy of religion, and analytic epistemology; prolific author of philosophical treatises.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "sayson_ciriaco",
+      "name": "Ciriaco M. Sayson, Jr.",
+      "role": "Associate Professor & Former Chair",
+      "rank_level": "assoc_prof",
+      "institution": "University of Massachusetts Amherst",
+      "phd_year": 1997,
+      "tradition": "Ancient Philosophy, Aristotle, Metaphysics, Logic",
+      "dissertation": "Aristotle on Substance, Matter, and Form",
+      "bio": "Former Department Chairperson; leading scholar in classical Greek metaphysics, Aristotle, and formal logic; convener of major international philosophy symposiums at UP Diliman.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "payongayong_maria_theresa",
+      "name": "Ma. Theresa T. Payongayong",
+      "role": "Professor & Former Vice Chancellor",
+      "rank_level": "full_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2007,
+      "tradition": "Feminist Philosophy, Filipino Philosophy, Philosophy for Children",
+      "dissertation": "Feministang Pilosopiya sa Kontekstong Pilipino: Kritika at Pagpapalawig",
+      "bio": "Professor and former Vice Chancellor for Academic Affairs at UP Diliman; leading voice in Filipino feminist philosophy, gender discourse, indigenous philosophy, and Philosophy for Children.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "ocampo_ma_liza_ruth",
+      "name": "Ma. Liza Ruth A. Ocampo",
+      "role": "Professor & Former Chair (2023)",
+      "rank_level": "full_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2006,
+      "tradition": "Metaphysics, Philosophical Anthropology, Medieval Philosophy, Thomas Aquinas",
+      "dissertation": "The Dignity of the Thinking Person: A Philosophical Reflection on Human Nature",
+      "bio": "Professor and former Department Chairperson (2023); recipient of the UP Diliman Centennial Professorial Chair; author of 'Break Open a Stone: An Invitation to Metaphysics' and 'The Dignity of the Thinking Person'; leading authority on Thomistic metaphysics.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "yasol_naval_jeanette",
+      "name": "Jeanette L. Yasol-Naval",
+      "role": "Professor",
+      "rank_level": "full_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2009,
+      "tradition": "Environmental Philosophy and Ethics, Pilosopiyang Filipino, EcoFeminism",
+      "dissertation": "Environmental Justice and Ecological Sustainability in Developing Economies",
+      "bio": "Professor with extensive publications in environmental philosophy, ethics of food, agricultural ethics, Philosophy for Children, indigenous cultures, and ecofeminism.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "boongaling_john_ian",
+      "name": "John Ian Boongaling",
+      "role": "Professor",
+      "rank_level": "full_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2018,
+      "tradition": "Epistemology, Logic, Philosophy of Mind, Philosophy of Language",
+      "dissertation": "Dissolving the Gettier Problem: Beyond Analysis",
+      "bio": "Full Professor specializing in epistemology, analytic logic, and philosophy of mind; author of 'Dissolving the Gettier Problem: Beyond Analysis' (Cambridge Scholars Publishing, 2020); prolific writer on Hintikka's epistemology, Aristotle's logic, and semantic theories.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "abalos_orendain_karen",
+      "name": "Karen Connie Abalos-Orendain",
+      "role": "Professor & Former Chair (2021-2023)",
+      "rank_level": "full_prof",
+      "institution": "Kobe University",
+      "phd_year": 2017,
+      "tradition": "Socio-Political Philosophy, Contemporary Philosophy, Japanese Philosophy, Immigration",
+      "dissertation": "Cosmopolitan Norms, Democratic Legitimacy, and the Rights of Migrant Workers",
+      "bio": "Professor and former Department Chairperson (2021–2023); Monbukagakusho scholar at Kobe University; recipient of ONE UP Professorial Chair Award in Applied Ethics; researcher on cosmopolitanism, deliberative democracy, and Japanese philosophy.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "lumagbas_lily_beth",
+      "name": "Lily Beth C. Lumagbas",
+      "role": "Associate Professor & Current Department Chair",
+      "rank_level": "assoc_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2016,
+      "tradition": "Ancient Philosophy, Moral Philosophy, Platonic Ethics",
+      "dissertation": "Virtue, Eudaimonia, and Moral Motivation in Platonic Dialogues",
+      "bio": "Current Chairperson of the UP Diliman Department of Philosophy; specialist in classical Greek ethics, Plato, ancient virtue theory, and moral psychology.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "mendoza_lumberto",
+      "name": "Lumberto Guce Mendoza",
+      "role": "Associate Professor",
+      "rank_level": "assoc_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2015,
+      "tradition": "Philosophy of Language, Wittgenstein, Social & Political Philosophy, STS, P4C",
+      "dissertation": "Naturalized Epistemology and Cognitive Architecture",
+      "bio": "Associate Professor specializing in Wittgenstein, Eastern philosophy, Philosophy for Children, logic as Gestalt, Science, Technology and Society (STS), and research ethics.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "sy_peter",
+      "name": "Peter A. Sy",
+      "role": "Associate Professor",
+      "rank_level": "assoc_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 1999,
+      "tradition": "AI Ethics, Bioethics, Social Philosophy, Data Privacy",
+      "dissertation": "Informational Privacy and Justice in Technological Society (MA Thesis)",
+      "bio": "Associate Professor and pioneer in AI ethics, bioethics, and informational privacy; former University Data Protection Officer and CSSP faculty leader.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "masakayan_nicolo",
+      "name": "Nicolo M. Masakayan",
+      "role": "Associate Professor",
+      "rank_level": "assoc_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2021,
+      "tradition": "Social & Political Philosophy, Ethics, Epistemic Injustice",
+      "dissertation": "Democratic Deliberation and Epistemic Injustice in Public Discourse",
+      "bio": "Associate Professor teaching ethics, political philosophy, and democratic theory; researcher in epistemic injustice and deliberative democracy.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "evangelista_francis_julius",
+      "name": "Francis Julius N. Evangelista",
+      "role": "Senior Lecturer",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2008,
+      "tradition": "Critical Thinking, Logic, Philosophy of Education, Ethics",
+      "dissertation": "Philosophical Inquiries in Critical Thinking and Pedagogy",
+      "bio": "Senior Lecturer with the Department of Philosophy; author of widely used Philippine university textbooks on logic, critical thinking, and ethics.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "agpaoa_jerwin",
+      "name": "Jerwin F. Agpaoa",
+      "role": "Assistant Professor & Vice Chancellor",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2014,
+      "tradition": "Logic, Ethics, Philosophy of Language, Bioethics",
+      "dissertation": "Ethical Considerations in Vulnerable Population Biomedical Research (MA)",
+      "bio": "Vice Chancellor for Student Affairs and Assistant Professor of Philosophy; specializes in logic, ethics, bioethics, and philosophy of language.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "banares_romulo",
+      "name": "Romulo T. Bañares, Jr.",
+      "role": "Assistant Professor & Undergraduate Coordinator",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2016,
+      "tradition": "Logic, Epistemology, Philosophy of Action",
+      "dissertation": "Formal Epistemology and Doxastic Justification (MA)",
+      "bio": "Undergraduate Coordinator; Assistant Professor specializing in symbolic logic, formal epistemology, and decision theory.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "fernando_enrique",
+      "name": "Enrique Benjamin R. Fernando III",
+      "role": "Assistant Professor",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2019,
+      "tradition": "Philosophy of Law, Political Philosophy, Philosophy of Mind, Analytic Metaphysics",
+      "dissertation": "Legal Normativity and Analytic Metaphysics (MPhil)",
+      "bio": "Assistant Professor specializing in philosophy of law, ethical theory, philosophy of language, philosophy of mind, cognitive science, and analytic metaphysics.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "franco_gerald_pio",
+      "name": "Gerald Pio M. Franco",
+      "role": "Assistant Professor",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2020,
+      "tradition": "Ethics, Applied Philosophy, Continental Thought",
+      "dissertation": "Normative Grounding in Applied Ethics",
+      "bio": "Assistant Professor teaching ethics, history of philosophy, and introductory philosophical analysis.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "macapinlac_arlyn",
+      "name": "Arlyn P. Macapinlac",
+      "role": "Assistant Professor",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2018,
+      "tradition": "Ethics, Filipino Philosophy, AI Ethics",
+      "dissertation": "Ethics of Information Technology and Indigenous Norms (MA)",
+      "bio": "Assistant Professor specializing in normative ethics, Filipino philosophy, and ethics of artificial intelligence; faculty leader in university extension.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "manaloto_renato",
+      "name": "Renato B. Manaloto",
+      "role": "Assistant Professor",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2017,
+      "tradition": "Pilosopiyang Pilipino, Phenomenology, Philosophy of Religion, Bioethics, Philosophy of Law",
+      "dissertation": "Phenomenology of Justice in Filipino Thought (MA)",
+      "bio": "Assistant Professor focusing on Pilosopiyang Pilipino, phenomenology, philosophy of religion, biomedical ethics, research ethics, and theories of justice.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "zosa_marielle",
+      "name": "Marielle Antoinette H. Zosa",
+      "role": "Assistant Professor",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2019,
+      "tradition": "Social and Political Philosophy, Applied Ethics, History of Philosophy, Logic, Philosophy of Science",
+      "dissertation": "Public Reasons and Scientific Rationality in Democratic Policy (MA)",
+      "bio": "Assistant Professor teaching social and political philosophy, history of philosophy, logic, and philosophy of science.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "de_guzman_daulat_symel",
+      "name": "Symel Noelin S. de Guzman-Daulat",
+      "role": "Assistant Professor",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2021,
+      "tradition": "Metaphysics, Logic, Philosophy of Science, Feminist Epistemology, Philosophy of Physics",
+      "dissertation": "Analytical Metaphysics and the Philosophy of Physics (MA)",
+      "bio": "Assistant Professor focusing on analytic metaphysics, modal logic, philosophy of the physical sciences, and feminist epistemology.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "boongaling_pamela_ann",
+      "name": "Pamela Ann Boongaling",
+      "role": "Assistant Professor",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2022,
+      "tradition": "Ethics, Epistemology, Philosophy of Education",
+      "dissertation": "Epistemic Agency and Moral Development",
+      "bio": "Assistant Professor with research interests across normative ethics, epistemology, and critical thinking pedagogy.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "alonzo_john_raymund",
+      "name": "John Raymund S. Alonzo",
+      "role": "Instructor",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2023,
+      "tradition": "Philosophy of Language, Epistemic Injustice",
+      "dissertation": "Linguistic Vulnerability and Testimonial Injustice (Graduating/Research)",
+      "bio": "Current generation instructor teaching philosophy of language, formal semantics, and epistemic injustice.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "chuacuco_gavin_nigel",
+      "name": "Gavin Nigel L. Chuacuco",
+      "role": "Instructor",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2024,
+      "tradition": "Philosophy of Artificial Intelligence, Filipino Philosophy, Epistemology, Ethics",
+      "dissertation": "Machine Consciousness, Agency, and Ethical Accountability",
+      "bio": "Current generation instructor focusing on cutting-edge issues in AI ethics, Filipino philosophical frameworks, and contemporary epistemology.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "de_jesus_ingrid_mae",
+      "name": "Ingrid Mae H. De Jesus",
+      "role": "Instructor",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2023,
+      "tradition": "Ancient Philosophy, Comparative/Asian Philosophy, Feminist Studies, Pop-Culture Philosophy",
+      "dissertation": "Comparative Metaphysics: Ancient Greek and Classical Asian Thought",
+      "bio": "Current generation instructor teaching ancient Greek philosophy, comparative Asian philosophies, feminist thought, and philosophy in media.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "ocon_joshua_jose",
+      "name": "Joshua Jose R. Ocon",
+      "role": "Instructor",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2024,
+      "tradition": "Ethics, Logic, Critical Thinking",
+      "dissertation": "Moral Rationality and Argumentation Theory",
+      "bio": "Current generation instructor conducting courses in elementary logic, critical thinking, and normative ethics.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "quitain_miguel_elvir",
+      "name": "Miguel Elvir R. Quitain",
+      "role": "Instructor",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2023,
+      "tradition": "Social and Political Philosophy, Democratic Theory",
+      "dissertation": "Theories of Deliberative Participation and Political Legitimacy",
+      "bio": "Current generation instructor specializing in contemporary socio-political philosophy, democratic theory, and theories of justice.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "tubera_kurt_christian",
+      "name": "Kurt Christian Tubera",
+      "role": "Instructor",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2024,
+      "tradition": "Modal Epistemology, Social Epistemology, Logic",
+      "dissertation": "Possible Worlds Semantics and Doxastic Epistemology",
+      "bio": "Current generation instructor specializing in formal logic, modal epistemology, and social epistemologies.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "villegas_patrick_joshua",
+      "name": "Patrick Joshua I. Villegas",
+      "role": "Instructor",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2024,
+      "tradition": "Philosophy of Medicine, Bioethics, Filipino Social Philosophy, Indigenous Philosophy, Philosophy of Mind",
+      "dissertation": "Conceptual Models of Disease and Indigenous Healing in Bioethics",
+      "bio": "Current generation instructor specializing in philosophy of medicine, bioethics, indigenous Filipino thought, and philosophy of mind.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "imperial_ron_joshua",
+      "name": "Ron Joshua Imperial",
+      "role": "Lecturer",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2024,
+      "tradition": "Logic, Philosophical Analysis, Ethics",
+      "dissertation": "Applied Logic in Philosophical Discourse",
+      "bio": "Part-time lecturer conducting undergraduate courses in logic and ethical reasoning at the Department.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "ingalla_sean_marcus",
+      "name": "Sean Marcus Ingalla",
+      "role": "Lecturer",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2024,
+      "tradition": "Epistemology, Modern Philosophy, Logic",
+      "dissertation": "Problems in Contemporary Epistemology",
+      "bio": "Part-time lecturer teaching general education philosophy and introduction to philosophical inquiry.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "duran_andrea_lorraine",
+      "name": "Andrea Lorraine C. Duran",
+      "role": "Lecturer",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2024,
+      "tradition": "Ethics, Applied Philosophy, Logic",
+      "dissertation": "Normative Reasoning in Practical Contexts",
+      "bio": "Part-time lecturer handling courses in ethics and philosophical inquiry.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "raz_joseph",
+      "name": "Joseph Raz",
+      "role": "Professor of Philosophy of Law",
+      "rank_level": "external",
+      "institution": "University of Oxford",
+      "phd_year": 1967,
+      "tradition": "Philosophy of Law, Legal Positivism, Practical Reason",
+      "dissertation": "The Concept of a Legal System",
+      "bio": "Celebrated legal, moral, and political philosopher at Balliol College, Oxford and Columbia University; supervised Emmanuel Q. Fernando at Merton College, Oxford.",
+      "is_upd_faculty": false,
+      "campus": "Global Predecessor"
+    },
+    {
+      "id": "lucas_jr",
+      "name": "John Randolph Lucas",
+      "role": "Fellow of Merton College, Oxford",
+      "rank_level": "external",
+      "institution": "University of Oxford",
+      "phd_year": 1958,
+      "tradition": "Philosophy of Mathematics, Gödelian Arguments, Metaphysics",
+      "dissertation": "The Principles of Politics",
+      "bio": "Distinguished Oxford philosopher and fellow of Merton College; celebrated for the Gödelian argument on mind, mechanism, and mathematical physics; co-advised Emmanuel Q. Fernando at Oxford.",
+      "is_upd_faculty": false,
+      "campus": "Global Predecessor"
+    },
+    {
+      "id": "fernando_emmanuel",
+      "name": "Emmanuel Q. Fernando",
+      "role": "Full Professor & Former Department Chair (2004–2005)",
+      "rank_level": "full_prof",
+      "institution": "University of Oxford (Merton College)",
+      "phd_year": 1992,
+      "tradition": "Philosophy of Law, Jurisprudence, Mathematical Logic, Legal Positivism, Ethics",
+      "dissertation": "The Role and Logic of Substantive Reasons in Adjudication",
+      "bio": "Son of former Chief Justice Enrique M. Fernando; recruited by Armando Bonifacio into the faculty in 1975 as one of the celebrated 'Bonifacio Boys'. Earned his MA at UPD on Gödel's Incompleteness Theorems, studied mathematical logic at Cambridge (Gonville & Caius), and completed his DPhil at Oxford (Merton College) under Joseph Raz and J.R. Lucas. Full Professor of Philosophy, Law, and Physics for over 40 years; Department Chair from 2004–2005. The annual Emmanuel Q. Fernando Philosophy Undergraduate Conference is celebrated in his honor by the UP Diliman Department of Philosophy.",
+      "is_upd_faculty": true,
+      "official_bio_pdf": "https://philosophy.upd.edu.ph/wp-content/uploads/2025/08/Emmanuel-Q.-Fernando-Biography-and-Selected-Bibliography-1.pdf",
+      "campus": "UP Diliman (Palma Hall)"
+    }
+  ],
+  "edges": [
+    {
+      "from": "townsend_henry",
+      "to": "pascual_ricardo",
+      "degree": "Mentorship",
+      "year": 1933
+    },
+    {
+      "from": "frege_gottlob",
+      "to": "carnap_rudolf",
+      "degree": "PhD",
+      "year": 1921
+    },
+    {
+      "from": "carnap_rudolf",
+      "to": "pascual_ricardo",
+      "degree": "PhD",
+      "year": 1939
+    },
+    {
+      "from": "morris_charles",
+      "to": "pascual_ricardo",
+      "degree": "Mentorship",
+      "year": 1939
+    },
+    {
+      "from": "skinner_bf",
+      "to": "lagmay_alfredo",
+      "degree": "PhD",
+      "year": 1955
+    },
+    {
+      "from": "pascual_ricardo",
+      "to": "lagmay_alfredo",
+      "degree": "MA",
+      "year": 1951
+    },
+    {
+      "from": "pascual_ricardo",
+      "to": "majul_cesar",
+      "degree": "Mentorship",
+      "year": 1953
+    },
+    {
+      "from": "pascual_ricardo",
+      "to": "bonifacio_armando",
+      "degree": "Mentorship",
+      "year": 1958
+    },
+    {
+      "from": "parry_william",
+      "to": "bonifacio_armando",
+      "degree": "PhD",
+      "year": 1969
+    },
+    {
+      "from": "evans_donald",
+      "to": "de_castro_leonardo",
+      "degree": "PhD",
+      "year": 1991
+    },
+    {
+      "from": "bonifacio_armando",
+      "to": "de_castro_leonardo",
+      "degree": "Mentorship",
+      "year": 1980
+    },
+    {
+      "from": "bonifacio_armando",
+      "to": "lee_zosimo",
+      "degree": "Mentorship",
+      "year": 1982
+    },
+    {
+      "from": "bonifacio_armando",
+      "to": "sayson_ciriaco",
+      "degree": "Mentorship",
+      "year": 1985
+    },
+    {
+      "from": "bonifacio_armando",
+      "to": "fronda_earl_stanley",
+      "degree": "Mentorship",
+      "year": 1986
+    },
+    {
+      "from": "bonifacio_armando",
+      "to": "ocampo_ma_liza_ruth",
+      "degree": "Mentorship",
+      "year": 1986
+    },
+    {
+      "from": "de_castro_leonardo",
+      "to": "payongayong_maria_theresa",
+      "degree": "PhD",
+      "year": 2007
+    },
+    {
+      "from": "de_castro_leonardo",
+      "to": "sy_peter",
+      "degree": "Mentorship",
+      "year": 1999
+    },
+    {
+      "from": "de_castro_leonardo",
+      "to": "agpaoa_jerwin",
+      "degree": "MA",
+      "year": 2014
+    },
+    {
+      "from": "de_castro_leonardo",
+      "to": "mendoza_lumberto",
+      "degree": "PhD",
+      "year": 2015
+    },
+    {
+      "from": "lee_zosimo",
+      "to": "yasol_naval_jeanette",
+      "degree": "PhD",
+      "year": 2009
+    },
+    {
+      "from": "lee_zosimo",
+      "to": "abalos_orendain_karen",
+      "degree": "Mentorship",
+      "year": 2005
+    },
+    {
+      "from": "lee_zosimo",
+      "to": "masakayan_nicolo",
+      "degree": "PhD",
+      "year": 2021
+    },
+    {
+      "from": "sayson_ciriaco",
+      "to": "lumagbas_lily_beth",
+      "degree": "PhD",
+      "year": 2016
+    },
+    {
+      "from": "sayson_ciriaco",
+      "to": "fernando_enrique",
+      "degree": "MA",
+      "year": 2019
+    },
+    {
+      "from": "sayson_ciriaco",
+      "to": "de_jesus_ingrid_mae",
+      "degree": "Mentorship",
+      "year": 2022
+    },
+    {
+      "from": "fronda_earl_stanley",
+      "to": "boongaling_john_ian",
+      "degree": "PhD",
+      "year": 2018
+    },
+    {
+      "from": "fronda_earl_stanley",
+      "to": "banares_romulo",
+      "degree": "MA",
+      "year": 2016
+    },
+    {
+      "from": "fronda_earl_stanley",
+      "to": "evangelista_francis_julius",
+      "degree": "PhD",
+      "year": 2008
+    },
+    {
+      "from": "payongayong_maria_theresa",
+      "to": "macapinlac_arlyn",
+      "degree": "MA",
+      "year": 2018
+    },
+    {
+      "from": "payongayong_maria_theresa",
+      "to": "manaloto_renato",
+      "degree": "Mentorship",
+      "year": 2017
+    },
+    {
+      "from": "ocampo_ma_liza_ruth",
+      "to": "franco_gerald_pio",
+      "degree": "PhD",
+      "year": 2020
+    },
+    {
+      "from": "ocampo_ma_liza_ruth",
+      "to": "zosa_marielle",
+      "degree": "Mentorship",
+      "year": 2019
+    },
+    {
+      "from": "boongaling_john_ian",
+      "to": "alonzo_john_raymund",
+      "degree": "Mentorship",
+      "year": 2022
+    },
+    {
+      "from": "boongaling_john_ian",
+      "to": "tubera_kurt_christian",
+      "degree": "Mentorship",
+      "year": 2023
+    },
+    {
+      "from": "boongaling_john_ian",
+      "to": "de_guzman_daulat_symel",
+      "degree": "Mentorship",
+      "year": 2021
+    },
+    {
+      "from": "boongaling_john_ian",
+      "to": "boongaling_pamela_ann",
+      "degree": "Mentorship",
+      "year": 2022
+    },
+    {
+      "from": "abalos_orendain_karen",
+      "to": "quitain_miguel_elvir",
+      "degree": "Mentorship",
+      "year": 2023
+    },
+    {
+      "from": "sy_peter",
+      "to": "chuacuco_gavin_nigel",
+      "degree": "Mentorship",
+      "year": 2023
+    },
+    {
+      "from": "sy_peter",
+      "to": "villegas_patrick_joshua",
+      "degree": "Mentorship",
+      "year": 2023
+    },
+    {
+      "from": "banares_romulo",
+      "to": "ocon_joshua_jose",
+      "degree": "Mentorship",
+      "year": 2023
+    },
+    {
+      "from": "banares_romulo",
+      "to": "imperial_ron_joshua",
+      "degree": "Mentorship",
+      "year": 2023
+    },
+    {
+      "from": "mendoza_lumberto",
+      "to": "ingalla_sean_marcus",
+      "degree": "Mentorship",
+      "year": 2023
+    },
+    {
+      "from": "agpaoa_jerwin",
+      "to": "duran_andrea_lorraine",
+      "degree": "Mentorship",
+      "year": 2023
+    },
+    {
+      "from": "raz_joseph",
+      "to": "fernando_emmanuel",
+      "degree": "PhD",
+      "year": 1992
+    },
+    {
+      "from": "lucas_jr",
+      "to": "fernando_emmanuel",
+      "degree": "Mentorship",
+      "year": 1992
+    },
+    {
+      "from": "bonifacio_armando",
+      "to": "fernando_emmanuel",
+      "degree": "Mentorship",
+      "year": 1975
+    },
+    {
+      "from": "fernando_emmanuel",
+      "to": "fernando_enrique",
+      "degree": "Mentorship",
+      "year": 2017
+    }
+  ],
+  "historical_eras": [
+    {
+      "period": "1910–1948",
+      "campus": "UP Manila (Padre Faura)",
+      "title": "Department of Philosophy and Psychology",
+      "description": "Established in 1910 within the College of Liberal Arts under Dr. Henry S. Townsend. Served as the colonial-era nursery for early Filipino civil servants and intellectuals."
+    },
+    {
+      "period": "December 1948 – January 1949",
+      "campus": "The Great Diliman Transfer",
+      "title": "Post-War Exodus & Rebirth at Palma Hall",
+      "description": "Following the devastating Battle of Manila and destruction of Padre Faura facilities, the University moved to Diliman, Quezon City. Dr. Ricardo R. Pascual founded the independent Department of Philosophy, embedding analytic philosophy."
+    },
+    {
+      "period": "1949–Present",
+      "campus": "UP Diliman (Palma Hall Pavilion 2)",
+      "title": "Independent Department of Philosophy",
+      "description": "The premier center of analytic philosophy in the Philippines, expanding into bioethics, philosophy for children, logic, and contemporary socio-political critique."
+    }
+  ]
+}

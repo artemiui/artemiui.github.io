@@ -1,0 +1,3411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academic Genealogy | UP Diliman Department of Philosophy</title>
+  
+  <!-- D3.js v7 for Graph Visualization with CDN Fallback -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script>window.d3 || document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"><\/script>')</script>
+
+  <style>
+    /* ==========================================================================
+       STRICT ACADEMIC MONOCHROME DESIGN SYSTEM
+       University of the Philippines Diliman - Department of Philosophy
+       Typography: Arial everywhere; minimal accents
+       ========================================================================== */
+    :root {
+      --bg-canvas: #FFFFFF;
+      --text-primary: #000000;
+      --text-secondary: #333333;
+      --text-muted: #666666;
+      --border-black: #000000;
+      --border-accent: #E5E5E5;
+      --border-subtle: #EEEEEE;
+      --surface-white: #FFFFFF;
+      --surface-elevated: #FAFAFA;
+      --dimmed-opacity: 0.12;
+      --focus-ring: #000000;
+      --up-green: #30b619;
+      --font-sans: Arial, Helvetica, sans-serif;
+      --font-mono: Arial, Helvetica, sans-serif;
+      --radius-sm: 2px;
+    }
+
+    *, html, body, button, input, select, textarea, kbd, svg text {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif !important;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: Arial, Helvetica, sans-serif !important;
+      user-select: none;
+    }
+
+    /* --------------------------------------------------------------------------
+       Interactive Full-Bleed Canvas & Coordinate Grid
+       -------------------------------------------------------------------------- */
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      cursor: grab;
+      background-color: var(--bg-canvas);
+    }
+
+    #canvas-container:active {
+      cursor: grabbing;
+    }
+
+    svg#genealogy-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .axis-line {
+      stroke: #000000;
+      stroke-width: 1px;
+      stroke-dasharray: 4, 4;
+      opacity: 0.35;
+    }
+
+    .origin-marker {
+      fill: #000000;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+
+    /* --------------------------------------------------------------------------
+       Edges / Connection Lines
+       -------------------------------------------------------------------------- */
+    .edge-path {
+      fill: none;
+      transition: opacity 0.25s ease, stroke-width 0.25s ease, stroke 0.25s ease;
+    }
+
+    .edge-phd {
+      stroke: #000000;
+      stroke-width: 1.5px;
+    }
+
+    .edge-ma {
+      stroke: #000000;
+      stroke-width: 1.5px;
+      stroke-dasharray: 5, 4;
+    }
+
+    .edge-mentorship {
+      stroke: #000000;
+      stroke-width: 1.5px;
+      stroke-dasharray: 2, 3;
+    }
+
+    .edge-path.highlighted-ancestor {
+      stroke: #000000 !important;
+      stroke-width: 2.5px !important;
+      opacity: 1 !important;
+    }
+
+    .edge-path.highlighted-descendant {
+      stroke: #000000 !important;
+      stroke-width: 2.5px !important;
+      opacity: 1 !important;
+    }
+
+    .edge-path.dimmed {
+      opacity: var(--dimmed-opacity) !important;
+    }
+
+    /* --------------------------------------------------------------------------
+       Node Cards & Typography
+       -------------------------------------------------------------------------- */
+    .node-group {
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), opacity 0.25s ease;
+    }
+
+    .node-group:focus {
+      outline: none;
+    }
+
+    .node-card {
+      fill: #FFFFFF;
+      stroke: var(--border-black);
+      stroke-width: 1px;
+      transition: stroke-width 0.15s ease, filter 0.15s ease;
+    }
+
+    .node-group:hover .node-card {
+      stroke-width: 2px;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.09));
+    }
+
+    .node-group.rank-emeritus .node-card {
+      stroke-width: 1.5px;
+    }
+
+    .node-group.rank-emeritus .node-card-inner-border {
+      fill: none;
+      stroke: #000000;
+      stroke-width: 1px;
+      opacity: 0.85;
+    }
+
+    .node-group.rank-full_prof .node-card {
+      stroke-width: 2px;
+    }
+
+    .node-group.rank-assoc_prof .node-card {
+      stroke-width: 1.5px;
+    }
+
+    .node-group.rank-asst_prof .node-card {
+      stroke-width: 1.1px;
+    }
+
+    .node-group.rank-lecturer .node-card {
+      stroke-dasharray: 3, 2;
+    }
+
+    .node-group.rank-external .node-card {
+      stroke-dasharray: 4, 3;
+      stroke: #333333;
+    }
+
+    .node-group.selected .node-card {
+      stroke-width: 2.5px;
+      stroke: #000000;
+      filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.18));
+    }
+
+    .node-group.highlighted-ancestor .node-card {
+      stroke-width: 2.2px;
+      stroke: #000000;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.12));
+    }
+
+    .node-group.highlighted-descendant .node-card {
+      stroke-width: 2.2px;
+      stroke: #000000;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.12));
+    }
+
+    .node-group.dimmed {
+      opacity: var(--dimmed-opacity) !important;
+    }
+
+    .node-name {
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+      font-weight: 600;
+      fill: #000000;
+      letter-spacing: 0.015em;
+    }
+
+    .node-role {
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 500;
+      fill: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+
+    .node-meta {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      fill: var(--text-muted);
+      letter-spacing: 0.03em;
+    }
+
+    .node-badge-text {
+      font-family: var(--font-sans);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .badge-dark-rect {
+      fill: #000000;
+    }
+
+    .badge-dark-text {
+      fill: #FFFFFF;
+    }
+
+    .badge-light-rect {
+      fill: #FFFFFF;
+      stroke: var(--border-black);
+      stroke-width: 1px;
+    }
+
+    .badge-light-text {
+      fill: #000000;
+    }
+
+    /* --------------------------------------------------------------------------
+       Floating Modular Toolbar (Control Chrome) - Top-Left (Simplified, No Background)
+       -------------------------------------------------------------------------- */
+    #control-chrome {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+      max-width: calc(100vw - 36px);
+    }
+
+    .chrome-card {
+      pointer-events: auto;
+      background: transparent;
+      border: none;
+      padding: 0;
+      box-shadow: none;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo-link {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .brand-logo-img {
+      height: 36px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+      filter: contrast(1.1);
+    }
+
+    /* Prototype Disclaimer Styles */
+    .prototype-badge-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 10px;
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px dashed var(--border-black);
+      padding: 4px 9px;
+      border-radius: var(--radius-sm);
+      max-width: fit-content;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+      pointer-events: auto;
+    }
+
+    .proto-pill {
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: #000000;
+      color: #FFFFFF;
+      padding: 1px 5px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .proto-desc {
+      font-size: 10px;
+      line-height: 1.35;
+      color: var(--text-secondary);
+    }
+
+    .legend-prototype-box {
+      margin-top: 8px;
+      padding-top: 7px;
+      border-top: 1px dashed var(--border-accent);
+      font-size: 9.5px;
+      line-height: 1.4;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .panel-prototype-banner {
+      margin: 12px 22px 0;
+      padding: 7px 11px;
+      background: #FAFAFA;
+      border: 1px dashed var(--border-black);
+      font-size: 10px;
+      line-height: 1.45;
+      color: var(--text-secondary);
+    }
+
+    /* Controls Bar: Button Groups */
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .btn-group {
+      display: inline-flex;
+      border: 1px solid var(--border-black);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: #FFFFFF;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+
+    .btn-academic {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      background: #FFFFFF;
+      color: #000000;
+      border: none;
+      border-right: 1px solid var(--border-black);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.12s ease, color 0.12s ease;
+    }
+
+    .btn-academic:last-child {
+      border-right: none;
+    }
+
+    .btn-academic:hover {
+      background: #000000;
+      color: #FFFFFF;
+    }
+
+    .btn-academic.active {
+      background: #000000;
+      color: #FFFFFF;
+      font-weight: 700;
+    }
+
+    .btn-academic.active svg {
+      stroke: #FFFFFF;
+      fill: #FFFFFF;
+    }
+
+    .btn-academic.btn-standalone {
+      border: 1px solid var(--border-black);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+
+    .btn-icon-only {
+      padding: 5px 8px;
+    }
+
+    /* Highlight Filter Dropdown */
+    .filter-dropdown-wrap {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .academic-select {
+      height: 27px;
+      padding: 0 24px 0 9px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: #000000;
+      background-color: #FFFFFF;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: calc(100% - 7px) center;
+      border: 1px solid var(--border-black);
+      border-radius: var(--radius-sm);
+      outline: none;
+      cursor: pointer;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      transition: background-color 0.12s ease, border-color 0.12s ease;
+    }
+
+    .academic-select:hover {
+      background-color: #F8F8F8;
+    }
+
+    .academic-select:focus {
+      box-shadow: 0 0 0 1px #000000;
+    }
+
+    /* --------------------------------------------------------------------------
+       Search Overlay Modal
+       -------------------------------------------------------------------------- */
+    .search-overlay-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(2px);
+      z-index: 200;
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 14vh;
+    }
+
+    .search-overlay-backdrop.open {
+      display: flex;
+    }
+
+    .search-overlay-dialog {
+      background: #FFFFFF;
+      border: 1px solid var(--border-black);
+      width: 90%;
+      max-width: 560px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+      animation: searchModalSlide 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes searchModalSlide {
+      from { transform: translateY(-8px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .search-overlay-input-wrap {
+      display: flex;
+      align-items: center;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-black);
+      gap: 10px;
+      background: #FAFAFA;
+    }
+
+    .search-icon-svg-inline {
+      opacity: 0.65;
+      flex-shrink: 0;
+    }
+
+    .search-overlay-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 13.5px;
+      color: #000000;
+    }
+
+    .search-overlay-clear-btn {
+      background: none;
+      border: none;
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: none;
+      padding: 3px 6px;
+    }
+
+    .search-overlay-clear-btn:hover {
+      color: #000000;
+    }
+
+    .search-overlay-esc {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 3px 6px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-black);
+      border-radius: 2px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.12s ease;
+    }
+
+    .search-overlay-esc:hover {
+      background: #000000;
+      color: #FFFFFF;
+    }
+
+    .search-overlay-results {
+      max-height: 400px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .search-overlay-hint {
+      padding: 20px 16px;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .search-overlay-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      transition: background 0.1s ease;
+    }
+
+    .search-overlay-item:last-child {
+      border-bottom: none;
+    }
+
+    .search-overlay-item:hover, .search-overlay-item.highlighted {
+      background: #F4F4F4;
+    }
+
+    .search-item-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .search-item-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #000000;
+    }
+
+    .search-item-rank {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 1px 5px;
+      border: 1px solid var(--border-black);
+      background: #FFFFFF;
+    }
+
+    .search-item-sub {
+      font-size: 10.5px;
+      color: var(--text-secondary);
+    }
+
+
+
+    /* --------------------------------------------------------------------------
+       Student Organizations Panel Overlay (#orgs-modal)
+       -------------------------------------------------------------------------- */
+    #orgs-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(2px);
+      z-index: 150;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #orgs-modal.open {
+      display: flex;
+    }
+
+    .orgs-dialog {
+      background: #FFFFFF;
+      border: 1px solid var(--border-black);
+      width: 90%;
+      max-width: 680px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
+    }
+
+    .orgs-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-black);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #FAFAFA;
+    }
+
+    .orgs-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .orgs-body {
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .org-card {
+      border: 1px solid var(--border-black);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: #FFFFFF;
+    }
+
+    .org-top-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .org-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #000000;
+    }
+
+    .org-type-badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 600;
+      border: 1px solid #000000;
+      padding: 2px 6px;
+      text-transform: uppercase;
+    }
+
+    .org-desc {
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    .org-links-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .org-link {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: #000000;
+      text-decoration: underline;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* --------------------------------------------------------------------------
+       Bottom-Left Minimal Bordered Legend (#legend-box)
+       -------------------------------------------------------------------------- */
+    #legend-box {
+      position: fixed;
+      bottom: 18px;
+      left: 18px;
+      z-index: 40;
+      background: var(--surface-white);
+      border: 1px solid var(--border-black);
+      padding: 11px 14px;
+      width: 250px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    }
+
+    .legend-title {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #000000;
+      margin-bottom: 7px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-accent);
+      padding-bottom: 3px;
+    }
+
+    .legend-section {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 7px;
+    }
+
+    .legend-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 1px 0;
+      transition: color 0.12s ease;
+    }
+
+    .legend-row:hover {
+      color: #000000;
+    }
+
+    .legend-swatch {
+      width: 16px;
+      height: 11px;
+      background: #FFFFFF;
+      border: 1px solid #000000;
+      flex-shrink: 0;
+      display: inline-block;
+    }
+
+    .legend-swatch.swatch-emeritus {
+      outline: 1px solid #000000;
+      outline-offset: 1px;
+    }
+
+    .legend-swatch.swatch-full-prof {
+      border-width: 2px;
+    }
+
+    .legend-swatch.swatch-assoc-prof {
+      border-width: 1.5px;
+    }
+
+    .legend-swatch.swatch-asst-prof {
+      border-width: 1.1px;
+    }
+
+    .legend-swatch.swatch-lecturer {
+      border-style: dotted;
+    }
+
+    .legend-swatch.swatch-external {
+      border-style: dashed;
+    }
+
+    .legend-line {
+      width: 20px;
+      height: 0;
+      border-bottom: 1.5px solid #000000;
+      flex-shrink: 0;
+    }
+
+    .legend-line.line-ma {
+      border-bottom-style: dashed;
+    }
+
+    .legend-line.line-mentorship {
+      border-bottom-style: dotted;
+    }
+
+    /* --------------------------------------------------------------------------
+       Bottom-Right Translucent Blurred Glass Keybinds Reference (#keybinds-box)
+       -------------------------------------------------------------------------- */
+    #keybinds-box {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      z-index: 40;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid var(--border-accent);
+      padding: 9px 13px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 10.5px;
+      color: var(--text-secondary);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      transition: border-color 0.15s ease;
+    }
+
+    #keybinds-box:hover {
+      border-color: var(--border-black);
+    }
+
+    .keybind-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .keybind-label {
+      font-size: 9.5px;
+      letter-spacing: 0.02em;
+    }
+
+    kbd {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 500;
+      background: #FFFFFF;
+      border: 1px solid var(--border-black);
+      padding: 1px 4px;
+      border-radius: 2px;
+      color: #000000;
+      box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+    }
+
+    /* --------------------------------------------------------------------------
+       Right-Side Slide-Over Scholar Dossier Panel (#details-panel)
+       -------------------------------------------------------------------------- */
+    #details-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 460px;
+      height: 100vh;
+      background: var(--surface-white);
+      border-left: 1px solid var(--border-black);
+      z-index: 100;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -8px 0 32px rgba(0, 0, 0, 0.08);
+    }
+
+    #details-panel.open {
+      transform: translateX(0);
+    }
+
+    .panel-header {
+      padding: 16px 22px 13px;
+      border-bottom: 1px solid var(--border-black);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      background: #FAFAFA;
+    }
+
+    .panel-breadcrumb {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .panel-close-btn {
+      background: transparent;
+      border: 1px solid var(--border-black);
+      color: #000000;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 13px;
+      border-radius: var(--radius-sm);
+      transition: all 0.12s ease;
+    }
+
+    .panel-close-btn:hover {
+      background: #000000;
+      color: #FFFFFF;
+    }
+
+    .panel-content {
+      padding: 22px;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .scholar-header-block {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .scholar-fullname {
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      color: #000000;
+    }
+
+    .scholar-badges-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 2px;
+    }
+
+    .badge-pill {
+      font-family: var(--font-mono);
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 7px;
+      border-radius: 2px;
+    }
+
+    .badge-pill.pill-dark {
+      background: #000000;
+      color: #FFFFFF;
+    }
+
+    .badge-pill.pill-light {
+      background: #FFFFFF;
+      border: 1px solid var(--border-black);
+      color: #000000;
+    }
+
+    .badge-pill.pill-upd {
+      background: #F0F0F0;
+      border: 1px solid var(--border-black);
+      color: #000000;
+    }
+
+    .meta-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .meta-table tr {
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .meta-table td {
+      padding: 7px 0;
+      vertical-align: top;
+    }
+
+    .meta-label {
+      width: 115px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      font-size: 9.5px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .meta-value {
+      font-weight: 500;
+      color: #000000;
+      line-height: 1.4;
+    }
+
+    .panel-section-title {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #000000;
+      border-bottom: 1px solid var(--border-black);
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dissertation-box {
+      background: #FAFAFA;
+      border-left: 3px solid #000000;
+      padding: 11px 13px;
+      font-style: italic;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: #111111;
+    }
+
+    .bio-text {
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    .lineage-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .lineage-item-card {
+      border: 1px solid var(--border-accent);
+      padding: 7px 11px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.12s ease;
+      background: #FFFFFF;
+    }
+
+    .lineage-item-card:hover {
+      border-color: #000000;
+      background: #FAFAFA;
+      transform: translateX(3px);
+    }
+
+    .lineage-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .lineage-item-name {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #000000;
+    }
+
+    .lineage-item-sub {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--text-muted);
+    }
+
+    .lineage-item-tag {
+      font-family: var(--font-mono);
+      font-size: 8.5px;
+      font-weight: 600;
+      border: 1px solid var(--border-black);
+      padding: 2px 5px;
+      background: #FFFFFF;
+      text-transform: uppercase;
+    }
+
+    .empty-lineage-note {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 5px 0;
+    }
+
+    .panel-footer {
+      padding: 15px 22px;
+      border-top: 1px solid var(--border-black);
+      background: #FAFAFA;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .btn-panel-action {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 8px 12px;
+      border: 1px solid var(--border-black);
+      background: #FFFFFF;
+      color: #000000;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: all 0.12s ease;
+    }
+
+    .btn-panel-action:hover {
+      background: #000000;
+      color: #FFFFFF;
+    }
+
+    .btn-panel-action.primary {
+      background: #000000;
+      color: #FFFFFF;
+    }
+
+    .btn-panel-action.primary:hover {
+      background: #262626;
+    }
+
+    /* Toast Notification */
+    #toast-notice {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #000000;
+      color: #FFFFFF;
+      padding: 8px 16px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      z-index: 200;
+      opacity: 0;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    #toast-notice.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Full-Bleed Interactive Canvas -->
+  <div id="canvas-container">
+    <svg id="genealogy-canvas">
+      <defs>
+        <!-- Background Coordinate Grid Pattern (100px intervals) -->
+        <pattern id="coord-grid" width="100" height="100" patternUnits="userSpaceOnUse">
+          <path d="M 100 0 L 0 0 0 100" fill="none" stroke="#E5E5E5" stroke-width="0.75"/>
+        </pattern>
+
+        <!-- Arrow Markers for Academic Edges -->
+        <marker id="marker-phd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#000000" />
+        </marker>
+
+        <marker id="marker-ma" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#FFFFFF" stroke="#000000" stroke-width="1.2" />
+        </marker>
+
+        <marker id="marker-mentorship" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 1 2 L 7 5 L 1 8" fill="none" stroke="#000000" stroke-width="1.5" />
+        </marker>
+      </defs>
+
+      <!-- Zoomable Root Group -->
+      <g id="zoom-root">
+        <!-- Coordinate Grid Background Plane -->
+        <rect id="grid-plane" width="200000" height="200000" x="-100000" y="-100000" fill="url(#coord-grid)"></rect>
+
+        <!-- Coordinate System Orientation Axes at Origin (0,0) -->
+        <g id="coordinate-axes">
+          <line x1="-50000" y1="0" x2="50000" y2="0" class="axis-line"></line>
+          <line x1="0" y1="-50000" x2="0" y2="50000" class="axis-line"></line>
+          <text x="12" y="-12" class="origin-marker">(0,0) ORIGIN // 2/F PALMA HALL PAV 2 · UPD PHILOSOPHY</text>
+        </g>
+
+        <!-- Edges Container -->
+        <g id="transfer-milestone-marker" style="display: none; pointer-events: none;">
+          <line x1="0" y1="-3000" x2="0" y2="3000" stroke="#000000" stroke-width="1.5" stroke-dasharray="6, 4" opacity="0.4"></line>
+          <rect x="-170" y="-380" width="340" height="24" fill="#000000" rx="2"></rect>
+          <text x="0" y="-364" fill="#FFFFFF" font-family="var(--font-mono)" font-size="9px" font-weight="700" letter-spacing="0.08em" text-anchor="middle">★ 1948–1949 THE GREAT DILIMAN TRANSFER</text>
+        </g>
+        <g id="edges-layer"></g>
+
+        <!-- Nodes Container -->
+        <g id="nodes-layer"></g>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Floating Modular Control Chrome (Top-Left, Simplified, No Background) -->
+  <div id="control-chrome">
+    <div class="chrome-card">
+      <!-- UP Philosophy Logo -->
+      <a href="#" onclick="event.preventDefault(); window.app && window.app.fitView();" title="UP Diliman Department of Philosophy" class="brand-logo-link">
+        <img src="https://philosophy.upd.edu.ph/wp-content/uploads/2023/01/up-philo-logo.png" onerror="this.onerror=null; this.src='up-philo-logo.png';" alt="UP Department of Philosophy Logo" class="brand-logo-img" />
+      </a>
+
+      <!-- Controls Row: Layout Mode Toggles, Search Overlay Button, View Controls, Highlight Filter Dropdown -->
+      <div class="controls-row">
+        <!-- Layout Mode Toggles (Labels preserved) -->
+        <div class="btn-group" id="layout-toggle-group">
+          <button class="btn-academic active" data-layout="tree" title="Generational Lineage Tree (Shortcut: 1)">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="8.5" y="14" width="7" height="7"/></svg>
+            Tree
+          </button>
+          <button class="btn-academic" data-layout="timeline" title="Chronological Timeline (Shortcut: 2)">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><circle cx="6" cy="12" r="2"/><circle cx="14" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+            Timeline
+          </button>
+          <button class="btn-academic" data-layout="network" title="Organic Force Network (Shortcut: 3)">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><line x1="12" y1="9" x2="6" y2="6"/><line x1="12" y1="9" x2="18" y2="6"/></svg>
+            Network
+          </button>
+        </div>
+
+        <!-- Search Overlay Trigger Button -->
+        <button class="btn-academic btn-standalone" id="btn-search-toggle" title="Search Scholars (Shortcut: /)">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          Search <kbd style="margin-left: 2px;">/</kbd>
+        </button>
+
+        <!-- View Controls -->
+        <div class="btn-group">
+          <button class="btn-academic btn-icon-only" id="btn-zoom-in" title="Zoom In (+)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <button class="btn-academic btn-icon-only" id="btn-zoom-out" title="Zoom Out (-)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <button class="btn-academic btn-icon-only" id="btn-fit-view" title="Fit Entire Genealogy (F)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          </button>
+          <button class="btn-academic btn-icon-only" id="btn-reset-view" title="Reset Zoom to 100% (0)">
+            <span style="font-size: 9.5px; font-weight: 700;">1:1</span>
+          </button>
+        </div>
+
+        <!-- Highlight Filter Dropdown -->
+        <div class="filter-dropdown-wrap">
+          <select id="filter-select" class="academic-select" title="Highlight scholars by rank or affiliation">
+            <option value="all">Highlight: All (47)</option>
+            <option value="upd">Highlight: UPD Faculty (39)</option>
+            <option value="emeritus">Highlight: Emeritus (4)</option>
+            <option value="full_prof">Highlight: Professors (8)</option>
+            <option value="assoc_prof">Highlight: Assoc Prof (5)</option>
+            <option value="asst_prof">Highlight: Asst Prof (9)</option>
+            <option value="instructors">Highlight: Instructors & Lecturers (12)</option>
+            <option value="external">Highlight: Roots & Predecessors (9)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explicit Prototype Disclaimer Note -->
+    <div class="prototype-badge-note">
+      <span class="proto-pill">PROTOTYPE</span>
+      <span class="proto-desc">Preliminary research visualization. Some information and supervision links are still to be assessed and are subject to change.</span>
+    </div>
+  </div>
+
+  <!-- Search Overlay Modal -->
+  <div id="search-overlay" class="search-overlay-backdrop">
+    <div class="search-overlay-dialog">
+      <div class="search-overlay-input-wrap">
+        <svg class="search-icon-svg-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="overlay-search-input" class="search-overlay-input" placeholder="Search faculty, tradition, dissertation, degree, institution..." autocomplete="off">
+        <button id="search-overlay-clear" class="search-overlay-clear-btn" title="Clear search">✕</button>
+        <button id="search-overlay-close" class="search-overlay-esc" title="Close search (ESC)">ESC</button>
+      </div>
+      <div id="search-overlay-results" class="search-overlay-results">
+        <div class="search-overlay-hint">Type a scholar's name, philosophical tradition, or dissertation topic...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom-Left Minimal Bordered Legend (#legend-box) -->
+  <div id="legend-box">
+    <div class="legend-title">
+      <span>Genealogy Conventions</span>
+      <span style="opacity: 0.5;">[ARCHIVE]</span>
+    </div>
+    
+    <div class="legend-section">
+      <div class="legend-row" data-legend-rank="emeritus" title="Filter Emeritus Faculty">
+        <span class="legend-swatch swatch-emeritus"></span>
+        <span>Professor Emeritus</span>
+      </div>
+      <div class="legend-row" data-legend-rank="full_prof" title="Filter Full Professors">
+        <span class="legend-swatch swatch-full-prof"></span>
+        <span>Full Professor</span>
+      </div>
+      <div class="legend-row" data-legend-rank="assoc_prof" title="Filter Associate Professors">
+        <span class="legend-swatch swatch-assoc-prof"></span>
+        <span>Associate Professor</span>
+      </div>
+      <div class="legend-row" data-legend-rank="asst_prof" title="Filter Assistant Professors">
+        <span class="legend-swatch swatch-asst-prof"></span>
+        <span>Assistant Professor</span>
+      </div>
+      <div class="legend-row" data-legend-rank="instructors" title="Filter Instructors & Lecturers">
+        <span class="legend-swatch swatch-lecturer"></span>
+        <span>Instructor / Lecturer</span>
+      </div>
+      <div class="legend-row" data-legend-rank="external" title="Filter Global Predecessors">
+        <span class="legend-swatch swatch-external"></span>
+        <span>Global Ancestor / Predecessor</span>
+      </div>
+    </div>
+
+    <div class="legend-title" style="margin-top: 5px;">
+      <span>Academic Lineage Links</span>
+    </div>
+    <div class="legend-section">
+      <div class="legend-row">
+        <span class="legend-line"></span>
+        <span>Doctoral Dissertation Supervision</span>
+      </div>
+      <div class="legend-row">
+        <span class="legend-line line-ma"></span>
+        <span>Master's Thesis Supervision</span>
+      </div>
+      <div class="legend-row">
+        <span class="legend-line line-mentorship"></span>
+        <span>Mentorship / Department Supervision</span>
+      </div>
+    </div>
+
+    <div class="legend-prototype-box">
+      <span class="proto-pill" style="align-self: flex-start;">PROTOTYPE</span>
+      <div>This academic genealogy is a prototype. Some historical information and supervision links are still to be assessed and are subject to change.</div>
+    </div>
+  </div>
+
+  <!-- Bottom-Right Translucent Glass Keybinds Reference (#keybinds-box) -->
+  <div id="keybinds-box">
+    <div class="keybind-row">
+      <span class="keybind-label">Search archive</span>
+      <kbd>/</kbd>
+    </div>
+    <div class="keybind-row">
+      <span class="keybind-label">Close panel / Clear</span>
+      <kbd>ESC</kbd>
+    </div>
+    <div class="keybind-row">
+      <span class="keybind-label">Fit entire canvas</span>
+      <kbd>F</kbd>
+    </div>
+    <div class="keybind-row">
+      <span class="keybind-label">Switch layout (1/2/3)</span>
+      <kbd>1-3</kbd>
+    </div>
+    <div class="keybind-row">
+      <span class="keybind-label">Zoom in / Zoom out</span>
+      <kbd>+</kbd> <kbd>-</kbd>
+    </div>
+    <div class="keybind-row">
+      <span class="keybind-label">Reset zoom & origin</span>
+      <kbd>0</kbd>
+    </div>
+  </div>
+
+  <!-- Right-Side Slide-Over Scholar Dossier Panel (#details-panel) -->
+  <div id="details-panel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-breadcrumb">Academic Dossier // UP Diliman Philosophy</div>
+        <div style="font-family: var(--font-mono); font-size: 10.5px; font-weight: 500;" id="panel-scholar-id">bonifacio_armando</div>
+      </div>
+      <button class="panel-close-btn" id="btn-close-panel" title="Close Panel (ESC)">✕</button>
+    </div>
+
+    <div class="panel-content">
+      <div class="scholar-header-block">
+        <h2 class="scholar-fullname" id="panel-name">Armando F. Bonifacio</h2>
+        <div class="scholar-badges-row" id="panel-badges">
+          <span class="badge-pill pill-dark" id="panel-rank-badge">Professor Emeritus</span>
+          <span class="badge-pill pill-upd" id="panel-upd-badge">UPD Palma Hall</span>
+          <span class="badge-pill pill-light" id="panel-year-badge">PhD 1969</span>
+        </div>
+      </div>
+
+      <div class="panel-prototype-banner">
+        <strong>Notice:</strong> This is a research prototype. Biographical entries and supervision records are undergoing active academic assessment and are subject to change.
+      </div>
+
+      <table class="meta-table">
+        <tbody>
+          <tr>
+            <td class="meta-label">Department Role</td>
+            <td class="meta-value" id="panel-role">Professor Emeritus</td>
+          </tr>
+          <tr>
+            <td class="meta-label">Doctoral Inst.</td>
+            <td class="meta-value" id="panel-institution">State University of New York at Buffalo</td>
+          </tr>
+          <tr>
+            <td class="meta-label">Year Conferred</td>
+            <td class="meta-value" id="panel-phd-year">1969</td>
+          </tr>
+          <tr>
+            <td class="meta-label">Tradition</td>
+            <td class="meta-value" id="panel-tradition">Analytic Philosophy, Epistemology</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div>
+        <div class="panel-section-title">
+          <span>Doctoral Dissertation / Thesis</span>
+        </div>
+        <div class="dissertation-box" id="panel-dissertation">
+          “The Concept of Obligation”
+        </div>
+      </div>
+
+      <div>
+        <div class="panel-section-title">
+          <span>Academic Biography & Department Legacy</span>
+        </div>
+        <p class="bio-text" id="panel-bio">
+          Foundational figure in modern analytic philosophy at UP Diliman; former department chair.
+        </p>
+      </div>
+
+      <div>
+        <div class="panel-section-title">
+          <span>Doctoral Advisors & Mentors</span>
+          <span id="panel-advisors-count" style="font-size: 8.5px; opacity: 0.7;">1 ADVISOR</span>
+        </div>
+        <div class="lineage-list" id="panel-advisors-list"></div>
+      </div>
+
+      <div>
+        <div class="panel-section-title">
+          <span>Supervised Faculty & Academic Progeny</span>
+          <span id="panel-advisees-count" style="font-size: 8.5px; opacity: 0.7;">4 ADVISEES</span>
+        </div>
+        <div class="lineage-list" id="panel-advisees-list"></div>
+      </div>
+    </div>
+
+    <div class="panel-footer">
+      <button class="btn-panel-action primary" id="btn-focus-graph">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="10"/></svg>
+        Focus Scholar & Highlight Lineage
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast-notice">Notice message</div>
+
+  <!-- In-Memory Authoritative Data & Application Engine -->
+  <script>
+    /**
+     * AUTHENTIC & VERIFIED IN-MEMORY DATA MODEL
+     * Source: Official UP Diliman Department of Philosophy records (philosophy.upd.edu.ph/people/)
+     */
+    const GENEALOGY_DATA = {
+  "department": "University of the Philippines Diliman Department of Philosophy",
+  "location": "2/F Palma Hall Pavilion 2, Quirino Avenue, UP Diliman, Quezon City",
+  "official_website": "https://philosophy.upd.edu.ph",
+  "founded": 1910,
+  "student_organizations": [
+    {
+      "id": "org_philosoc",
+      "name": "UP Philosophical Society (UP PhiloSoc)",
+      "type": "Student Organization",
+      "founded": "1960s (58+ years of existence)",
+      "base": "University-wide, CSSP-based",
+      "description": "True to its 58 years of existence, UP PhiloSoc is not only a haven for liberal philosophical learning, but a breeding ground for effective, critical, and responsible leaders and thinkers of society in whatever field they may be a part of. Members pursue professions such as law, public governance, journalism, research, and education. Organizes philosophical discussions, lecture series, and philosophy tutorials.",
+      "facebook": "https://www.facebook.com/UPPhiloSoc",
+      "instagram": "https://www.instagram.com/upphilosoc/"
+    },
+    {
+      "id": "org_kapitas",
+      "name": "UP Kabataang Pilosopo Tasyo (UP KAPITAS)",
+      "type": "Student Organization",
+      "founded": "CSSP, UP Diliman",
+      "base": "Department-based socio-academic",
+      "description": "Isang sosyo-akademikong samahan para sa mga mag-aaral ng Kagawaran ng Pilosopiya sa Unibersidad ng Pilipinas Diliman. Layunin nito na paunlarin ang pilosopiyang Pilipino na angkop at makabuluhan sa lipunang Pilipino; humubog ng mga Pilipinong palaisip na nais paglingkuran ang sambayanan; magbigay ng espasyo para sa mga gawaing pilosopikal; at isulong ang pilosopiya bilang isang disiplina.",
+      "facebook": "https://www.facebook.com/updkapitas",
+      "instagram": "https://www.instagram.com/up_kapitas/"
+    },
+    {
+      "id": "org_apeiron",
+      "name": "Apeiron Core Group",
+      "type": "Student Volunteer Arm",
+      "founded": "UP Diliman Department of Philosophy",
+      "base": "Official Department Volunteer Arm",
+      "description": "Serves as the official student volunteer arm of the UP Diliman Department of Philosophy. Committed to addressing Department needs and concerns, delivering basic student services, and forwarding relevant university and national campaigns.",
+      "facebook": "https://www.facebook.com/ApeironUPD"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "townsend_henry",
+      "name": "Henry S. Townsend",
+      "role": "Inaugural Department Head (1910–1918, UP Manila)",
+      "rank_level": "external",
+      "institution": "University of Chicago / Des Moines College",
+      "phd_year": 1910,
+      "tradition": "Early Pragmatism, Logic, Educational Philosophy",
+      "dissertation": "Educational and Philosophical Foundations in the Philippine Islands",
+      "bio": "First Head of the joint Department of Philosophy and Psychology established in 1910 at the University of the Philippines Manila campus (Padre Faura); oversaw the initial curriculum of philosophical and psychological studies during the American occupation before the post-war transfer to Diliman.",
+      "is_upd_faculty": true,
+      "campus": "UP Manila (1910–1918)"
+    },
+    {
+      "id": "frege_gottlob",
+      "name": "Friedrich Ludwig Gottlob Frege",
+      "role": "Professor of Mathematics & Logic",
+      "rank_level": "external",
+      "institution": "University of Göttingen",
+      "phd_year": 1873,
+      "tradition": "Mathematical Logic, Philosophy of Language",
+      "dissertation": "Über eine geometrische Darstellung der imaginären Gebilde in der Ebene",
+      "bio": "Foundational figure in modern mathematical logic and analytic philosophy; intellectual predecessor whose lectures and works shaped Rudolf Carnap at the University of Jena.",
+      "is_upd_faculty": false,
+      "campus": "Global Predecessor"
+    },
+    {
+      "id": "carnap_rudolf",
+      "name": "Rudolf Carnap",
+      "role": "Professor of Philosophy",
+      "rank_level": "external",
+      "institution": "University of Jena",
+      "phd_year": 1921,
+      "tradition": "Logical Positivism, Semantics, Philosophy of Science",
+      "dissertation": "Der Raum: Ein Beitrag zur Wissenschaftslehre",
+      "bio": "Pivotal member of the Vienna Circle and major proponent of logical empiricism; professor at the University of Chicago where he supervised Ricardo R. Pascual's doctoral dissertation.",
+      "is_upd_faculty": false,
+      "campus": "Global Predecessor"
+    },
+    {
+      "id": "morris_charles",
+      "name": "Charles W. Morris",
+      "role": "Professor of Philosophy",
+      "rank_level": "external",
+      "institution": "University of Chicago",
+      "phd_year": 1925,
+      "tradition": "Pragmatism, Semiotics, Logical Empiricism",
+      "dissertation": "Symbolism and Reality",
+      "bio": "American semiotician and pragmatist at the University of Chicago; co-advisor and collaborator on the International Encyclopedia of Unified Science alongside Carnap, mentoring Ricardo Pascual.",
+      "is_upd_faculty": false,
+      "campus": "Global Predecessor"
+    },
+    {
+      "id": "skinner_bf",
+      "name": "B. F. Skinner",
+      "role": "Edgar Pierce Professor of Psychology",
+      "rank_level": "external",
+      "institution": "Harvard University",
+      "phd_year": 1931,
+      "tradition": "Radical Behaviorism, Epistemology of Science",
+      "dissertation": "The Concept of the Reflex in the Description of Behavior",
+      "bio": "Renowned Harvard epistemologist of behavior and experimental psychologist; doctoral dissertation supervisor of Alfredo V. Lagmay at Harvard University.",
+      "is_upd_faculty": false,
+      "campus": "Global Predecessor"
+    },
+    {
+      "id": "parry_william",
+      "name": "William Tuthill Parry",
+      "role": "Professor of Philosophy",
+      "rank_level": "external",
+      "institution": "Harvard University",
+      "phd_year": 1932,
+      "tradition": "Analytic Logic, Modal Logic, Epistemology",
+      "dissertation": "Implication and the Principles of Deductive Systems",
+      "bio": "American logician known for the theory of analytic implication; supervised Armando F. Bonifacio's doctoral dissertation at the State University of New York at Buffalo.",
+      "is_upd_faculty": false,
+      "campus": "Global Predecessor"
+    },
+    {
+      "id": "evans_donald",
+      "name": "Donald Evans",
+      "role": "Professor of Medical Ethics",
+      "rank_level": "external",
+      "institution": "University of Wales Swansea",
+      "phd_year": 1980,
+      "tradition": "Bioethics, Medical Jurisprudence, Moral Philosophy",
+      "dissertation": "Ethics and Medical Practice",
+      "bio": "Director of the Centre for Philosophy and Health Care at the University of Wales Swansea; primary doctoral supervisor of Leonardo D. de Castro.",
+      "is_upd_faculty": false,
+      "campus": "Global Predecessor"
+    },
+    {
+      "id": "pascual_ricardo",
+      "name": "Ricardo R. Pascual",
+      "role": "Founding Department Chair & Professor",
+      "rank_level": "emeritus",
+      "institution": "University of Chicago",
+      "phd_year": 1939,
+      "tradition": "Logical Positivism, Epistemology, Philippine Thought",
+      "dissertation": "Logical Analysis",
+      "bio": "Pioneer of Anglo-American analytic philosophy in the Philippines. First Filipino to earn a PhD in philosophy; spearheaded the establishment of an independent UP Department of Philosophy in Diliman after WWII; cultivated the celebrated 'Pasky Boys'.",
+      "is_upd_faculty": true,
+      "campus": "UP Manila (BA/MA) → UP Diliman Transfer (1949)"
+    },
+    {
+      "id": "lagmay_alfredo",
+      "name": "Alfredo V. Lagmay",
+      "role": "Former Instructor in Philosophy & Alumnus (Ph.B., M.A.)",
+      "rank_level": "lecturer",
+      "institution": "Harvard University",
+      "phd_year": 1955,
+      "tradition": "Logic, Epistemology, Philosophy of Mind",
+      "dissertation": "A Logical Analysis of the Concept of Mind and Conditioning",
+      "bio": "Alumnus and former faculty member of the UP Department of Philosophy. Earned his Ph.B. (1947, cum laude) and M.A. in Philosophy (1951) under Dr. Ricardo R. Pascual. Served as an Instructor in Philosophy handling logic and philosophical analysis during the post-war Padre Faura and early Diliman periods before pursuing doctoral studies at Harvard. Did not become a professor of philosophy; his teaching and academic appointment in the department were as an instructor and alumnus.",
+      "is_upd_faculty": true,
+      "campus": "UP Manila → UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "majul_cesar",
+      "name": "Cesar Adib Majul",
+      "role": "Assistant Head of Philosophy (1959) & Dean of Arts and Sciences",
+      "rank_level": "full_prof",
+      "institution": "Cornell University",
+      "phd_year": 1957,
+      "tradition": "Islamic Philosophy, Political Thought, Historiography",
+      "dissertation": "The Political and Constitutional Ideas of the Philippine Revolution",
+      "bio": "Seminal Philippine political philosopher and historian; served as Assistant Head of the Department of Philosophy in 1959 under Ricardo Pascual. Later served as Dean of University College (1961–1966), Dean of the College of Arts and Sciences (1969–1971), and designated University Professor (1979). Not an emeritus of the department.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "bonifacio_armando",
+      "name": "Armando F. Bonifacio",
+      "role": "Professor Emeritus",
+      "rank_level": "emeritus",
+      "institution": "State University of New York at Buffalo",
+      "phd_year": 1969,
+      "tradition": "Analytic Philosophy, Epistemology, Philosophy of Education",
+      "dissertation": "The Concept of Obligation",
+      "bio": "Foundational figure in modern analytic philosophy at UP Diliman; served as Department Chairperson for eighteen years (1968–1986); conferred Professor Emeritus in 1987; shaped generations of Filipino philosophers.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "de_castro_leonardo",
+      "name": "Leonardo D. de Castro",
+      "role": "Centennial Professor & Former Chair",
+      "rank_level": "emeritus",
+      "institution": "University of Wales, Swansea",
+      "phd_year": 1991,
+      "tradition": "Bioethics, Applied Ethics, Ethical Theory",
+      "dissertation": "The Concept of Rules",
+      "bio": "Pioneer of Bioethics in Asia; Centennial Professor and long-time Chair of the UP Diliman Department of Philosophy; Editor-in-Chief of Asian Bioethics Review; Vice-Chair of the UNESCO International Bioethics Committee.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "lee_zosimo",
+      "name": "Zosimo E. Lee",
+      "role": "Former Dean (CSSP) & Professor",
+      "rank_level": "emeritus",
+      "institution": "State University of New York at Buffalo",
+      "phd_year": 1990,
+      "tradition": "Social & Political Philosophy, Rawlsian Liberalism, P4C",
+      "dissertation": "Autonomy, Rationality, and the Public Sphere in Political Liberalism",
+      "bio": "Affectionately remembered as the 'Walking Dean'; Dean of the College of Social Sciences and Philosophy (2004–2010); introduced Philosophy for Children (P4C) to the Philippines; prominent Rawlsian scholar.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "fronda_earl_stanley",
+      "name": "Earl Stanley B. Fronda",
+      "role": "Professor & Former Chair",
+      "rank_level": "full_prof",
+      "institution": "University of Wales Lampeter",
+      "phd_year": 2005,
+      "tradition": "Philosophy of Religion, Wittgenstein, Analytic Epistemology",
+      "dissertation": "Wittgenstein's Philosophy of Religion: Faith, Reason, and Form of Life",
+      "bio": "Professor and former department chairperson; authority on Ludwig Wittgenstein, philosophy of religion, and analytic epistemology; prolific author of philosophical treatises.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "sayson_ciriaco",
+      "name": "Ciriaco M. Sayson, Jr.",
+      "role": "Associate Professor & Former Chair",
+      "rank_level": "assoc_prof",
+      "institution": "University of Massachusetts Amherst",
+      "phd_year": 1997,
+      "tradition": "Ancient Philosophy, Aristotle, Metaphysics, Logic",
+      "dissertation": "Aristotle on Substance, Matter, and Form",
+      "bio": "Former Department Chairperson; leading scholar in classical Greek metaphysics, Aristotle, and formal logic; convener of major international philosophy symposiums at UP Diliman.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "payongayong_maria_theresa",
+      "name": "Ma. Theresa T. Payongayong",
+      "role": "Professor & Former Vice Chancellor",
+      "rank_level": "full_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2007,
+      "tradition": "Feminist Philosophy, Filipino Philosophy, Philosophy for Children",
+      "dissertation": "Feministang Pilosopiya sa Kontekstong Pilipino: Kritika at Pagpapalawig",
+      "bio": "Professor and former Vice Chancellor for Academic Affairs at UP Diliman; leading voice in Filipino feminist philosophy, gender discourse, indigenous philosophy, and Philosophy for Children.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "ocampo_ma_liza_ruth",
+      "name": "Ma. Liza Ruth A. Ocampo",
+      "role": "Professor & Former Chair (2023)",
+      "rank_level": "full_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2006,
+      "tradition": "Metaphysics, Philosophical Anthropology, Medieval Philosophy, Thomas Aquinas",
+      "dissertation": "The Dignity of the Thinking Person: A Philosophical Reflection on Human Nature",
+      "bio": "Professor and former Department Chairperson (2023); recipient of the UP Diliman Centennial Professorial Chair; author of 'Break Open a Stone: An Invitation to Metaphysics' and 'The Dignity of the Thinking Person'; leading authority on Thomistic metaphysics.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "yasol_naval_jeanette",
+      "name": "Jeanette L. Yasol-Naval",
+      "role": "Professor",
+      "rank_level": "full_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2009,
+      "tradition": "Environmental Philosophy and Ethics, Pilosopiyang Filipino, EcoFeminism",
+      "dissertation": "Environmental Justice and Ecological Sustainability in Developing Economies",
+      "bio": "Professor with extensive publications in environmental philosophy, ethics of food, agricultural ethics, Philosophy for Children, indigenous cultures, and ecofeminism.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "boongaling_john_ian",
+      "name": "John Ian Boongaling",
+      "role": "Professor",
+      "rank_level": "full_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2018,
+      "tradition": "Epistemology, Logic, Philosophy of Mind, Philosophy of Language",
+      "dissertation": "Dissolving the Gettier Problem: Beyond Analysis",
+      "bio": "Full Professor specializing in epistemology, analytic logic, and philosophy of mind; author of 'Dissolving the Gettier Problem: Beyond Analysis' (Cambridge Scholars Publishing, 2020); prolific writer on Hintikka's epistemology, Aristotle's logic, and semantic theories.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "abalos_orendain_karen",
+      "name": "Karen Connie Abalos-Orendain",
+      "role": "Professor & Former Chair (2021-2023)",
+      "rank_level": "full_prof",
+      "institution": "Kobe University",
+      "phd_year": 2017,
+      "tradition": "Socio-Political Philosophy, Contemporary Philosophy, Japanese Philosophy, Immigration",
+      "dissertation": "Cosmopolitan Norms, Democratic Legitimacy, and the Rights of Migrant Workers",
+      "bio": "Professor and former Department Chairperson (2021–2023); Monbukagakusho scholar at Kobe University; recipient of ONE UP Professorial Chair Award in Applied Ethics; researcher on cosmopolitanism, deliberative democracy, and Japanese philosophy.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "lumagbas_lily_beth",
+      "name": "Lily Beth C. Lumagbas",
+      "role": "Associate Professor & Current Department Chair",
+      "rank_level": "assoc_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2016,
+      "tradition": "Ancient Philosophy, Moral Philosophy, Platonic Ethics",
+      "dissertation": "Virtue, Eudaimonia, and Moral Motivation in Platonic Dialogues",
+      "bio": "Current Chairperson of the UP Diliman Department of Philosophy; specialist in classical Greek ethics, Plato, ancient virtue theory, and moral psychology.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "mendoza_lumberto",
+      "name": "Lumberto Guce Mendoza",
+      "role": "Associate Professor",
+      "rank_level": "assoc_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2015,
+      "tradition": "Philosophy of Language, Wittgenstein, Social & Political Philosophy, STS, P4C",
+      "dissertation": "Naturalized Epistemology and Cognitive Architecture",
+      "bio": "Associate Professor specializing in Wittgenstein, Eastern philosophy, Philosophy for Children, logic as Gestalt, Science, Technology and Society (STS), and research ethics.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "sy_peter",
+      "name": "Peter A. Sy",
+      "role": "Associate Professor",
+      "rank_level": "assoc_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 1999,
+      "tradition": "AI Ethics, Bioethics, Social Philosophy, Data Privacy",
+      "dissertation": "Informational Privacy and Justice in Technological Society (MA Thesis)",
+      "bio": "Associate Professor and pioneer in AI ethics, bioethics, and informational privacy; former University Data Protection Officer and CSSP faculty leader.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "masakayan_nicolo",
+      "name": "Nicolo M. Masakayan",
+      "role": "Associate Professor",
+      "rank_level": "assoc_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2021,
+      "tradition": "Social & Political Philosophy, Ethics, Epistemic Injustice",
+      "dissertation": "Democratic Deliberation and Epistemic Injustice in Public Discourse",
+      "bio": "Associate Professor teaching ethics, political philosophy, and democratic theory; researcher in epistemic injustice and deliberative democracy.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "evangelista_francis_julius",
+      "name": "Francis Julius N. Evangelista",
+      "role": "Senior Lecturer",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2008,
+      "tradition": "Critical Thinking, Logic, Philosophy of Education, Ethics",
+      "dissertation": "Philosophical Inquiries in Critical Thinking and Pedagogy",
+      "bio": "Senior Lecturer with the Department of Philosophy; author of widely used Philippine university textbooks on logic, critical thinking, and ethics.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "agpaoa_jerwin",
+      "name": "Jerwin F. Agpaoa",
+      "role": "Assistant Professor & Vice Chancellor",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2014,
+      "tradition": "Logic, Ethics, Philosophy of Language, Bioethics",
+      "dissertation": "Ethical Considerations in Vulnerable Population Biomedical Research (MA)",
+      "bio": "Vice Chancellor for Student Affairs and Assistant Professor of Philosophy; specializes in logic, ethics, bioethics, and philosophy of language.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "banares_romulo",
+      "name": "Romulo T. Bañares, Jr.",
+      "role": "Assistant Professor & Undergraduate Coordinator",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2016,
+      "tradition": "Logic, Epistemology, Philosophy of Action",
+      "dissertation": "Formal Epistemology and Doxastic Justification (MA)",
+      "bio": "Undergraduate Coordinator; Assistant Professor specializing in symbolic logic, formal epistemology, and decision theory.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "fernando_enrique",
+      "name": "Enrique Benjamin R. Fernando III",
+      "role": "Assistant Professor",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2019,
+      "tradition": "Philosophy of Law, Political Philosophy, Philosophy of Mind, Analytic Metaphysics",
+      "dissertation": "Legal Normativity and Analytic Metaphysics (MPhil)",
+      "bio": "Assistant Professor specializing in philosophy of law, ethical theory, philosophy of language, philosophy of mind, cognitive science, and analytic metaphysics.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "franco_gerald_pio",
+      "name": "Gerald Pio M. Franco",
+      "role": "Assistant Professor",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2020,
+      "tradition": "Ethics, Applied Philosophy, Continental Thought",
+      "dissertation": "Normative Grounding in Applied Ethics",
+      "bio": "Assistant Professor teaching ethics, history of philosophy, and introductory philosophical analysis.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "macapinlac_arlyn",
+      "name": "Arlyn P. Macapinlac",
+      "role": "Assistant Professor",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2018,
+      "tradition": "Ethics, Filipino Philosophy, AI Ethics",
+      "dissertation": "Ethics of Information Technology and Indigenous Norms (MA)",
+      "bio": "Assistant Professor specializing in normative ethics, Filipino philosophy, and ethics of artificial intelligence; faculty leader in university extension.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "manaloto_renato",
+      "name": "Renato B. Manaloto",
+      "role": "Assistant Professor",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2017,
+      "tradition": "Pilosopiyang Pilipino, Phenomenology, Philosophy of Religion, Bioethics, Philosophy of Law",
+      "dissertation": "Phenomenology of Justice in Filipino Thought (MA)",
+      "bio": "Assistant Professor focusing on Pilosopiyang Pilipino, phenomenology, philosophy of religion, biomedical ethics, research ethics, and theories of justice.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "zosa_marielle",
+      "name": "Marielle Antoinette H. Zosa",
+      "role": "Assistant Professor",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2019,
+      "tradition": "Social and Political Philosophy, Applied Ethics, History of Philosophy, Logic, Philosophy of Science",
+      "dissertation": "Public Reasons and Scientific Rationality in Democratic Policy (MA)",
+      "bio": "Assistant Professor teaching social and political philosophy, history of philosophy, logic, and philosophy of science.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "de_guzman_daulat_symel",
+      "name": "Symel Noelin S. de Guzman-Daulat",
+      "role": "Assistant Professor",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2021,
+      "tradition": "Metaphysics, Logic, Philosophy of Science, Feminist Epistemology, Philosophy of Physics",
+      "dissertation": "Analytical Metaphysics and the Philosophy of Physics (MA)",
+      "bio": "Assistant Professor focusing on analytic metaphysics, modal logic, philosophy of the physical sciences, and feminist epistemology.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "boongaling_pamela_ann",
+      "name": "Pamela Ann Boongaling",
+      "role": "Assistant Professor",
+      "rank_level": "asst_prof",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2022,
+      "tradition": "Ethics, Epistemology, Philosophy of Education",
+      "dissertation": "Epistemic Agency and Moral Development",
+      "bio": "Assistant Professor with research interests across normative ethics, epistemology, and critical thinking pedagogy.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "alonzo_john_raymund",
+      "name": "John Raymund S. Alonzo",
+      "role": "Instructor",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2023,
+      "tradition": "Philosophy of Language, Epistemic Injustice",
+      "dissertation": "Linguistic Vulnerability and Testimonial Injustice (Graduating/Research)",
+      "bio": "Current generation instructor teaching philosophy of language, formal semantics, and epistemic injustice.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "chuacuco_gavin_nigel",
+      "name": "Gavin Nigel L. Chuacuco",
+      "role": "Instructor",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2024,
+      "tradition": "Philosophy of Artificial Intelligence, Filipino Philosophy, Epistemology, Ethics",
+      "dissertation": "Machine Consciousness, Agency, and Ethical Accountability",
+      "bio": "Current generation instructor focusing on cutting-edge issues in AI ethics, Filipino philosophical frameworks, and contemporary epistemology.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "de_jesus_ingrid_mae",
+      "name": "Ingrid Mae H. De Jesus",
+      "role": "Instructor",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2023,
+      "tradition": "Ancient Philosophy, Comparative/Asian Philosophy, Feminist Studies, Pop-Culture Philosophy",
+      "dissertation": "Comparative Metaphysics: Ancient Greek and Classical Asian Thought",
+      "bio": "Current generation instructor teaching ancient Greek philosophy, comparative Asian philosophies, feminist thought, and philosophy in media.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "ocon_joshua_jose",
+      "name": "Joshua Jose R. Ocon",
+      "role": "Instructor",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2024,
+      "tradition": "Ethics, Logic, Critical Thinking",
+      "dissertation": "Moral Rationality and Argumentation Theory",
+      "bio": "Current generation instructor conducting courses in elementary logic, critical thinking, and normative ethics.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "quitain_miguel_elvir",
+      "name": "Miguel Elvir R. Quitain",
+      "role": "Instructor",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2023,
+      "tradition": "Social and Political Philosophy, Democratic Theory",
+      "dissertation": "Theories of Deliberative Participation and Political Legitimacy",
+      "bio": "Current generation instructor specializing in contemporary socio-political philosophy, democratic theory, and theories of justice.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "tubera_kurt_christian",
+      "name": "Kurt Christian Tubera",
+      "role": "Instructor",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2024,
+      "tradition": "Modal Epistemology, Social Epistemology, Logic",
+      "dissertation": "Possible Worlds Semantics and Doxastic Epistemology",
+      "bio": "Current generation instructor specializing in formal logic, modal epistemology, and social epistemologies.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "villegas_patrick_joshua",
+      "name": "Patrick Joshua I. Villegas",
+      "role": "Instructor",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2024,
+      "tradition": "Philosophy of Medicine, Bioethics, Filipino Social Philosophy, Indigenous Philosophy, Philosophy of Mind",
+      "dissertation": "Conceptual Models of Disease and Indigenous Healing in Bioethics",
+      "bio": "Current generation instructor specializing in philosophy of medicine, bioethics, indigenous Filipino thought, and philosophy of mind.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "imperial_ron_joshua",
+      "name": "Ron Joshua Imperial",
+      "role": "Lecturer",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2024,
+      "tradition": "Logic, Philosophical Analysis, Ethics",
+      "dissertation": "Applied Logic in Philosophical Discourse",
+      "bio": "Part-time lecturer conducting undergraduate courses in logic and ethical reasoning at the Department.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "ingalla_sean_marcus",
+      "name": "Sean Marcus Ingalla",
+      "role": "Lecturer",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2024,
+      "tradition": "Epistemology, Modern Philosophy, Logic",
+      "dissertation": "Problems in Contemporary Epistemology",
+      "bio": "Part-time lecturer teaching general education philosophy and introduction to philosophical inquiry.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "duran_andrea_lorraine",
+      "name": "Andrea Lorraine C. Duran",
+      "role": "Lecturer",
+      "rank_level": "lecturer",
+      "institution": "University of the Philippines Diliman",
+      "phd_year": 2024,
+      "tradition": "Ethics, Applied Philosophy, Logic",
+      "dissertation": "Normative Reasoning in Practical Contexts",
+      "bio": "Part-time lecturer handling courses in ethics and philosophical inquiry.",
+      "is_upd_faculty": true,
+      "campus": "UP Diliman (Palma Hall)"
+    },
+    {
+      "id": "raz_joseph",
+      "name": "Joseph Raz",
+      "role": "Professor of Philosophy of Law",
+      "rank_level": "external",
+      "institution": "University of Oxford",
+      "phd_year": 1967,
+      "tradition": "Philosophy of Law, Legal Positivism, Practical Reason",
+      "dissertation": "The Concept of a Legal System",
+      "bio": "Celebrated legal, moral, and political philosopher at Balliol College, Oxford and Columbia University; supervised Emmanuel Q. Fernando at Merton College, Oxford.",
+      "is_upd_faculty": false,
+      "campus": "Global Predecessor"
+    },
+    {
+      "id": "lucas_jr",
+      "name": "John Randolph Lucas",
+      "role": "Fellow of Merton College, Oxford",
+      "rank_level": "external",
+      "institution": "University of Oxford",
+      "phd_year": 1958,
+      "tradition": "Philosophy of Mathematics, Gödelian Arguments, Metaphysics",
+      "dissertation": "The Principles of Politics",
+      "bio": "Distinguished Oxford philosopher and fellow of Merton College; celebrated for the Gödelian argument on mind, mechanism, and mathematical physics; co-advised Emmanuel Q. Fernando at Oxford.",
+      "is_upd_faculty": false,
+      "campus": "Global Predecessor"
+    },
+    {
+      "id": "fernando_emmanuel",
+      "name": "Emmanuel Q. Fernando",
+      "role": "Full Professor & Former Department Chair (2004–2005)",
+      "rank_level": "full_prof",
+      "institution": "University of Oxford (Merton College)",
+      "phd_year": 1992,
+      "tradition": "Philosophy of Law, Jurisprudence, Mathematical Logic, Legal Positivism, Ethics",
+      "dissertation": "The Role and Logic of Substantive Reasons in Adjudication",
+      "bio": "Son of former Chief Justice Enrique M. Fernando; recruited by Armando Bonifacio into the faculty in 1975 as one of the celebrated 'Bonifacio Boys'. Earned his MA at UPD on Gödel's Incompleteness Theorems, studied mathematical logic at Cambridge (Gonville & Caius), and completed his DPhil at Oxford (Merton College) under Joseph Raz and J.R. Lucas. Full Professor of Philosophy, Law, and Physics for over 40 years; Department Chair from 2004–2005. The annual Emmanuel Q. Fernando Philosophy Undergraduate Conference is celebrated in his honor by the UP Diliman Department of Philosophy.",
+      "is_upd_faculty": true,
+      "official_bio_pdf": "https://philosophy.upd.edu.ph/wp-content/uploads/2025/08/Emmanuel-Q.-Fernando-Biography-and-Selected-Bibliography-1.pdf",
+      "campus": "UP Diliman (Palma Hall)"
+    }
+  ],
+  "edges": [
+    {
+      "from": "townsend_henry",
+      "to": "pascual_ricardo",
+      "degree": "Mentorship",
+      "year": 1933
+    },
+    {
+      "from": "frege_gottlob",
+      "to": "carnap_rudolf",
+      "degree": "PhD",
+      "year": 1921
+    },
+    {
+      "from": "carnap_rudolf",
+      "to": "pascual_ricardo",
+      "degree": "PhD",
+      "year": 1939
+    },
+    {
+      "from": "morris_charles",
+      "to": "pascual_ricardo",
+      "degree": "Mentorship",
+      "year": 1939
+    },
+    {
+      "from": "skinner_bf",
+      "to": "lagmay_alfredo",
+      "degree": "PhD",
+      "year": 1955
+    },
+    {
+      "from": "pascual_ricardo",
+      "to": "lagmay_alfredo",
+      "degree": "MA",
+      "year": 1951
+    },
+    {
+      "from": "pascual_ricardo",
+      "to": "majul_cesar",
+      "degree": "Mentorship",
+      "year": 1953
+    },
+    {
+      "from": "pascual_ricardo",
+      "to": "bonifacio_armando",
+      "degree": "Mentorship",
+      "year": 1958
+    },
+    {
+      "from": "parry_william",
+      "to": "bonifacio_armando",
+      "degree": "PhD",
+      "year": 1969
+    },
+    {
+      "from": "evans_donald",
+      "to": "de_castro_leonardo",
+      "degree": "PhD",
+      "year": 1991
+    },
+    {
+      "from": "bonifacio_armando",
+      "to": "de_castro_leonardo",
+      "degree": "Mentorship",
+      "year": 1980
+    },
+    {
+      "from": "bonifacio_armando",
+      "to": "lee_zosimo",
+      "degree": "Mentorship",
+      "year": 1982
+    },
+    {
+      "from": "bonifacio_armando",
+      "to": "sayson_ciriaco",
+      "degree": "Mentorship",
+      "year": 1985
+    },
+    {
+      "from": "bonifacio_armando",
+      "to": "fronda_earl_stanley",
+      "degree": "Mentorship",
+      "year": 1986
+    },
+    {
+      "from": "bonifacio_armando",
+      "to": "ocampo_ma_liza_ruth",
+      "degree": "Mentorship",
+      "year": 1986
+    },
+    {
+      "from": "de_castro_leonardo",
+      "to": "payongayong_maria_theresa",
+      "degree": "PhD",
+      "year": 2007
+    },
+    {
+      "from": "de_castro_leonardo",
+      "to": "sy_peter",
+      "degree": "Mentorship",
+      "year": 1999
+    },
+    {
+      "from": "de_castro_leonardo",
+      "to": "agpaoa_jerwin",
+      "degree": "MA",
+      "year": 2014
+    },
+    {
+      "from": "de_castro_leonardo",
+      "to": "mendoza_lumberto",
+      "degree": "PhD",
+      "year": 2015
+    },
+    {
+      "from": "lee_zosimo",
+      "to": "yasol_naval_jeanette",
+      "degree": "PhD",
+      "year": 2009
+    },
+    {
+      "from": "lee_zosimo",
+      "to": "abalos_orendain_karen",
+      "degree": "Mentorship",
+      "year": 2005
+    },
+    {
+      "from": "lee_zosimo",
+      "to": "masakayan_nicolo",
+      "degree": "PhD",
+      "year": 2021
+    },
+    {
+      "from": "sayson_ciriaco",
+      "to": "lumagbas_lily_beth",
+      "degree": "PhD",
+      "year": 2016
+    },
+    {
+      "from": "sayson_ciriaco",
+      "to": "fernando_enrique",
+      "degree": "MA",
+      "year": 2019
+    },
+    {
+      "from": "sayson_ciriaco",
+      "to": "de_jesus_ingrid_mae",
+      "degree": "Mentorship",
+      "year": 2022
+    },
+    {
+      "from": "fronda_earl_stanley",
+      "to": "boongaling_john_ian",
+      "degree": "PhD",
+      "year": 2018
+    },
+    {
+      "from": "fronda_earl_stanley",
+      "to": "banares_romulo",
+      "degree": "MA",
+      "year": 2016
+    },
+    {
+      "from": "fronda_earl_stanley",
+      "to": "evangelista_francis_julius",
+      "degree": "PhD",
+      "year": 2008
+    },
+    {
+      "from": "payongayong_maria_theresa",
+      "to": "macapinlac_arlyn",
+      "degree": "MA",
+      "year": 2018
+    },
+    {
+      "from": "payongayong_maria_theresa",
+      "to": "manaloto_renato",
+      "degree": "Mentorship",
+      "year": 2017
+    },
+    {
+      "from": "ocampo_ma_liza_ruth",
+      "to": "franco_gerald_pio",
+      "degree": "PhD",
+      "year": 2020
+    },
+    {
+      "from": "ocampo_ma_liza_ruth",
+      "to": "zosa_marielle",
+      "degree": "Mentorship",
+      "year": 2019
+    },
+    {
+      "from": "boongaling_john_ian",
+      "to": "alonzo_john_raymund",
+      "degree": "Mentorship",
+      "year": 2022
+    },
+    {
+      "from": "boongaling_john_ian",
+      "to": "tubera_kurt_christian",
+      "degree": "Mentorship",
+      "year": 2023
+    },
+    {
+      "from": "boongaling_john_ian",
+      "to": "de_guzman_daulat_symel",
+      "degree": "Mentorship",
+      "year": 2021
+    },
+    {
+      "from": "boongaling_john_ian",
+      "to": "boongaling_pamela_ann",
+      "degree": "Mentorship",
+      "year": 2022
+    },
+    {
+      "from": "abalos_orendain_karen",
+      "to": "quitain_miguel_elvir",
+      "degree": "Mentorship",
+      "year": 2023
+    },
+    {
+      "from": "sy_peter",
+      "to": "chuacuco_gavin_nigel",
+      "degree": "Mentorship",
+      "year": 2023
+    },
+    {
+      "from": "sy_peter",
+      "to": "villegas_patrick_joshua",
+      "degree": "Mentorship",
+      "year": 2023
+    },
+    {
+      "from": "banares_romulo",
+      "to": "ocon_joshua_jose",
+      "degree": "Mentorship",
+      "year": 2023
+    },
+    {
+      "from": "banares_romulo",
+      "to": "imperial_ron_joshua",
+      "degree": "Mentorship",
+      "year": 2023
+    },
+    {
+      "from": "mendoza_lumberto",
+      "to": "ingalla_sean_marcus",
+      "degree": "Mentorship",
+      "year": 2023
+    },
+    {
+      "from": "agpaoa_jerwin",
+      "to": "duran_andrea_lorraine",
+      "degree": "Mentorship",
+      "year": 2023
+    },
+    {
+      "from": "raz_joseph",
+      "to": "fernando_emmanuel",
+      "degree": "PhD",
+      "year": 1992
+    },
+    {
+      "from": "lucas_jr",
+      "to": "fernando_emmanuel",
+      "degree": "Mentorship",
+      "year": 1992
+    },
+    {
+      "from": "bonifacio_armando",
+      "to": "fernando_emmanuel",
+      "degree": "Mentorship",
+      "year": 1975
+    },
+    {
+      "from": "fernando_emmanuel",
+      "to": "fernando_enrique",
+      "degree": "Mentorship",
+      "year": 2017
+    }
+  ],
+  "historical_eras": [
+    {
+      "period": "1910–1948",
+      "campus": "UP Manila (Padre Faura)",
+      "title": "Department of Philosophy and Psychology",
+      "description": "Established in 1910 within the College of Liberal Arts under Dr. Henry S. Townsend. Served as the colonial-era nursery for early Filipino civil servants and intellectuals."
+    },
+    {
+      "period": "December 1948 – January 1949",
+      "campus": "The Great Diliman Transfer",
+      "title": "Post-War Exodus & Rebirth at Palma Hall",
+      "description": "Following the devastating Battle of Manila and destruction of Padre Faura facilities, the University moved to Diliman, Quezon City. Dr. Ricardo R. Pascual founded the independent Department of Philosophy, embedding analytic philosophy."
+    },
+    {
+      "period": "1949–Present",
+      "campus": "UP Diliman (Palma Hall Pavilion 2)",
+      "title": "Independent Department of Philosophy",
+      "description": "The premier center of analytic philosophy in the Philippines, expanding into bioethics, philosophy for children, logic, and contemporary socio-political critique."
+    }
+  ]
+};
+
+    /**
+     * APPLICATION LOGIC & VISUALIZATION ENGINE
+     */
+    class PhilosophyGenealogyApp {
+      constructor(data) {
+        this.rawData = data;
+        this.nodes = JSON.parse(JSON.stringify(data.nodes));
+        this.edges = JSON.parse(JSON.stringify(data.edges));
+        this.studentOrgs = data.student_organizations || [];
+
+        this.nodeMap = new Map();
+        this.incomingEdges = new Map();
+        this.outgoingEdges = new Map();
+
+        this.currentLayout = 'tree';
+        this.currentFilter = 'all';
+        this.selectedNodeId = null;
+        this.highlightedLineage = null;
+        this.cardWidth = 236;
+        this.cardHeight = 88;
+
+        this.svg = d3.select("#genealogy-canvas");
+        this.zoomRoot = d3.select("#zoom-root");
+        this.edgesLayer = d3.select("#edges-layer");
+        this.nodesLayer = d3.select("#nodes-layer");
+
+        this.simulation = null;
+
+        this.initDataStructures();
+        this.initZoom();
+        this.initDomEvents();
+        this.updateFilterCounts();
+        this.computeLayoutPositions(this.currentLayout);
+        this.renderGraph();
+
+        setTimeout(() => this.fitView(), 150);
+      }
+
+      initDataStructures() {
+        this.nodes.forEach(n => {
+          this.nodeMap.set(n.id, n);
+          this.incomingEdges.set(n.id, []);
+          this.outgoingEdges.set(n.id, []);
+        });
+
+        this.edges.forEach(e => {
+          if (this.nodeMap.has(e.from) && this.nodeMap.has(e.to)) {
+            this.incomingEdges.get(e.to).push(e);
+            this.outgoingEdges.get(e.from).push(e);
+          }
+        });
+      }
+
+      initZoom() {
+        this.zoomBehavior = d3.zoom()
+          .scaleExtent([0.15, 3.5])
+          .on("zoom", (event) => {
+            this.zoomRoot.attr("transform", event.transform);
+          });
+
+        this.svg.call(this.zoomBehavior)
+          .on("dblclick.zoom", null);
+      }
+
+      updateFilterCounts() {
+        const allCount = this.nodes.length;
+        const updCount = this.nodes.filter(n => n.is_upd_faculty).length;
+        const emeritusCount = this.nodes.filter(n => n.rank_level === 'emeritus').length;
+        const fullCount = this.nodes.filter(n => n.rank_level === 'full_prof').length;
+        const assocCount = this.nodes.filter(n => n.rank_level === 'assoc_prof').length;
+        const asstCount = this.nodes.filter(n => n.rank_level === 'asst_prof').length;
+        const lecturerCount = this.nodes.filter(n => n.rank_level === 'lecturer').length;
+        const externalCount = this.nodes.filter(n => n.rank_level === 'external').length;
+
+        const select = d3.select("#filter-select");
+        if (!select.empty()) {
+          select.select("option[value='all']").text(`Highlight: All (${allCount})`);
+          select.select("option[value='upd']").text(`Highlight: UPD Faculty (${updCount})`);
+          select.select("option[value='emeritus']").text(`Highlight: Emeritus (${emeritusCount})`);
+          select.select("option[value='full_prof']").text(`Highlight: Professors (${fullCount})`);
+          select.select("option[value='assoc_prof']").text(`Highlight: Assoc Prof (${assocCount})`);
+          select.select("option[value='asst_prof']").text(`Highlight: Asst Prof (${asstCount})`);
+          select.select("option[value='instructors']").text(`Highlight: Instructors & Lecturers (${lecturerCount})`);
+          select.select("option[value='external']").text(`Highlight: Roots & Predecessors (${externalCount})`);
+        }
+      }
+
+      openSearchOverlay() {
+        const overlay = d3.select("#search-overlay");
+        overlay.classed("open", true);
+        const input = d3.select("#overlay-search-input");
+        setTimeout(() => {
+          if (input.node()) {
+            input.node().focus();
+            input.node().select();
+          }
+        }, 40);
+      }
+
+      closeSearchOverlay() {
+        const overlay = d3.select("#search-overlay");
+        overlay.classed("open", false);
+        const input = d3.select("#overlay-search-input");
+        if (input.node()) input.property("value", "");
+        d3.select("#search-overlay-clear").style("display", "none");
+        d3.select("#search-overlay-results").html(
+          '<div class="search-overlay-hint">Type a scholar\'s name, philosophical tradition, or dissertation topic...</div>'
+        );
+      }
+
+      renderStudentOrgs() {
+        const container = d3.select("#orgs-body-content");
+        container.selectAll("*").remove();
+
+        this.studentOrgs.forEach(org => {
+          const card = container.append("div").attr("class", "org-card");
+          
+          const top = card.append("div").attr("class", "org-top-row");
+          top.append("div").attr("class", "org-name").text(org.name);
+          top.append("div").attr("class", "org-type-badge").text(org.type);
+
+          card.append("div")
+            .style("font-family", "var(--font-mono)")
+            .style("font-size", "9.5px")
+            .style("color", "var(--text-muted)")
+            .text(`${org.base} · ${org.founded}`);
+
+          card.append("p").attr("class", "org-desc").text(org.description);
+
+          const links = card.append("div").attr("class", "org-links-row");
+          if (org.facebook) {
+            links.append("a")
+              .attr("class", "org-link")
+              .attr("href", org.facebook)
+              .attr("target", "_blank")
+              .text("Official Facebook Page ↗");
+          }
+          if (org.instagram) {
+            links.append("a")
+              .attr("class", "org-link")
+              .attr("href", org.instagram)
+              .attr("target", "_blank")
+              .text("Official Instagram ↗");
+          }
+        });
+      }
+
+      /* --------------------------------------------------------------------------
+         LAYOUT ENGINES
+         -------------------------------------------------------------------------- */
+      computeLayoutPositions(mode) {
+        if (this.simulation) {
+          this.simulation.stop();
+          this.simulation = null;
+        }
+
+        if (mode === 'tree') {
+          this.computeTreeLayout();
+        } else if (mode === 'timeline') {
+          this.computeTimelineLayout();
+        } else if (mode === 'network') {
+          this.computeNetworkLayout();
+        }
+      }
+
+      computeTreeLayout() {
+        const strata = {
+          0: ['frege_gottlob', 'morris_charles', 'skinner_bf', 'parry_william', 'evans_donald', 'raz_joseph', 'lucas_jr'],
+          1: ['carnap_rudolf', 'townsend_henry'],
+          2: ['pascual_ricardo', 'lagmay_alfredo', 'majul_cesar'],
+          3: ['bonifacio_armando'],
+          4: ['de_castro_leonardo', 'lee_zosimo', 'sayson_ciriaco', 'fronda_earl_stanley', 'ocampo_ma_liza_ruth', 'fernando_emmanuel'],
+          5: ['payongayong_maria_theresa', 'yasol_naval_jeanette', 'sy_peter', 'lumagbas_lily_beth', 'boongaling_john_ian', 'mendoza_lumberto', 'abalos_orendain_karen'],
+          6: ['agpaoa_jerwin', 'banares_romulo', 'fernando_enrique', 'franco_gerald_pio', 'macapinlac_arlyn', 'manaloto_renato', 'zosa_marielle', 'de_guzman_daulat_symel', 'boongaling_pamela_ann', 'masakayan_nicolo', 'evangelista_francis_julius'],
+          7: ['alonzo_john_raymund', 'chuacuco_gavin_nigel', 'de_jesus_ingrid_mae', 'ocon_joshua_jose', 'quitain_miguel_elvir', 'tubera_kurt_christian', 'villegas_patrick_joshua', 'imperial_ron_joshua', 'ingalla_sean_marcus', 'duran_andrea_lorraine']
+        };
+
+        const layerHeight = 175;
+        const colGap = 265;
+
+        Object.entries(strata).forEach(([layerIdx, nodeIds]) => {
+          const l = parseInt(layerIdx, 10);
+          const totalWidth = nodeIds.length * colGap;
+          const startX = -totalWidth / 2 + colGap / 2;
+          const y = l * layerHeight - 450;
+
+          nodeIds.forEach((id, idx) => {
+            const node = this.nodeMap.get(id);
+            if (node) {
+              node.x = startX + idx * colGap;
+              node.y = y;
+            }
+          });
+        });
+      }
+
+      computeTimelineLayout() {
+        const minYear = 1870;
+        const maxYear = 2026;
+        const totalXSpan = 4200;
+        const startX = -totalXSpan / 2;
+
+        const sortedNodes = [...this.nodes].sort((a, b) => a.phd_year - b.phd_year);
+        const rows = [];
+        const minRowGapX = 260;
+
+        sortedNodes.forEach(node => {
+          const x = startX + ((node.phd_year - minYear) / (maxYear - minYear)) * totalXSpan;
+          
+          let placedRow = -1;
+          for (let r = 0; r < rows.length; r++) {
+            if (x - rows[r] >= minRowGapX) {
+              placedRow = r;
+              rows[r] = x;
+              break;
+            }
+          }
+
+          if (placedRow === -1) {
+            rows.push(x);
+            placedRow = rows.length - 1;
+          }
+
+          const rowHeight = 105;
+          const y = (placedRow - 5) * rowHeight;
+
+          node.x = x;
+          node.y = y;
+        });
+
+        // Compute 1949 Transfer marker X position
+        this.dilimanTransferX = startX + ((1949 - minYear) / (maxYear - minYear)) * totalXSpan;
+      }
+
+      computeNetworkLayout() {
+        this.nodes.forEach(n => {
+          if (n.x === undefined) n.x = (Math.random() - 0.5) * 1000;
+          if (n.y === undefined) n.y = (Math.random() - 0.5) * 800;
+        });
+
+        const simulationEdges = this.edges.map(e => ({
+          source: e.from,
+          target: e.to,
+          degree: e.degree
+        }));
+
+        this.simulation = d3.forceSimulation(this.nodes)
+          .force("link", d3.forceLink(simulationEdges).id(d => d.id).distance(160))
+          .force("charge", d3.forceManyBody().strength(-800))
+          .force("collide", d3.forceCollide().radius(135).iterations(2))
+          .force("center", d3.forceCenter(0, 0))
+          .force("x", d3.forceX(0).strength(0.04))
+          .force("y", d3.forceY(0).strength(0.04));
+
+        this.simulation.on("tick", () => {
+          this.updateNodeAndEdgePositions();
+        });
+      }
+
+      /* --------------------------------------------------------------------------
+         RENDERING
+         -------------------------------------------------------------------------- */
+      renderGraph() {
+        const self = this;
+
+        // Render Edges
+        const edgeSelection = this.edgesLayer
+          .selectAll("path.edge-path")
+          .data(this.edges, d => `${d.from}->${d.to}`);
+
+        edgeSelection.exit().remove();
+
+        const edgeEnter = edgeSelection.enter()
+          .append("path")
+          .attr("class", d => `edge-path edge-${d.degree.toLowerCase()}`)
+          .attr("id", d => `edge-${d.from}-${d.to}`)
+          .attr("marker-end", d => {
+            if (d.degree === 'PhD') return "url(#marker-phd)";
+            if (d.degree === 'MA') return "url(#marker-ma)";
+            return "url(#marker-mentorship)";
+          });
+
+        this.edgeElements = edgeEnter.merge(edgeSelection);
+
+        // Render Nodes
+        const nodeSelection = this.nodesLayer
+          .selectAll("g.node-group")
+          .data(this.nodes, d => d.id);
+
+        nodeSelection.exit().remove();
+
+        const nodeEnter = nodeSelection.enter()
+          .append("g")
+          .attr("class", d => `node-group rank-${d.rank_level}`)
+          .attr("id", d => `node-${d.id}`)
+          .on("click", (event, d) => {
+            event.stopPropagation();
+            self.selectScholar(d.id, true);
+          });
+
+        nodeEnter.call(d3.drag()
+          .on("start", (event, d) => {
+            if (!event.active && self.simulation) self.simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+          })
+          .on("drag", (event, d) => {
+            d.fx = event.x;
+            d.fy = event.y;
+            d.x = event.x;
+            d.y = event.y;
+            self.updateNodeAndEdgePositions();
+          })
+          .on("end", (event, d) => {
+            if (!event.active && self.simulation) self.simulation.alphaTarget(0);
+            if (self.currentLayout !== 'network') {
+              d.fx = null;
+              d.fy = null;
+            }
+          })
+        );
+
+        nodeEnter.append("rect")
+          .attr("class", "node-card")
+          .attr("width", this.cardWidth)
+          .attr("height", this.cardHeight)
+          .attr("rx", 3);
+
+        nodeEnter.filter(d => d.rank_level === 'emeritus')
+          .append("rect")
+          .attr("class", "node-card-inner-border")
+          .attr("x", 3)
+          .attr("y", 3)
+          .attr("width", this.cardWidth - 6)
+          .attr("height", this.cardHeight - 6)
+          .attr("rx", 2);
+
+        // Badge Group
+        const badgeGroup = nodeEnter.append("g")
+          .attr("transform", "translate(9, 11)");
+
+        badgeGroup.append("rect")
+          .attr("class", d => d.rank_level === 'emeritus' ? "badge-dark-rect" : "badge-light-rect")
+          .attr("height", 13)
+          .attr("rx", 2);
+
+        badgeGroup.append("text")
+          .attr("class", d => `node-badge-text ${d.rank_level === 'emeritus' ? 'badge-dark-text' : 'badge-light-text'}`)
+          .attr("x", 4)
+          .attr("y", 9.5)
+          .text(d => self.getRankBadgeText(d));
+
+        badgeGroup.each(function() {
+          const textNode = d3.select(this).select("text").node();
+          const bbox = textNode.getBBox();
+          d3.select(this).select("rect").attr("width", bbox.width + 8);
+        });
+
+        // Top Right: PhD/MA Year
+        nodeEnter.append("text")
+          .attr("class", "node-meta")
+          .attr("x", this.cardWidth - 9)
+          .attr("y", 21)
+          .attr("text-anchor", "end")
+          .text(d => `${d.phd_year}`);
+
+        // Name
+        nodeEnter.append("text")
+          .attr("class", "node-name")
+          .attr("x", 9)
+          .attr("y", 43)
+          .text(d => self.truncateText(d.name, 26));
+
+        // Role / Department Title
+        nodeEnter.append("text")
+          .attr("class", "node-role")
+          .attr("x", 9)
+          .attr("y", 58)
+          .text(d => self.truncateText(d.role, 30));
+
+        // Tradition
+        const footerGroup = nodeEnter.append("g")
+          .attr("transform", "translate(9, 68)");
+
+        footerGroup.append("text")
+          .attr("class", "node-meta")
+          .attr("y", 9)
+          .text(d => {
+            const trads = d.tradition.split(',')[0].trim();
+            return d.is_upd_faculty ? `UPD · ${trads}` : trads;
+          });
+
+        this.nodeElements = nodeEnter.merge(nodeSelection);
+        this.updateNodeAndEdgePositions();
+      }
+
+      getRankBadgeText(d) {
+        if (d.id === 'lagmay_alfredo') return 'INSTRUCTOR';
+        if (d.rank_level === 'emeritus') return 'EMERITUS';
+        if (d.rank_level === 'full_prof') return 'PROFESSOR';
+        if (d.rank_level === 'assoc_prof') return 'ASSOC PROF';
+        if (d.rank_level === 'asst_prof') return 'ASST PROF';
+        if (d.rank_level === 'external') return 'ROOT ANCESTOR';
+        return 'INSTRUCTOR/LECTURER';
+      }
+
+      truncateText(str, maxLength) {
+        if (!str) return '';
+        return str.length > maxLength ? str.substring(0, maxLength - 1) + '…' : str;
+      }
+
+      updateNodeAndEdgePositions() {
+        const self = this;
+        this.nodeElements.attr("transform", d => `translate(${d.x - self.cardWidth / 2}, ${d.y - self.cardHeight / 2})`);
+
+        this.edgeElements.attr("d", d => {
+          const source = typeof d.source === 'object' ? d.source : self.nodeMap.get(d.from);
+          const target = typeof d.target === 'object' ? d.target : self.nodeMap.get(d.to);
+          if (!source || !target) return '';
+
+          if (self.currentLayout === 'tree') {
+            const sx = source.x;
+            const sy = source.y + self.cardHeight / 2;
+            const tx = target.x;
+            const ty = target.y - self.cardHeight / 2;
+            const deltaY = ty - sy;
+            return `M ${sx} ${sy} C ${sx} ${sy + deltaY * 0.5}, ${tx} ${ty - deltaY * 0.5}, ${tx} ${ty}`;
+          } else if (self.currentLayout === 'timeline') {
+            const sx = source.x + self.cardWidth / 2;
+            const sy = source.y;
+            const tx = target.x - self.cardWidth / 2;
+            const ty = target.y;
+            const cx = sx + (tx - sx) * 0.5;
+            return `M ${sx} ${sy} C ${cx} ${sy}, ${cx} ${ty}, ${tx} ${ty}`;
+          } else {
+            const dx = target.x - source.x;
+            const dy = target.y - source.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist === 0) return '';
+            const pad = 48;
+            const tx = target.x - (dx / dist) * pad;
+            const ty = target.y - (dy / dist) * pad;
+            return `M ${source.x} ${source.y} L ${tx} ${ty}`;
+          }
+        });
+      }
+
+      /* --------------------------------------------------------------------------
+         LINEAGE CALCULATION & HIGHLIGHTING
+         -------------------------------------------------------------------------- */
+      getAncestors(nodeId) {
+        const ancestors = new Set();
+        const queue = [nodeId];
+        while (queue.length > 0) {
+          const current = queue.shift();
+          const inEdges = this.incomingEdges.get(current) || [];
+          inEdges.forEach(edge => {
+            if (!ancestors.has(edge.from)) {
+              ancestors.add(edge.from);
+              queue.push(edge.from);
+            }
+          });
+        }
+        return ancestors;
+      }
+
+      getDescendants(nodeId) {
+        const descendants = new Set();
+        const queue = [nodeId];
+        while (queue.length > 0) {
+          const current = queue.shift();
+          const outEdges = this.outgoingEdges.get(current) || [];
+          outEdges.forEach(edge => {
+            if (!descendants.has(edge.to)) {
+              descendants.add(edge.to);
+              queue.push(edge.to);
+            }
+          });
+        }
+        return descendants;
+      }
+
+      selectScholar(scholarId, openPanel = true) {
+        const scholar = this.nodeMap.get(scholarId);
+        if (!scholar) return;
+
+        this.selectedNodeId = scholarId;
+        const ancestors = this.getAncestors(scholarId);
+        const descendants = this.getDescendants(scholarId);
+        const lineageSet = new Set([...ancestors, ...descendants, scholarId]);
+        this.highlightedLineage = lineageSet;
+
+        this.nodeElements
+          .classed("selected", d => d.id === scholarId)
+          .classed("highlighted-ancestor", d => ancestors.has(d.id))
+          .classed("highlighted-descendant", d => descendants.has(d.id))
+          .classed("dimmed", d => !lineageSet.has(d.id));
+
+        this.edgeElements
+          .classed("dimmed", d => !(lineageSet.has(d.from) && lineageSet.has(d.to)))
+          .classed("highlighted-ancestor", d => ancestors.has(d.from) && (ancestors.has(d.to) || d.to === scholarId))
+          .classed("highlighted-descendant", d => (descendants.has(d.from) || d.from === scholarId) && descendants.has(d.to));
+
+        if (openPanel) {
+          this.populateDossierPanel(scholar);
+          this.openDetailsPanel();
+        }
+      }
+
+      clearSelection() {
+        this.selectedNodeId = null;
+        this.highlightedLineage = null;
+
+        this.nodeElements
+          .classed("selected", false)
+          .classed("highlighted-ancestor", false)
+          .classed("highlighted-descendant", false)
+          .classed("dimmed", d => !this.isNodeMatchingFilter(d));
+
+        this.edgeElements
+          .classed("dimmed", false)
+          .classed("highlighted-ancestor", false)
+          .classed("highlighted-descendant", false);
+
+        this.closeDetailsPanel();
+      }
+
+      /* --------------------------------------------------------------------------
+         FILTERING & SEARCH
+         -------------------------------------------------------------------------- */
+      setFilter(filterKey) {
+        this.currentFilter = filterKey;
+        
+        const select = d3.select("#filter-select");
+        if (!select.empty() && select.property("value") !== filterKey) {
+          select.property("value", filterKey);
+        }
+
+        this.nodeElements.classed("dimmed", d => !this.isNodeMatchingFilter(d));
+        this.edgeElements.classed("dimmed", d => {
+          const s = this.nodeMap.get(d.from);
+          const t = this.nodeMap.get(d.to);
+          return !(this.isNodeMatchingFilter(s) && this.isNodeMatchingFilter(t));
+        });
+
+        this.showToast(`Filter: ${filterKey.toUpperCase()}`);
+      }
+
+      isNodeMatchingFilter(d) {
+        if (!d) return false;
+        if (this.currentFilter === 'all') return true;
+        if (this.currentFilter === 'upd') return d.is_upd_faculty === true;
+        if (this.currentFilter === 'emeritus') return d.rank_level === 'emeritus';
+        if (this.currentFilter === 'full_prof') return d.rank_level === 'full_prof';
+        if (this.currentFilter === 'assoc_prof') return d.rank_level === 'assoc_prof';
+        if (this.currentFilter === 'asst_prof') return d.rank_level === 'asst_prof';
+        if (this.currentFilter === 'instructors') return d.rank_level === 'lecturer';
+        if (this.currentFilter === 'external') return d.rank_level === 'external';
+        return true;
+      }
+
+      setLayout(layoutMode) {
+        if (this.currentLayout === layoutMode) return;
+        this.currentLayout = layoutMode;
+        d3.select("#transfer-milestone-marker")
+          .style("display", layoutMode === 'timeline' ? "block" : "none")
+          .attr("transform", `translate(${this.dilimanTransferX || 0}, 0)`);
+
+        d3.selectAll("#layout-toggle-group .btn-academic").classed("active", function() {
+          return d3.select(this).attr("data-layout") === layoutMode;
+        });
+
+        this.computeLayoutPositions(layoutMode);
+        
+        const duration = 600;
+        this.nodeElements.transition()
+          .duration(duration)
+          .ease(d3.easeCubicInOut)
+          .attr("transform", d => `translate(${d.x - this.cardWidth / 2}, ${d.y - this.cardHeight / 2})`);
+
+        this.edgeElements.transition()
+          .duration(duration)
+          .ease(d3.easeCubicInOut)
+          .attr("d", d => {
+            const source = typeof d.source === 'object' ? d.source : this.nodeMap.get(d.from);
+            const target = typeof d.target === 'object' ? d.target : this.nodeMap.get(d.to);
+            if (layoutMode === 'tree') {
+              const sx = source.x;
+              const sy = source.y + this.cardHeight / 2;
+              const tx = target.x;
+              const ty = target.y - this.cardHeight / 2;
+              const deltaY = ty - sy;
+              return `M ${sx} ${sy} C ${sx} ${sy + deltaY * 0.5}, ${tx} ${ty - deltaY * 0.5}, ${tx} ${ty}`;
+            } else if (layoutMode === 'timeline') {
+              const sx = source.x + this.cardWidth / 2;
+              const sy = source.y;
+              const tx = target.x - this.cardWidth / 2;
+              const ty = target.y;
+              const cx = sx + (tx - sx) * 0.5;
+              return `M ${sx} ${sy} C ${cx} ${sy}, ${cx} ${ty}, ${tx} ${ty}`;
+            } else {
+              return `M ${source.x} ${source.y} L ${target.x} ${target.y}`;
+            }
+          });
+
+        setTimeout(() => this.fitView(), duration + 50);
+        this.showToast(`Layout: ${layoutMode.toUpperCase()}`);
+      }
+
+      /* --------------------------------------------------------------------------
+         PAN & ZOOM HELPERS
+         -------------------------------------------------------------------------- */
+      fitView() {
+        const svgNode = this.svg.node();
+        const width = svgNode.clientWidth || window.innerWidth;
+        const height = svgNode.clientHeight || window.innerHeight;
+
+        let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+        this.nodes.forEach(n => {
+          if (n.x !== undefined && n.y !== undefined) {
+            minX = Math.min(minX, n.x - this.cardWidth / 2);
+            maxX = Math.max(maxX, n.x + this.cardWidth / 2);
+            minY = Math.min(minY, n.y - this.cardHeight / 2);
+            maxY = Math.max(maxY, n.y + this.cardHeight / 2);
+          }
+        });
+
+        if (minX === Infinity) return;
+
+        const padding = 120;
+        const graphWidth = maxX - minX + padding * 2;
+        const graphHeight = maxY - minY + padding * 2;
+
+        const scale = Math.min(width / graphWidth, height / graphHeight, 1.15);
+        const midX = (minX + maxX) / 2;
+        const midY = (minY + maxY) / 2;
+
+        const transform = d3.zoomIdentity
+          .translate(width / 2, height / 2)
+          .scale(scale)
+          .translate(-midX, -midY);
+
+        this.svg.transition()
+          .duration(550)
+          .ease(d3.easeCubicOut)
+          .call(this.zoomBehavior.transform, transform);
+      }
+
+      focusNode(nodeId) {
+        const node = this.nodeMap.get(nodeId);
+        if (!node) return;
+
+        const svgNode = this.svg.node();
+        const width = svgNode.clientWidth || window.innerWidth;
+        const height = svgNode.clientHeight || window.innerHeight;
+        const isPanelOpen = d3.select("#details-panel").classed("open");
+        const offsetX = isPanelOpen ? -150 : 0;
+
+        const transform = d3.zoomIdentity
+          .translate(width / 2 + offsetX, height / 2)
+          .scale(1.1)
+          .translate(-node.x, -node.y);
+
+        this.svg.transition()
+          .duration(480)
+          .ease(d3.easeCubicOut)
+          .call(this.zoomBehavior.transform, transform);
+      }
+
+      zoomStep(direction) {
+        this.svg.transition()
+          .duration(240)
+          .call(this.zoomBehavior.scaleBy, direction > 0 ? 1.3 : 0.77);
+      }
+
+      resetZoom() {
+        const svgNode = this.svg.node();
+        const width = svgNode.clientWidth || window.innerWidth;
+        const height = svgNode.clientHeight || window.innerHeight;
+
+        const transform = d3.zoomIdentity
+          .translate(width / 2, height / 2)
+          .scale(1)
+          .translate(0, 0);
+
+        this.svg.transition()
+          .duration(480)
+          .call(this.zoomBehavior.transform, transform);
+      }
+
+      /* --------------------------------------------------------------------------
+         DOSSIER PANEL
+         -------------------------------------------------------------------------- */
+      populateDossierPanel(scholar) {
+        const self = this;
+        d3.select("#panel-scholar-id").text(`ID: ${scholar.id}`);
+        d3.select("#panel-name").text(scholar.name);
+        d3.select("#panel-role").text(scholar.role);
+        d3.select("#panel-institution").text(scholar.institution);
+        d3.select("#panel-phd-year").text(scholar.phd_year);
+        d3.select("#panel-tradition").text(scholar.tradition);
+        d3.select("#panel-dissertation").text(`“${scholar.dissertation}”`);
+        d3.select("#panel-bio").html(scholar.bio + (scholar.official_bio_pdf ? '<div style="margin-top:10px;"><a href="' + scholar.official_bio_pdf + '" target="_blank" style="color:#000; font-family:var(--font-mono); font-size:10px; font-weight:600; text-decoration:underline; display:inline-flex; align-items:center; gap:4px;">📄 Official Biography & Selected Bibliography (PDF) ↗</a></div>' : ''));
+
+        d3.select("#panel-rank-badge").text(self.getRankBadgeText(scholar));
+        d3.select("#panel-upd-badge")
+          .text(scholar.is_upd_faculty ? "UP FACULTY" : "GLOBAL FOUNDATION");
+        d3.select("#panel-campus-badge")
+          .text(scholar.campus ? scholar.campus.toUpperCase() : "PALMA HALL");
+        d3.select("#panel-year-badge").text(`YEAR ${scholar.phd_year}`);
+
+        // Advisors list
+        const inEdges = this.incomingEdges.get(scholar.id) || [];
+        const advisorsContainer = d3.select("#panel-advisors-list");
+        advisorsContainer.selectAll("*").remove();
+        d3.select("#panel-advisors-count").text(`${inEdges.length} ${inEdges.length === 1 ? 'ADVISOR' : 'ADVISORS'}`);
+
+        if (inEdges.length === 0) {
+          advisorsContainer.append("div")
+            .attr("class", "empty-lineage-note")
+            .text("Foundational figure / No prior departmental advisor recorded in archive");
+        } else {
+          inEdges.forEach(edge => {
+            const advisor = self.nodeMap.get(edge.from);
+            if (!advisor) return;
+
+            const card = advisorsContainer.append("div")
+              .attr("class", "lineage-item-card")
+              .on("click", () => {
+                self.selectScholar(advisor.id, true);
+                self.focusNode(advisor.id);
+              });
+
+            const info = card.append("div").attr("class", "lineage-item-info");
+            info.append("div").attr("class", "lineage-item-name").text(advisor.name);
+            info.append("div").attr("class", "lineage-item-sub").text(`${advisor.role} · ${advisor.institution}`);
+
+            card.append("div")
+              .attr("class", "lineage-item-tag")
+              .text(`${edge.degree} (${edge.year})`);
+          });
+        }
+
+        // Advisees list
+        const outEdges = this.outgoingEdges.get(scholar.id) || [];
+        const adviseesContainer = d3.select("#panel-advisees-list");
+        adviseesContainer.selectAll("*").remove();
+        d3.select("#panel-advisees-count").text(`${outEdges.length} ${outEdges.length === 1 ? 'ADVISEE' : 'ADVISEES'}`);
+
+        if (outEdges.length === 0) {
+          adviseesContainer.append("div")
+            .attr("class", "empty-lineage-note")
+            .text("No supervised faculty recorded in archive");
+        } else {
+          outEdges.forEach(edge => {
+            const student = self.nodeMap.get(edge.to);
+            if (!student) return;
+
+            const card = adviseesContainer.append("div")
+              .attr("class", "lineage-item-card")
+              .on("click", () => {
+                self.selectScholar(student.id, true);
+                self.focusNode(student.id);
+              });
+
+            const info = card.append("div").attr("class", "lineage-item-info");
+            info.append("div").attr("class", "lineage-item-name").text(student.name);
+            info.append("div").attr("class", "lineage-item-sub").text(`${student.role} · ${student.tradition.split(',')[0]}`);
+
+            card.append("div")
+              .attr("class", "lineage-item-tag")
+              .text(`${edge.degree} (${edge.year})`);
+          });
+        }
+      }
+
+      openDetailsPanel() {
+        d3.select("#details-panel").classed("open", true);
+      }
+
+      closeDetailsPanel() {
+        d3.select("#details-panel").classed("open", false);
+      }
+
+      showToast(msg) {
+        const toast = d3.select("#toast-notice");
+        toast.text(msg).classed("show", true);
+        clearTimeout(this.toastTimer);
+        this.toastTimer = setTimeout(() => {
+          toast.classed("show", false);
+        }, 2200);
+      }
+
+      /* --------------------------------------------------------------------------
+         EVENTS & SHORTCUTS
+         -------------------------------------------------------------------------- */
+      initDomEvents() {
+        const self = this;
+
+        this.svg.on("click", () => self.clearSelection());
+        d3.select("#btn-close-panel").on("click", () => self.closeDetailsPanel());
+
+        // Zoom Controls
+        d3.select("#btn-zoom-in").on("click", () => self.zoomStep(1));
+        d3.select("#btn-zoom-out").on("click", () => self.zoomStep(-1));
+        d3.select("#btn-fit-view").on("click", () => self.fitView());
+        d3.select("#btn-reset-view").on("click", () => self.resetZoom());
+
+        // Layout Toggles
+        d3.selectAll("#layout-toggle-group .btn-academic").on("click", function() {
+          const layout = d3.select(this).attr("data-layout");
+          self.setLayout(layout);
+        });
+
+        // Filter Dropdown
+        d3.select("#filter-select").on("change", function() {
+          self.setFilter(this.value);
+        });
+
+        // Legend row filter
+        d3.selectAll(".legend-row[data-legend-rank]").on("click", function() {
+          const rank = d3.select(this).attr("data-legend-rank");
+          self.setFilter(rank);
+        });
+
+        // Panel Actions
+        d3.select("#btn-focus-graph").on("click", () => {
+          if (self.selectedNodeId) self.focusNode(self.selectedNodeId);
+        });
+
+        // Search Overlay Trigger & Close
+        d3.select("#btn-search-toggle").on("click", () => self.openSearchOverlay());
+        d3.select("#search-overlay-close").on("click", () => self.closeSearchOverlay());
+        d3.select("#search-overlay").on("click", function(event) {
+          if (event.target === this) self.closeSearchOverlay();
+        });
+
+        // Search Overlay Input & Real-Time Querying
+        const overlayInput = d3.select("#overlay-search-input");
+        const overlayClear = d3.select("#search-overlay-clear");
+        const overlayResults = d3.select("#search-overlay-results");
+
+        overlayInput.on("input", function() {
+          const query = this.value.trim().toLowerCase();
+          overlayClear.style("display", query ? "block" : "none");
+
+          if (!query) {
+            overlayResults.html(
+              '<div class="search-overlay-hint">Type a scholar\'s name, philosophical tradition, or dissertation topic...</div>'
+            );
+            return;
+          }
+
+          const matches = self.nodes.filter(n => 
+            n.name.toLowerCase().includes(query) ||
+            (n.tradition && n.tradition.toLowerCase().includes(query)) ||
+            (n.dissertation && n.dissertation.toLowerCase().includes(query)) ||
+            (n.institution && n.institution.toLowerCase().includes(query)) ||
+            (n.role && n.role.toLowerCase().includes(query))
+          ).slice(0, 10);
+
+          if (matches.length === 0) {
+            overlayResults.html(
+              '<div class="search-overlay-hint">No scholars found matching "' + query + '"</div>'
+            );
+            return;
+          }
+
+          overlayResults.selectAll("*").remove();
+          matches.forEach(m => {
+            const item = overlayResults.append("div")
+              .attr("class", "search-overlay-item")
+              .on("click", () => {
+                self.closeSearchOverlay();
+                self.selectScholar(m.id, true);
+                self.focusNode(m.id);
+              });
+
+            const top = item.append("div").attr("class", "search-item-top");
+            top.append("div").attr("class", "search-item-name").text(m.name);
+            top.append("div").attr("class", "search-item-rank").text(self.getRankBadgeText(m));
+
+            const sub = item.append("div").attr("class", "search-item-sub");
+            const details = [];
+            if (m.institution) details.push(m.institution);
+            if (m.phd_year) details.push(m.phd_year);
+            if (m.tradition) details.push(m.tradition);
+            sub.text(details.join(" · "));
+          });
+        });
+
+        overlayClear.on("click", () => {
+          overlayInput.property("value", "");
+          overlayClear.style("display", "none");
+          overlayResults.html(
+            '<div class="search-overlay-hint">Type a scholar\'s name, philosophical tradition, or dissertation topic...</div>'
+          );
+          overlayInput.node().focus();
+        });
+
+        // Keyboard Shortcuts
+        window.addEventListener("keydown", (e) => {
+          const isInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT';
+
+          if (e.key === '/' && !isInput) {
+            e.preventDefault();
+            self.openSearchOverlay();
+          } else if (e.key === 'Escape') {
+            if (d3.select("#search-overlay").classed("open")) {
+              self.closeSearchOverlay();
+            } else {
+              self.clearSelection();
+            }
+          } else if (!isInput) {
+            if (e.key === 'f' || e.key === 'F') {
+              e.preventDefault();
+              self.fitView();
+            } else if (e.key === '0') {
+              e.preventDefault();
+              self.resetZoom();
+            } else if (e.key === '+' || e.key === '=') {
+              e.preventDefault();
+              self.zoomStep(1);
+            } else if (e.key === '-' || e.key === '_') {
+              e.preventDefault();
+              self.zoomStep(-1);
+            } else if (e.key === '1') {
+              self.setLayout('tree');
+            } else if (e.key === '2') {
+              self.setLayout('timeline');
+            } else if (e.key === '3') {
+              self.setLayout('network');
+            }
+          }
+        });
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      window.app = new PhilosophyGenealogyApp(GENEALOGY_DATA);
+    });
+  </script>
+</body>
+</html>
