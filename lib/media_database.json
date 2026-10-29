@@ -503,6 +503,13 @@
     "cover_link": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1wkn.jpg"
   },
   {
+    "title": "Call of Duty: Modern Warfare 4 2026",
+    "type": "game",
+    "started": "30-10-2026",
+    "completed": "30-10-2026",
+    "cover_link": "https://www.callofduty.com/content/dam/atvi/callofduty/cod-touchui/mw4/home/hero/MW4LP_BGHero_XL.webp"
+  },
+  {
     "title": "Call of Duty World at War",
     "type": "game",
     "cover_link": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co1wl8.jpg"
@@ -659,6 +666,13 @@
     "started": "02-08-2025",
     "completed": "02-08-2025",
     "cover_link": "https://a.ltrbxd.com/resized/film-poster/9/2/5/1/8/3/925183-cyberpunk-edgerunners-0-230-0-345-crop.jpg?v=917d95cb49"
+  },
+  {
+    "title": "Cyberpunk: Edgerunners Season 2",
+    "type": "anime",
+    "started": "30-10-2026",
+    "completed": "30-10-2026",
+    "cover_link": "https://www.cyberpunk.net/build/images/edgerunners2/cover-pc-81ae3e53.jpg"
   },
   {
     "title": "Cytus II",
