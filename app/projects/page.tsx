@@ -392,30 +392,51 @@ const panelsData: PanelItem[] = [
         liveUrl: "https://godle-logic-game.vercel.app",
       },
       {
+        id: "phi",
+        title: "phi",
+        subtitle: "Personal timeline and media journal",
+        description:
+          "Phi is a self-hosted journal with a vanilla JavaScript frontend, a Node.js server, and a local SQLite database. The timeline supports text, photo grids, and KaTeX math. A separate media log lets users search and filter entries by type and keep ratings, dates, and notes. Backups can be exported and imported from Settings.\n\nOptional widgets read iCalendar feeds, show GitHub contributions, and map links in a local Obsidian vault. Each widget can sit in the timeline or the sidebar.",
+        imageSrc: "/images/phi-timeline.jpg",
+        gallery: [
+          {
+            src: "/images/phi-timeline.jpg",
+            title: "Timeline",
+            description: "A timeline with entries and optional personal widgets.",
+          },
+          {
+            src: "/images/phi-log.jpg",
+            title: "Media log",
+            description: "A searchable collection of movies, games, books, and other media.",
+          },
+        ],
+        githubUrl: "https://github.com/artemiui/phi",
+      },
+      {
         id: "dev-2",
         title: "Philippine Junior Data Science Challenge 2026",
-        subtitle: "Official Competition Web Platform",
+        subtitle: "Competition website for UP Data Science Society",
         description:
-          "I designed and developed the official web platform for the Philippine Junior Data Science Challenge 2026 (PJDSC 2026), the premier nationwide inter-collegiate data science competition organized by the UP Data Science Society.\n\nCentered on the theme 'Public Health Analytics: Trace the Pattern, Target the Cure', the platform connects over 600 student participants, mentors, and academic and industry partners across 30+ universities nationwide.\n\nBuilt with Next.js, React, Tailwind CSS, and Framer Motion, the portal features real-time competition phase countdowns, comprehensive challenge primer and timeline modules, track explorations across 10 public health innovation domains, and an interactive particle canvas background simulation.",
+          "I designed and built the official competition website with the Next.js App Router, React, TypeScript, and Tailwind CSS. Dedicated pages organize the primer, milestone timeline, dataset catalogue, and workshop programme so teams can reach each resource directly.\n\nThe interface uses Framer Motion for transitions, a canvas-rendered background for the visual identity, and a client-side milestone countdown for upcoming deadlines. The homepage brings the current competition phase and workshop updates together with links to the detailed resources.",
         imageSrc: "/images/pjdsc26-preview-1.png",
         gallery: [
           {
             src: "/images/pjdsc26-preview-1.png",
-            title: "PJDSC 2026 Homepage & Real-Time Countdown",
+            title: "PJDSC 2026 Homepage",
             description:
-              "Official web platform homepage featuring dynamic particle canvas background, event registration countdown, and nationwide reach metrics.",
+              "The current homepage introduces the public health challenge and links to the primer and dataset catalogue.",
           },
           {
             src: "/images/pjdsc26-preview-2.png",
-            title: "Public Health Analytics & 10 Innovation Tracks",
+            title: "Public Health Dataset Catalogue",
             description:
-              "Challenge theme breakdown exploring 10 key public health domains from disease surveillance and epidemiological modeling to digital health systems.",
+              "Teams can filter open datasets by topic and review their sources, coverage periods, and geographic scope.",
           },
           {
             src: "/images/pjdsc26-preview-3.png",
-            title: "Event Primer, Rules & Competition Mechanics",
+            title: "Project Development Workshop Programme",
             description:
-              "Comprehensive documentation hub detailing eligibility, team capacity quotas, registration fees, and multi-stage evaluation criteria.",
+              "The workshop page brings together the event schedule, venue, online session details, and materials.",
           },
         ],
         liveUrl: "https://pjdsc26-website.vercel.app",
