@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { LoadingProjectImage, ProjectImageFrame } from "./ProjectImageFrame";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronDown,
@@ -737,15 +738,7 @@ export default function ProjectsPage() {
                               {/* Clean Thumbnail Box */}
                               <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 bg-zinc-100 dark:bg-zinc-800">
                                 {item.imageSrc && !item.imageSrc.startsWith("/placeholder") ? (
-                                  <Image
-                                    src={item.imageSrc}
-                                    alt={item.title}
-                                    fill
-                                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                    sizes="(max-width: 768px) 100vw, 50vw"
-                                    priority
-                                    unoptimized
-                                  />
+                                  <LoadingProjectImage key={item.imageSrc} src={item.imageSrc} alt={item.title} />
                                 ) : (
                                   <div className="absolute inset-0 bg-gradient-to-br from-zinc-200 via-zinc-100 to-zinc-300 dark:from-zinc-800 dark:via-zinc-900 dark:to-zinc-800 flex items-center justify-center">
                                     <div className="flex flex-col items-center gap-1 text-zinc-400 dark:text-zinc-500">
@@ -849,15 +842,7 @@ export default function ProjectsPage() {
                                     }`}
                                   >
                                     {currentSrc && !currentSrc.startsWith("/placeholder") ? (
-                                      <Image
-                                        src={currentSrc}
-                                        alt={item.title}
-                                        fill
-                                        className="object-cover transition-transform duration-500 hover:scale-105"
-                                        sizes="(max-width: 768px) 100vw, 40vw"
-                                        priority
-                                        unoptimized
-                                      />
+                                      <LoadingProjectImage key={currentSrc} src={currentSrc} alt={item.title} />
                                     ) : (
                                       <div className="absolute inset-0 bg-gradient-to-br from-zinc-200 via-zinc-100 to-zinc-300 dark:from-zinc-800 dark:via-zinc-900 dark:to-zinc-800 flex items-center justify-center">
                                         <div className="flex flex-col items-center gap-1 text-zinc-400 dark:text-zinc-500">
@@ -1095,25 +1080,10 @@ export default function ProjectsPage() {
             >
               {/* Image Viewport: Full Uncropped Display */}
               <div className="relative w-full flex items-center justify-center p-2 sm:p-4">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentImageIndex}
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
-                    transition={{ duration: 0.2 }}
-                    className="relative flex items-center justify-center"
-                  >
-                    <img
-                      src={activeGalleryItem.gallery[currentImageIndex].src}
-                      alt={
-                        activeGalleryItem.gallery[currentImageIndex].title ||
-                        activeGalleryItem.title
-                      }
-                      className="max-h-[62vh] sm:max-h-[70vh] w-auto max-w-full object-contain rounded-2xl shadow-2xl"
-                    />
-                  </motion.div>
-                </AnimatePresence>
+                <ProjectImageFrame
+                  src={activeGalleryItem.gallery[currentImageIndex].src}
+                  alt={activeGalleryItem.gallery[currentImageIndex].title || activeGalleryItem.title}
+                />
 
                 {/* Floating Close Button */}
                 <div className="absolute top-3 right-3 sm:top-5 sm:right-5 z-20 pointer-events-auto">
