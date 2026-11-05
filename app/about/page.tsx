@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { Music, Mic, PenTool, Palette, Layout } from "lucide-react";
 import { motion } from "framer-motion";
 import InstitutionsCarousel from "@/components/InstitutionsCarousel";
@@ -221,15 +220,12 @@ export default function AboutPage() {
         className="pb-6 border-b border-zinc-200 dark:border-zinc-800 space-y-4"
       >
         <div className="flex flex-col sm:flex-row sm:items-start gap-5 sm:gap-6">
-          <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-800 flex-shrink-0 shadow-sm">
-            <Image
+          <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-800 flex-shrink-0 shadow-sm">
+            <img
               src="/placeholder-avatar.jpg"
               alt="Artemio Arcega"
-              width={128}
-              height={128}
-              className="w-full h-full object-cover"
-              priority
-              unoptimized
+              className="w-full h-full object-cover block"
+              loading="eager"
             />
           </div>
           <div className="space-y-3 flex-1 min-w-0">

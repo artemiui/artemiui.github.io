@@ -206,7 +206,7 @@ async function generateOGImage() {
 
     <!-- Site Tagline / Description -->
     <text x="338" y="326" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif" font-weight="400" font-size="17" fill="#a1a1aa" letter-spacing="-0.1">
-      a collection of ideas, statistics, philosophy, and pixels.
+      a collection of ideas and pixels.
     </text>
 
     <!-- Category Pill Badges -->
@@ -239,6 +239,8 @@ async function generateOGImage() {
   // 3. Render with Sharp to JPEG and PNG in public/
   const outJpg = path.resolve('public/og-image.jpg');
   const outPng = path.resolve('public/og-image.png');
+  const rootJpg = path.resolve('og-image.jpg');
+  const rootPng = path.resolve('og-image.png');
 
   const svgBuffer = Buffer.from(svg);
 
@@ -249,6 +251,10 @@ async function generateOGImage() {
   await sharp(svgBuffer)
     .png({ compressionLevel: 9 })
     .toFile(outPng);
+
+  // Also write to root for direct static hosting fallback
+  fs.copyFileSync(outJpg, rootJpg);
+  fs.copyFileSync(outPng, rootPng);
 
   const jpgStats = fs.statSync(outJpg);
   const pngStats = fs.statSync(outPng);

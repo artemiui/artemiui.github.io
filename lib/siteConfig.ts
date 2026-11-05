@@ -1,13 +1,21 @@
+const getSiteUrl = () => {
+  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return "https://artemiui.vercel.app";
+};
+
+const siteUrl = getSiteUrl();
+
 export const siteConfig = {
   title: "artemiui",
   siteName: "artemiui",
   author: "Artemio Arcega",
-  url: "https://artemiui.github.io",
-  description:
-    "Personal digital portfolio and collection of ideas, statistics, analytical philosophy, and pixels by Artemio Arcega at University of the Philippines Diliman.",
-  ogImage: "https://artemiui.github.io/og-image.jpg",
+  url: siteUrl,
+  description: "a collection of ideas and pixels.",
+  ogImage: `${siteUrl}/og-image.jpg`,
   ogImageAlt:
-    "Artemio Arcega - Personal site featuring an Obsidian graph background design",
+    "artemiui - Personal site featuring an Obsidian graph background design",
   quote: "",
   navLinks: [
     { label: "Blog", href: "/" },
