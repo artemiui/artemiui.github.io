@@ -1,8 +1,10 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { getPostBySlug, getPostSlugs } from "@/lib/mdx";
+import { siteConfig } from "@/lib/siteConfig";
 import TableOfContents from "@/components/TableOfContents";
 import AudioPlayer from "@/components/AudioPlayer";
 import InteractiveDiagram from "@/components/InteractiveDiagram";
@@ -57,6 +59,60 @@ const katexSanitizeOptions = {
     '*': [...(baseAttributes['*'] ?? []), 'className', 'aria-hidden', 'style']
   }
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
+
+  if (!post) {
+    return {};
+  }
+
+  const postTitle = post.frontmatter.title;
+  const postDescription =
+    post.frontmatter.description ||
+    `${postTitle} - Article by ${siteConfig.author}`;
+  const canonicalUrl = `${siteConfig.url}/blog/${slug}`;
+
+  return {
+    title: postTitle,
+    description: postDescription,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      type: "article",
+      url: canonicalUrl,
+      title: postTitle,
+      description: postDescription,
+      siteName: siteConfig.siteName,
+      publishedTime: post.frontmatter.date,
+      authors: [siteConfig.author],
+      tags: post.frontmatter.tags,
+      images: [
+        {
+          url: siteConfig.ogImage,
+          secureUrl: siteConfig.ogImage,
+          width: 1200,
+          height: 630,
+          type: "image/jpeg",
+          alt: `${postTitle} - ${siteConfig.ogImageAlt}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: postTitle,
+      description: postDescription,
+      images: [
+        {
+          url: siteConfig.ogImage,
+          alt: `${postTitle} - ${siteConfig.ogImageAlt}`,
+        },
+      ],
+    },
+  };
+}
 
 export async function generateStaticParams() {
   const slugs = getPostSlugs();
