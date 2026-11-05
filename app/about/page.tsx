@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Music, Mic, PenTool, Palette, Layout } from "lucide-react";
 import { motion } from "framer-motion";
 import InstitutionsCarousel from "@/components/InstitutionsCarousel";
@@ -212,17 +213,32 @@ const aboutSections: SaveFile[] = [
 export default function AboutPage() {
   return (
     <div className="space-y-8">
-      {/* Personal Description Placeholder */}
+      {/* Personal Description */}
       <motion.section
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.05 }}
         className="pb-6 border-b border-zinc-200 dark:border-zinc-800 space-y-4"
       >
-        <h1 className="text-2xl font-mono font-bold text-foreground">Who I am</h1>
-        <p className="text-sm font-sans text-zinc-600 dark:text-zinc-400 leading-relaxed">
-          I'm a statistics student from UP Diliman with an interest in working in banking. Academically, I'm interested in analytical philosophy (language), AI philosophy, and xAI. I believe that a healthy intersection of the liberal arts and technical ability goes a long way.
-        </p>
+        <div className="flex flex-col sm:flex-row sm:items-start gap-5 sm:gap-6">
+          <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-800 flex-shrink-0 shadow-sm">
+            <Image
+              src="/placeholder-avatar.jpg"
+              alt="Artemio Arcega"
+              width={128}
+              height={128}
+              className="w-full h-full object-cover"
+              priority
+              unoptimized
+            />
+          </div>
+          <div className="space-y-3 flex-1 min-w-0">
+            <h1 className="text-2xl font-mono font-bold text-foreground">Who I am</h1>
+            <p className="text-sm font-sans text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              I'm a statistics student from UP Diliman with an interest in working in banking. Academically, I'm interested in analytical philosophy (language), AI philosophy, and xAI. I believe that a healthy intersection of the liberal arts and technical ability goes a long way.
+            </p>
+          </div>
+        </div>
 
         {/* Skills & Pursuits */}
         <div className="pt-2 space-y-2">
