@@ -1,86 +1,80 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
-  ChevronLeft,
-  ChevronRight,
   ChevronDown,
   ChevronUp,
   ExternalLink,
 } from "lucide-react";
 import { useTheme } from "@/lib/themeContext";
 
-const photos = [
-  {
-    src: "/oct11/94a2f697-9327-4821-bff5-64f22afe8813.jpg",
-    alt: "Memory 2",
-  },
-  {
-    src: "/oct11/9b580256-70e9-4181-b0fc-ae2827d4d864.jpg",
-    alt: "Memory 3",
-  },
-  {
-    src: "/oct11/c98bdb03-fce7-4c82-a0c1-f26f068056a0.jpg",
-    alt: "Memory 4",
-  },
-  {
-    src: "/oct11/cf53d662-b56c-45b1-8c9d-6423095e5ac4.jpg",
-    alt: "Memory 5",
-  },
-  {
-    src: "/oct11/dbec6096-dac5-4466-b31e-0892693b0864.jpg",
-    alt: "Memory 6",
-  },
-];
-
+const photos = [{ src: "/gf-nov11.png", alt: "Artem kissing Sophia in a mirror surrounded by plants and colorful lights" }];
 const poemParagraphs = [
-  "Take as many pictures as you can; especially of the things that matter.",
-  "But how exactly do you do something like that when that 'thing that matters' is the most beautiful person to ever grace your eyes?",
-  "That a photo only captures the minute details of an infinitely beautiful, continuous being. The one that reminded me that love isn't supposed to be being stabbed in the chest every waking day.",
-  "The one that showed me that love can be fun, not cannibalistic. The one that showed me that to truly cannibalize is to feed into each other, not parasitically.",
-  "Because, frankly, I never thought I'd find you. And there hasn't been a single day of my life since I met you that I've never been scared of losing you.",
-  "You're too perfect. I have no idea how you stumbled upon me. You're too intelligent. I have no idea how you stumbled upon a pea-brain like me who can't discern right from wrong.",
-  "I want to walk inside your mind. Understand how it came to settling with me. Because frankly, I'll always be the lucky one.",
-  "The lucky one you taught how to love truly.",
-  "The lucky one you taught how to not take myself too seriously.",
-  "The lucky one you taught can take breaks.",
-  "The lucky one you loved.",
-  "Lucky me,\n\nlucky me..",
+"the time you always and never fail to mention.",
+"how long it has it already been since we first met,",
+"a gentle love that suddenly swooped by and made my life a life of happiness,",
+"how's my hoodie from that day?",
+"do you still remember the first time i started hitting off my dark jokes on you?",
+"it scared me how you'd react",
+"what about that one time under the overpass in katip, waiting for your bus?",
+"or our first time riding a bus to bridgetowne together?",
+"it is by this time that you should come to know,",
+"that i have withdrawn from thinking of silencing my world of its worthless echoes",
+"that in every stroke of your fingers upon my coarse skin that my cells become magnified to you more than what is logically necessary",
+"all there is, and should be, and will be, are you and i.",
+"i am but a minute star in the sea of your glimmering dreams",
+"and i am happily sailing; forever, and ever.",
+"my darling beloved.",
+"happy 6 months, sophia:3",
 ];
 
 const asciiFlowers = `                    _
-                  _(_)_                          wWWWw   _
-      @@@@       (_)@(_)   vVVVv     _     @@@@  (___) _(_)_
-     @@()@@ wWWWw  (_)\\    (___)   _(_)_  @@()@@   Y  (_)@(_)
-      @@@@  (___)     \`|/    Y    (_)@(_)  @@@@   \\|/   (_)\\
-       /      Y       \\|    \\|/    /(_)    \\|      |/      |
-    \\ |     \\ |/       | / \\ | /  \\|/       |/    \\|      \\|/
-jgs \\|//   \\|///  \\\\\\|//\\\\\\|/// \\|///  \\\\\\|//  \\|//  \\\\\\|// 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^`;
+                  :=+++++=-
+                -**+--::-=**+++=:
+              -#*-:        :---@*
+             =@=             :=%=
+            =@-            :**=:
+           :@=            :%+:
+           +#:            =@:
+          :%+             :#*::
+           %+              :=***+++=--::
+           +%             ::   ::--==++*+=-:
+           -@=           :+**=:        :-=+**=:
+            =%=    -:      :-*%-    :      :-*#-
+             *@*-: =#-        =%+-            -@=
+            =@--+*+=+#*-       :=*+=-::--::    =@-
+         -=*#-:-=*%*=:-**=-:     :-+@+ =++++:  :%=
+         =##++++=-:     :=+**+++*++++=----=@=  -@-
+           :::              :::::=#%*======-  :#*:
+                                 -==+*=::--+- -@-
+                                     -=++#@*: =@:
+                                         *#  -@=
+                                         -@++%=
+                                         :*+=:`;
 
 // Minimalist Gen 1 Pokemon-style Dialogue Box
 function PokemonDialogue({ onUnlocked }: { onUnlocked: () => void }) {
   const [turn, setTurn] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<"YES" | "NO">("YES");
+  const [selectedOption, setSelectedOption] = useState("HI");
   const [displayedText, setDisplayedText] = useState("");
 
   const dialogueScript = [
     {
-      text: "You are the most beautiful girl in the world.",
-      options: ["YES", "NO"],
+      text: "hello, my love.",
+      options: ["HI", "NO"],
     },
     {
-      text: "baliw ka ba",
-      options: ["YES", "NO"],
+      text: "pls say hi back",
+      options: ["HI", "NO"],
     },
     {
-      text: "now u just lyin",
-      options: ["YES", "NO"],
+      text: "bruhnion",
+      options: ["HI", "NO"],
     },
     {
-      text: "wala ka nang magagawa. pag maganda ka, maganda ka. mahal kita.",
-      options: ["YES", "YES!"],
+      text: "cmon let me get you in on a lil secret",
+      options: ["HI", "YES!"],
     },
   ];
 
@@ -100,11 +94,11 @@ function PokemonDialogue({ onUnlocked }: { onUnlocked: () => void }) {
   }, [turn, currentDialogue.text]);
 
   const handleSelect = (choice: string) => {
-    if (choice === "YES" || choice === "YES!") {
+    if (choice === "HI" || choice === "YES" || choice === "YES!") {
       onUnlocked();
     } else {
       setTurn((prev) => Math.min(prev + 1, dialogueScript.length - 1));
-      setSelectedOption("YES");
+      setSelectedOption("HI");
     }
   };
 
@@ -127,8 +121,9 @@ function PokemonDialogue({ onUnlocked }: { onUnlocked: () => void }) {
                   <button
                     key={opt}
                     onClick={() => handleSelect(opt)}
-                    onMouseEnter={() => setSelectedOption(opt as "YES" | "NO")}
-                    className="flex items-center text-left text-xs sm:text-sm font-semibold tracking-wider hover:opacity-100 transition-opacity text-zinc-600 dark:text-zinc-400 hover:text-foreground"
+                    onMouseEnter={() => setSelectedOption(opt)}
+                    onFocus={() => setSelectedOption(opt)}
+                    className="flex items-center min-h-11 focus-visible:outline focus-visible:outline-offset-4 active:scale-[0.97] text-left text-xs sm:text-sm font-semibold tracking-wider hover:opacity-100 transition-opacity text-zinc-600 dark:text-zinc-400 hover:text-foreground"
                   >
                     <span className="w-4 text-xs font-bold text-foreground">
                       {isCurrent ? "▶" : " "}
@@ -149,14 +144,15 @@ function PokemonDialogue({ onUnlocked }: { onUnlocked: () => void }) {
 
 // Simple Animated Star Background
 function StarryBackground() {
+  const reducedMotion = useReducedMotion();
   const stars = useMemo(() => {
     return Array.from({ length: 50 }, (_, i) => ({
       id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 2 + 1,
-      duration: Math.random() * 3 + 2,
-      delay: Math.random() * 3,
+      x: (i * 37 + 13) % 100,
+      y: (i * 61 + 7) % 100,
+      size: (i % 3) + 1,
+      duration: (i % 4) + 3,
+      delay: i % 3,
     }));
   }, []);
 
@@ -172,10 +168,7 @@ function StarryBackground() {
             width: `${star.size}px`,
             height: `${star.size}px`,
           }}
-          animate={{
-            opacity: [0.15, 0.9, 0.15],
-            scale: [0.8, 1.4, 0.8],
-          }}
+          animate={reducedMotion ? { opacity: 0.4 } : { opacity: [0.15, 0.7, 0.15] }}
           transition={{
             duration: star.duration,
             repeat: Infinity,
@@ -189,8 +182,10 @@ function StarryBackground() {
 }
 
 export default function ForYouPage() {
+  const reducedMotion = useReducedMotion();
+  const [wish, setWish] = useState(false);
   const [isUnlocked, setIsUnlocked] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex] = useState(0);
   const [activeParagraphIndex, setActiveParagraphIndex] = useState(0);
   const [isMinimized, setIsMinimized] = useState(false);
   const { setTheme } = useTheme();
@@ -199,16 +194,6 @@ export default function ForYouPage() {
     setIsUnlocked(true);
     setTheme("dark");
   };
-
-  // Auto-play slideshow timer (every 4.5 seconds)
-  useEffect(() => {
-    if (!isUnlocked) return;
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % photos.length);
-    }, 4500);
-
-    return () => clearInterval(interval);
-  }, [isUnlocked]);
 
   // Track active paragraph based on scroll position for focused reading highlight
   useEffect(() => {
@@ -239,14 +224,6 @@ export default function ForYouPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isUnlocked]);
 
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + photos.length) % photos.length);
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % photos.length);
-  };
-
   return (
     <>
       {/* Starry Background when unlocked */}
@@ -259,14 +236,19 @@ export default function ForYouPage() {
         </div>
       ) : (
         /* Main Page Content: only rendered and visible once unlocked */
-        <div className="space-y-16 pb-32">
+        <div className="space-y-16 pb-72 motion-reduce:[&_*]:!animate-none motion-reduce:[&_*]:!transition-none">
+<header className="text-center pt-10 space-y-5">
+<h1 className="font-mono text-5xl sm:text-6xl font-light tracking-tight tabular-nums">11:11</h1>
+<button aria-pressed={wish} onClick={() => setWish(true)} className="min-h-11 px-5 rounded-full border border-zinc-600 text-sm hover:bg-zinc-800 focus-visible:outline focus-visible:outline-offset-4 active:scale-[0.97]">{wish ? "wish made" : "make a wish"}</button>
+<p aria-live="polite" className="min-h-12 mx-auto max-w-xs text-sm text-zinc-300 leading-relaxed">{wish ? "all there is, and should be, and will be, are you and i." : "a little moment, just for you."}</p>
+</header>
           {/* Sticky 16:9 Slideshow Showcase */}
-          <div className="sticky top-6 z-20 flex justify-center py-2 pointer-events-none">
+          <div className="relative z-10 flex justify-center py-2 pointer-events-none">
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
+            initial={reducedMotion ? false : { opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="relative group aspect-video w-full max-w-[560px] sm:max-w-[640px] rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md overflow-hidden shadow-2xl pointer-events-auto"
+            className="relative group aspect-[3/4] w-full max-w-[360px] sm:max-w-[420px] rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md overflow-hidden shadow-2xl pointer-events-auto"
           >
             {/* Images with crossfade animation */}
             <AnimatePresence initial={false}>
@@ -289,30 +271,6 @@ export default function ForYouPage() {
             {/* Vignette overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
 
-            {/* Prev / Next navigation buttons on hover */}
-            <div className="absolute inset-0 flex items-center justify-between px-3 pointer-events-none">
-              <button
-                onClick={handlePrev}
-                aria-label="Previous photo"
-                className="pointer-events-auto p-2 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md text-white/80 hover:text-white transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button
-                onClick={handleNext}
-                aria-label="Next photo"
-                className="pointer-events-auto p-2 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md text-white/80 hover:text-white transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Photo Counter Indicator */}
-            <div className="absolute bottom-3 right-3 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-mono z-10 shadow pointer-events-none">
-              <span>{currentIndex + 1}</span>
-              <span className="text-zinc-400">/</span>
-              <span className="text-zinc-400">{photos.length}</span>
-            </div>
           </motion.div>
         </div>
 
@@ -320,17 +278,17 @@ export default function ForYouPage() {
         <div className="max-w-xl mx-auto space-y-36 px-4 pt-16 sm:pt-20 relative z-10 font-sans">
           {poemParagraphs.map((paragraph, pIdx) => {
             const isActive = pIdx === activeParagraphIndex;
-            const isLuckyMe = paragraph.includes("Lucky me");
+            const isLuckyMe = pIdx >= poemParagraphs.length - 2;
             const isOpening = pIdx === 0;
 
             return (
               <div
                 key={pIdx}
                 id={`poem-para-${pIdx}`}
-                className={`transition-all duration-500 min-h-[90px] flex items-center justify-center text-center cursor-default ${
+                className={`transition-[opacity,transform,color,max-height,margin] duration-500 min-h-[90px] flex items-center justify-center text-center cursor-default ${
                   isActive
                     ? "opacity-100 scale-100 text-zinc-900 dark:text-zinc-100 font-normal"
-                    : "opacity-35 scale-[0.98] text-zinc-400 dark:text-zinc-500"
+                    : "opacity-100 scale-[0.98] text-zinc-600 dark:text-zinc-400"
                 }`}
               >
                 <div className="space-y-2 max-w-lg">
@@ -362,7 +320,7 @@ export default function ForYouPage() {
           className="pt-16 border-t border-zinc-200 dark:border-zinc-800 flex justify-center relative z-10"
         >
           <div className="overflow-x-auto w-full max-w-full flex justify-center py-2">
-            <pre className="font-mono text-[10px] sm:text-xs text-zinc-700 dark:text-zinc-300 leading-none select-none whitespace-pre tracking-normal">
+            <pre className="font-mono text-[7px] min-[400px]:text-[9px] sm:text-xs text-zinc-700 dark:text-zinc-300 leading-none select-none whitespace-pre tracking-normal">
               {asciiFlowers}
             </pre>
           </div>
@@ -374,7 +332,7 @@ export default function ForYouPage() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.35, delay: 0.2 }}
           aria-label="Audio overlay player"
-          className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 w-[calc(100vw-2.5rem)] sm:w-80 max-w-[340px] bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-2xl p-3 transition-all duration-300"
+          className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 w-[calc(100vw-2.5rem)] sm:w-80 max-w-[340px] bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-2xl p-3 transition-[opacity,transform,color,max-height,margin] duration-300"
         >
           {/* Overlay Player Header */}
           <div className="flex items-center justify-between gap-2">
@@ -388,17 +346,17 @@ export default function ForYouPage() {
 
               <div className="min-w-0">
                 <p className="text-[11px] font-mono font-medium text-foreground truncate leading-tight">
-                  Your Universe
+                  11:11 · for sophia
                 </p>
                 <p className="text-[10px] font-sans text-zinc-500 dark:text-zinc-400 truncate leading-tight">
-                  Rico Blanco
+                  Our soundtrack
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-1 flex-shrink-0">
               <a
-                href="https://www.youtube.com/watch?v=m-fNVB-fAjk"
+                href="https://www.youtube.com/watch?v=pFBFSBgM6og"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-1 rounded-md text-zinc-500 hover:text-foreground dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
@@ -410,6 +368,8 @@ export default function ForYouPage() {
 
               <button
                 onClick={() => setIsMinimized(!isMinimized)}
+                aria-expanded={!isMinimized}
+                aria-controls="music-player"
                 className="p-1 rounded-md text-zinc-500 hover:text-foreground dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
                 title={isMinimized ? "Expand player" : "Minimize player"}
                 aria-label={isMinimized ? "Expand player" : "Minimize player"}
@@ -425,14 +385,15 @@ export default function ForYouPage() {
 
           {/* Video Frame: stays mounted so audio persists even when minimized */}
           <div
-            className={`transition-all duration-300 overflow-hidden ${
+            id="music-player" inert={isMinimized}
+            className={`transition-[opacity,transform,color,max-height,margin] duration-300 overflow-hidden ${
               isMinimized ? "max-h-0 opacity-0 mt-0" : "max-h-56 opacity-100 mt-2.5"
             }`}
           >
             <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-black border border-zinc-200/60 dark:border-zinc-800/60 shadow-inner">
               <iframe
-                src="https://www.youtube.com/embed/m-fNVB-fAjk?autoplay=1&enablejsapi=1&playsinline=1"
-                title="Rico Blanco - Your Universe"
+                src="https://www.youtube.com/embed/pFBFSBgM6og?playsinline=1"
+                title="Our soundtrack - Your Universe"
                 className="w-full h-full border-0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
