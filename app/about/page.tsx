@@ -1,8 +1,5 @@
 "use client";
-
-import { Music, Mic, PenTool, Palette, Layout } from "lucide-react";
 import { motion } from "framer-motion";
-import InstitutionsCarousel from "@/components/InstitutionsCarousel";
 
 type EducationItem = {
   degree: string;
@@ -149,6 +146,11 @@ const awardsList: AwardItem[] = [
     event: "Quake Quest 2024",
     dates: "2024",
   },
+  {
+    title: "Second Runner Up, Finalist",
+    event: "UST CSSPrint 2026",
+    dates: "2026",
+  },
 ];
 
 const microcredentialsList: MicrocredentialItem[] = [
@@ -194,18 +196,12 @@ const microcredentialsList: MicrocredentialItem[] = [
   },
 ];
 
-const skillsList = [
-  { name: "Piano", icon: Music },
-  { name: "Casual Singing", icon: Mic },
-  { name: "Creative Writing", icon: PenTool },
-  { name: "Illustration", icon: Palette },
-  { name: "Layout & Graphic Design", icon: Layout },
-];
+
 
 const aboutSections: SaveFile[] = [
   {
     id: "education",
-    title: "My professional background",
+    title: "Professional Background",
   },
 ];
 
@@ -222,8 +218,8 @@ export default function AboutPage() {
         <div className="flex flex-col sm:flex-row sm:items-start gap-5 sm:gap-6">
           <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-800 flex-shrink-0 shadow-sm">
             <img
-              src="/placeholder-avatar.jpg"
-              alt="Artemio Arcega"
+              src="images\alticon.png"
+              alt="mi photo"
               className="w-full h-full object-cover block"
               loading="eager"
             />
@@ -231,46 +227,11 @@ export default function AboutPage() {
           <div className="space-y-3 flex-1 min-w-0">
             <h1 className="text-2xl font-mono font-bold text-foreground">Who I am</h1>
             <p className="text-sm font-sans text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              I'm a statistics student from UP Diliman with an interest in working in banking. Academically, I'm interested in analytical philosophy (language), AI philosophy, and xAI. I believe that a healthy intersection of the liberal arts and technical ability goes a long way.
+              I'm a statistics student from UP Diliman with an interest in working in banking or as an actuary. Academically, I'm interested in analytical philosophy (language), AI philosophy, and xAI. I believe that a healthy intersection of the liberal arts and technical ability goes a long way.
             </p>
           </div>
         </div>
 
-        {/* Skills & Pursuits */}
-        <div className="pt-2 space-y-2">
-          <span className="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400">
-            Skills & Creative Pursuits
-          </span>
-          <div className="flex flex-wrap gap-2 pt-0.5">
-            {skillsList.map((skill, idx) => {
-              const Icon = skill.icon;
-              return (
-                <span
-                  key={idx}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-sans text-zinc-600 dark:text-zinc-400 bg-zinc-100/80 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-800 rounded-md hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-colors"
-                >
-                  <Icon className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
-                  {skill.name}
-                </span>
-              );
-            })}
-          </div>
-        </div>
-      </motion.section>
-
-      {/* The groups I've worked with Section */}
-      <motion.section
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.08 }}
-        className="pb-6 border-b border-zinc-200 dark:border-zinc-800 space-y-4"
-      >
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-mono font-semibold text-foreground">
-            I've worked with
-          </h2>
-        </div>
-        <InstitutionsCarousel />
       </motion.section>
 
       {/* About Sections List */}

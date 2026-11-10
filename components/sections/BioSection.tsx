@@ -14,9 +14,6 @@ export default function BioSection({ className = "" }: BioSectionProps) {
       transition={{ duration: 0.3 }}
       className={`pt-1 ${className}`}
     >
-      <h1 className="text-2xl font-mono font-semibold text-zinc-900 dark:text-zinc-100">
-        Entries
-      </h1>
     </motion.div>
   );
 }

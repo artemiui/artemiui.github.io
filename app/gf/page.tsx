@@ -392,7 +392,7 @@ export default function ForYouPage() {
           >
             <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-black border border-zinc-200/60 dark:border-zinc-800/60 shadow-inner">
               <iframe
-                src="https://www.youtube.com/embed/pFBFSBgM6og?playsinline=1"
+                src="https://www.youtube.com/embed/pFBFSBgM6og?autoplay=1&playsinline=1"
                 title="Our soundtrack - Your Universe"
                 className="w-full h-full border-0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

@@ -42,7 +42,7 @@ export default function Header() {
             title="GitHub"
             aria-label="GitHub Profile"
           >
-            <Github className="w-4 h-4" />
+            <Github className="w-5 h-5" />
           </a>
           <a
             href="https://linkedin.com/in/artemioarcega"
@@ -52,7 +52,7 @@ export default function Header() {
             title="LinkedIn"
             aria-label="LinkedIn Profile"
           >
-            <Linkedin className="w-4 h-4" />
+            <Linkedin className="w-5 h-5" />
           </a>
           <a
             href="https://instagram.com/virtualsarili"
@@ -62,7 +62,7 @@ export default function Header() {
             title="Instagram"
             aria-label="Instagram Profile"
           >
-            <Instagram className="w-4 h-4" />
+            <Instagram className="w-5 h-5" />
           </a>
         </div>
       </div>
