@@ -13,9 +13,9 @@ export const siteConfig = {
   author: "Artemio Arcega",
   url: siteUrl,
   description: "a collection of ideas and pixels.",
-  ogImage: `${siteUrl}/og-image.jpg`,
+  ogImage: `${siteUrl}/share/blog.jpg`,
   ogImageAlt:
-    "artemiui - Personal site featuring an Obsidian graph background design",
+    "artemiui Blog — writing and research in a paper collage",
   quote: "",
   navLinks: [
     { label: "Blog", href: "/" },
@@ -31,3 +31,4 @@ export const siteConfig = {
 };
 
 export type SiteConfig = typeof siteConfig;
+
