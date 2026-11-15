@@ -38,22 +38,6 @@ const externalLinks: FeedItemType[] = [
     category: "Knowledge Sharing",
     description: "Amanda Askell is a philosopher at Anthropic who works on Claude's character.",
   },
-	{
-		title: "On the Ontological Limitations of Digital Twins",
-		date: "2026-04-28",
-		url: "https://philosophy.upd.edu.ph/wp-content/uploads/2026/04/On-the-Formal-Isomorphism-and-the-Asymptotic-Limits-of-Digital-Twins.pdf",
-		category: "Papers",
-		tags: ["Ontology"],
-		description: "Winning conference paper presented in the Emmanuel Q. Fernando Undergraduate Seminar of the UP Diliman Department of Philosophy under the Philosophy of Science category.",
-	},
-  {
-    title: "Machine-Assisted Proofs & Syntactic Manipulation",
-    date: "2026-05-20",
-    url: "https://docs.google.com/document/d/1iLC1HqmGHEscmIxUqmyQZJktXe3-s1YwE1GtCQozVKM/edit?usp=sharing",
-    category: "Papers",
-    tags: ["Interpretability"],
-    description: "Paper submission for Department of Philosophy course Philosophic Questions, PHILO197. I show why it is unlikely the case that such lone syntactic manipulation is the correct interpretation of the origin of such proofs, and that the novel autonomous proof showcases the case that we are seeing the rise of Strong AI.",
-  },
   {
 		title: "Public Knowledge and Attitudes on Microplastic Contamination of Aquaculture and Fisheries Products in CAMANAVA ",
 		date: "2025-09-16",

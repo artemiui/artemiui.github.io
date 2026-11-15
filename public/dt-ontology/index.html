@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>On the Ontological Limitations of Digital Twins</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --fg: #16161a;
+  --fg-2: #52525b;
+  --muted: #8b8b93;
+  --rule: rgba(22, 22, 26, 0.11);
+  --rule-strong: rgba(22, 22, 26, 0.22);
+  --wash: rgba(22, 22, 26, 0.035);
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --neutral-mark: #a1a1aa;
+  --pos: #2a78d6;
+  --neg: #d03b3b;
+  --seq-0: #e7f0fc; --seq-1: #cde2fb; --seq-2: #9ec5f4; --seq-3: #6da7ec;
+  --seq-4: #3987e5; --seq-5: #256abf; --seq-6: #184f95; --seq-7: #0d366b;
+  --grid: rgba(22, 22, 26, 0.07);
+  --axis: rgba(22, 22, 26, 0.26);
+  --selection: rgba(42, 120, 214, 0.16);
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --measure: 68ch;
+  --gutter: 24px;
+}
+html.dark, :root.dark {
+  color-scheme: dark;
+  --bg: #09090b;
+  --surface: #09090b;
+  --fg: #ededea;
+  --fg-2: #a3a3ab;
+  --muted: #76767e;
+  --rule: rgba(255, 255, 255, 0.12);
+  --rule-strong: rgba(255, 255, 255, 0.24);
+  --wash: rgba(255, 255, 255, 0.04);
+  --neutral-mark: #52525b;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --seq-0: #11203a; --seq-1: #0d366b; --seq-2: #104281; --seq-3: #184f95;
+  --seq-4: #256abf; --seq-5: #3987e5; --seq-6: #6da7ec; --seq-7: #9ec5f4;
+  --grid: rgba(255, 255, 255, 0.07);
+  --axis: rgba(255, 255, 255, 0.26);
+  --selection: rgba(57, 135, 229, 0.26);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+
+::selection { background: var(--selection); color: var(--fg); }
+:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; border-radius: 2px; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--rule-strong); border-radius: 8px; border: 3px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.65;
+  caret-color: var(--series-1);
+  transition: background-color .2s ease, color .2s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; animation: none !important; }
+}
+
+/* ---------- measure & bleed ----------
+   Text sits in a reading column. Figures break out wider, the way a journal
+   sets a plate across the gutter. */
+/* Text and figures share a left edge. Prose stops at the reading measure;
+   figures run on to the full width of the page, the way a journal sets a
+   plate wider than its column. */
+.page { max-width: 936px; margin: 0 auto; padding: 0 var(--gutter) 128px; }
+.col { max-width: var(--measure); margin-left: 0; margin-right: 0; }
+.bleed { max-width: 100%; margin-left: 0; margin-right: 0; }
+@media (min-width: 1080px) { .page { max-width: 1000px; } }
+
+/* ---------- top bar ---------- */
+.bar {
+  position: sticky; top: 0; z-index: 60;
+  display: flex; align-items: center; gap: 4px;
+  padding: 12px 0; margin-bottom: 56px;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--rule);
+}
+.bar nav { display: flex; gap: 2px; flex: 1 1 auto; overflow-x: auto; scrollbar-width: none; }
+.bar nav::-webkit-scrollbar { display: none; }
+.bar nav a {
+  font-size: 13px; color: var(--muted); text-decoration: none;
+  padding: 4px 9px; border-radius: 6px; white-space: nowrap;
+  transition: color .14s var(--ease-out), background-color .14s var(--ease-out);
+}
+.bar nav a:hover { color: var(--fg); background: var(--wash); }
+.bar nav a .n {
+  font-family: var(--font-mono); font-size: 11px; color: var(--muted);
+  margin-right: 5px; font-variant-numeric: tabular-nums;
+}
+
+button {
+  font-family: inherit; font-size: 13px; color: var(--fg-2);
+  background: transparent; border: 1px solid var(--rule);
+  border-radius: 8px; padding: 5px 11px; cursor: pointer;
+  white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;
+  transition: color .14s var(--ease-out), background-color .14s var(--ease-out),
+              border-color .14s var(--ease-out), transform .12s var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  button:hover { color: var(--fg); background: var(--wash); }
+}
+button:active { transform: scale(0.97); }
+button[aria-pressed="true"], button.on {
+  color: var(--fg); background: var(--wash); border-color: var(--rule-strong);
+}
+
+/* ---------- title block ---------- */
+.title-block { padding-bottom: 40px; border-bottom: 1px solid var(--rule); }
+h1 {
+  font-size: clamp(30px, 4.6vw, 44px); line-height: 1.12;
+  font-weight: 600; letter-spacing: -0.021em; text-wrap: balance;
+  margin-bottom: 20px;
+}
+.authors { font-size: 16px; color: var(--fg); margin-bottom: 4px; }
+.affil { font-size: 14.5px; color: var(--muted); }
+.abstract { margin-top: 36px; }
+.abstract p { font-size: 17px; }
+.abstract p:first-of-type { }
+
+/* ---------- prose ---------- */
+section { margin-top: 72px; scroll-margin-top: 76px; }
+h2 {
+  font-size: 23px; font-weight: 600; letter-spacing: -0.014em;
+  margin-bottom: 20px; text-wrap: balance;
+}
+h2 .s {
+  font-family: var(--font-mono); font-size: 14px; font-weight: 400;
+  color: var(--muted); margin-right: 12px; font-variant-numeric: tabular-nums;
+}
+h3 { font-size: 16.5px; font-weight: 600; margin: 40px 0 12px; letter-spacing: -0.008em; }
+p { color: var(--fg-2); margin-bottom: 18px; }
+p:last-child { margin-bottom: 0; }
+strong { color: var(--fg); font-weight: 600; }
+em { font-style: italic; }
+a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--rule-strong);
+    text-underline-offset: 3px; text-decoration-thickness: 1px;
+    transition: text-decoration-color .14s var(--ease-out); }
+a:hover { text-decoration-color: var(--series-1); }
+ul, ol { color: var(--fg-2); margin: 0 0 18px 0; padding-left: 22px; }
+li { margin-bottom: 9px; }
+li::marker { color: var(--muted); }
+code {
+  font-family: var(--font-mono); font-size: .86em;
+  background: var(--wash); padding: 1.5px 5px; border-radius: 4px; color: var(--fg);
+}
+.katex { font-size: 1.04em; }
+.katex-display { margin: 26px 0; overflow-x: auto; overflow-y: hidden; }
+
+/* ---------- dataset summary (ruled, not tiles) ---------- */
+.facts { margin-top: 32px; border-top: 1px solid var(--rule); }
+.facts .row {
+  display: flex; align-items: baseline; gap: 16px;
+  padding: 9px 0; border-bottom: 1px solid var(--rule);
+}
+.facts .k { flex: 1 1 auto; font-size: 14.5px; color: var(--fg-2); }
+.facts .v {
+  font-family: var(--font-mono); font-size: 14.5px; color: var(--fg);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.facts .u { color: var(--muted); }
+
+/* ---------- figures as plates, not cards ---------- */
+figure { margin: 48px 0; }
+.fig-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap;
+  padding-bottom: 10px; border-bottom: 1px solid var(--rule-strong);
+}
+.fig-id {
+  font-family: var(--font-mono); font-size: 12px; color: var(--muted);
+  display: block; margin-bottom: 5px;
+}
+.fig-title { font-size: 15px; font-weight: 600; color: var(--fg); letter-spacing: -0.008em; }
+.fig-sub { font-size: 13.5px; color: var(--muted); margin-top: 3px; }
+.ctl { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.ctl .lab { font-size: 12.5px; color: var(--muted); margin-right: 2px; }
+.ctl button { font-size: 12.5px; padding: 4px 9px; border-radius: 7px; }
+.plot { padding: 20px 0 4px; position: relative; }
+figcaption {
+  font-size: 13.5px; color: var(--muted); max-width: 78ch;
+  padding-top: 12px; border-top: 1px solid var(--rule);
+}
+figcaption b { color: var(--fg-2); font-weight: 600; }
+
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+.grid line { stroke: var(--grid); stroke-width: 1; shape-rendering: crispEdges; }
+.axis path, .axis line { stroke: var(--axis); shape-rendering: crispEdges; }
+.axis text { fill: var(--muted); font-family: var(--font-mono); font-size: 10px; font-variant-numeric: tabular-nums; }
+.axis-title { fill: var(--fg-2); font-family: var(--font-sans); font-size: 11.5px; font-weight: 500; }
+.ref-line { stroke: var(--axis); stroke-width: 1; stroke-dasharray: 3 3; }
+.ref-text { fill: var(--muted); font-family: var(--font-mono); font-size: 10px; }
+.dlabel {
+  fill: var(--fg); font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  paint-order: stroke; stroke: var(--bg); stroke-width: 3px; stroke-linejoin: round;
+}
+
+.legend { display: flex; gap: 18px; flex-wrap: wrap; padding: 4px 0 14px; }
+.legend .item { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--fg-2); }
+.swatch { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+.swatch.line { height: 2px; border-radius: 1px; width: 16px; }
+
+/* ---------- tooltip ---------- */
+.tip {
+  position: absolute; pointer-events: none; opacity: 0; z-index: 40;
+  background: var(--bg); border: 1px solid var(--rule-strong); border-radius: 9px;
+  padding: 10px 12px; font-size: 12.5px; color: var(--fg-2);
+  box-shadow: 0 4px 16px rgba(0,0,0,.10), 0 1px 3px rgba(0,0,0,.06);
+  min-width: 158px; max-width: 272px;
+  transition: opacity .12s var(--ease-out);
+}
+.tip .t-title { font-weight: 600; color: var(--fg); font-size: 13px; margin-bottom: 6px; }
+.tip .t-row { display: flex; justify-content: space-between; gap: 16px; font-family: var(--font-mono); font-size: 11px; }
+.tip .t-row span:last-child { color: var(--fg); font-variant-numeric: tabular-nums; }
+.tip .t-note { margin-top: 7px; font-size: 11.5px; color: var(--muted); font-style: italic; }
+
+/* ---------- tables ---------- */
+.tablewrap { display: none; padding-top: 16px; max-height: 360px; overflow: auto; }
+.tablewrap.on { display: block; }
+table.data { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.data th, table.data td { text-align: left; padding: 7px 10px 7px 0; border-bottom: 1px solid var(--rule); }
+table.data th {
+  position: sticky; top: 0; background: var(--bg);
+  font-size: 12.5px; color: var(--muted); font-weight: 500;
+  border-bottom: 1px solid var(--rule-strong);
+}
+table.data td { color: var(--fg-2); font-variant-numeric: tabular-nums; }
+table.data td.num { text-align: right; font-family: var(--font-mono); padding-right: 14px; }
+table.data th.num { text-align: right; padding-right: 14px; }
+table.data tr:hover td { color: var(--fg); }
+
+input.search {
+  font-family: inherit; font-size: 13px; padding: 5px 10px;
+  border: 1px solid var(--rule); border-radius: 8px;
+  background: transparent; color: var(--fg); width: 168px;
+  transition: border-color .14s var(--ease-out);
+}
+input.search::placeholder { color: var(--muted); }
+input.search:focus { outline: none; border-color: var(--series-1); }
+
+/* ---------- aside note ---------- */
+.aside {
+  margin: 32px 0; padding: 2px 0 2px 22px;
+  border-left: 1px solid var(--rule-strong);
+}
+.aside p { font-size: 15px; margin-bottom: 10px; }
+.aside p:last-child { margin-bottom: 0; }
+
+.pin {
+  display: none; align-items: center; gap: 7px;
+  font-size: 12.5px; color: var(--fg);
+  background: var(--wash); border: 1px solid var(--rule);
+  border-radius: 7px; padding: 4px 9px; cursor: pointer;
+}
+.pin.on { display: inline-flex; }
+.pin .x { color: var(--muted); }
+
+footer {
+  margin-top: 88px; padding-top: 28px; border-top: 1px solid var(--rule);
+  font-size: 13.5px; color: var(--muted);
+}
+footer p { font-size: 13.5px; color: var(--muted); margin-bottom: 12px; }
+.refs { list-style: none; padding-left: 0; }
+.refs li { font-size: 13.5px; color: var(--muted); margin-bottom: 11px; padding-left: 24px; text-indent: -24px; }
+
+@media (max-width: 760px) {
+  :root { --gutter: 18px; }
+  body { font-size: 15.5px; }
+  .page { padding-bottom: 80px; }
+  section { margin-top: 56px; }
+  .plot { padding: 14px 0 4px; }
+  .bar nav a .n { display: none; }
+}
+
+/* ---------- numbered claim lists (axioms, requirements) ---------- */
+.claims { counter-reset: claim; margin: 24px 0; border-top: 1px solid var(--rule); }
+.claim {
+  counter-increment: claim;
+  display: grid; grid-template-columns: 46px 1fr; gap: 14px;
+  padding: 13px 10px 13px 0; border-bottom: 1px solid var(--rule);
+  transition: background-color .16s var(--ease-out);
+  scroll-margin-top: 80px;
+}
+.claim .tag {
+  font-family: var(--font-mono); font-size: 13px; color: var(--muted);
+  padding-top: 1px; white-space: nowrap;
+}
+.claim .txt { color: var(--fg-2); font-size: 15.5px; }
+.claim.lit { background: var(--wash); }
+.claim.lit .tag { color: var(--series-1); }
+
+/* ---------- dependency matrix ---------- */
+.matrix { overflow-x: auto; padding-top: 18px; }
+table.mx { border-collapse: collapse; font-size: 13px; min-width: 460px; }
+table.mx th, table.mx td { padding: 0; text-align: center; }
+table.mx th.rowh, table.mx td.rowh {
+  text-align: left; font-family: var(--font-mono); font-weight: 400;
+  color: var(--fg-2); padding-right: 16px; white-space: nowrap;
+}
+table.mx th.colh {
+  font-family: var(--font-mono); font-weight: 400; color: var(--fg-2);
+  padding: 0 6px 10px; cursor: pointer; width: 112px;
+}
+table.mx th.colh span {
+  display: block; font-family: var(--font-sans); font-size: 11.5px;
+  color: var(--muted); margin-top: 3px; line-height: 1.3;
+}
+table.mx td.cell { height: 38px; width: 112px; }
+table.mx td.rowh { cursor: pointer; }
+.mx .dot {
+  width: 11px; height: 11px; border-radius: 50%; margin: 0 auto;
+  background: var(--fg-2); opacity: .28;
+  transition: opacity .16s var(--ease-out), background-color .16s var(--ease-out), transform .16s var(--ease-out);
+}
+.mx .dot.none { background: none; }
+.mx tr.hot td.rowh, .mx th.colh.hot { color: var(--fg); }
+.mx td.hot .dot, .mx .dot.hot { opacity: 1; background: var(--series-1); transform: scale(1.25); }
+.mx .sep td { border-top: 1px solid var(--rule); height: 1px; padding-top: 8px; }
+.mx td.status {
+  font-family: var(--font-mono); font-size: 11.5px; color: var(--muted);
+  padding-top: 8px; white-space: nowrap;
+}
+.mx caption {
+  caption-side: bottom; text-align: left; padding-top: 14px;
+  font-size: 13px; color: var(--muted);
+}
+.mx-readout {
+  margin-top: 16px; padding: 14px 0 0; border-top: 1px solid var(--rule);
+  font-size: 14.5px; color: var(--fg-2); min-height: 72px;
+}
+.mx-readout .h { color: var(--fg); font-weight: 600; margin-bottom: 6px; }
+.mx-readout .l { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); }
+
+/* ---------- diagram controls ---------- */
+.diagram { padding: 20px 0 6px; }
+.diagram svg { max-width: 100%; }
+.dg-label { font-family: var(--font-sans); font-size: 12px; fill: var(--fg-2); }
+.dg-small { font-family: var(--font-mono); font-size: 10.5px; fill: var(--muted); }
+.dg-title { font-family: var(--font-sans); font-size: 12.5px; font-weight: 600; fill: var(--fg); }
+
+/* ---------- glossary ---------- */
+.gloss { border-top: 1px solid var(--rule); margin: 22px 0; }
+.gloss .g {
+  display: grid; grid-template-columns: 112px 1fr; gap: 16px;
+  padding: 10px 0; border-bottom: 1px solid var(--rule);
+}
+.gloss .sym { font-family: var(--font-mono); font-size: 14px; color: var(--fg); }
+.gloss .def { font-size: 14.5px; color: var(--fg-2); }
+
+/* a symbol mentioned in running prose */
+.s-ref {
+  font-family: var(--font-mono); font-size: .92em; color: var(--fg);
+  border-bottom: 1px dotted var(--rule-strong); cursor: help;
+}
+
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="bar">
+  <nav>
+    <a href="#notation"><span class="n">2</span>Notation</a>
+    <a href="#axioms"><span class="n">3</span>Axioms</a>
+    <a href="#criteria"><span class="n">4</span>Criteria</a>
+    <a href="#proofs"><span class="n">5</span>Proofs</a>
+    <a href="#conclusion"><span class="n">6</span>Conclusion</a>
+    <a href="#supplementary"><span class="n">7</span>Supplementary</a>
+    <a href="#discussion"><span class="n">8</span>Discussion</a>
+  </nav>
+  <button id="btn-theme" aria-label="Toggle theme">
+    <svg id="theme-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+  </button>
+</div>
+
+<div class="col">
+  <div class="title-block">
+    <h1>On the ontological limitations of digital twins</h1>
+    <div class="authors">Artemio S. Arcega III</div>
+    <div class="affil">
+      Department of Philosophy, College of Social Sciences and Philosophy,
+      University of the Philippines – Diliman
+    </div>
+    <div class="affil" style="margin-top:8px">
+      Presented at <em>Analysis: The Emmanuel Q. Fernando Philosophy Undergraduate Conference</em>, April 2026
+    </div>
+  </div>
+
+  <div class="abstract">
+    <p>
+      As modern computing moves toward high-fidelity modelling of complex physical phenomena, a
+      philosophical tension emerges between the independent digital representation and the target
+      systems of reality it claims to mirror. Using Landauer's claim that information is physical,
+      and the ontological analytical framework of Gehlert and Esswein, I interrogate the status of
+      equivalence through physical law and mathematical isomorphism.
+    </p>
+    <p>
+      The question is whether a target system — an ontology, in this case the continuum that is
+      reality — can ever be represented <em>equivalently</em> in a digital substrate through a
+      digital twin. There exists a fundamental limitation of digital substrates in their
+      discreteness, which posits a construct deficit and excess, and incompleteness by the
+      Einstein-Podolsky-Rosen criterion. So for all cases, there exists a divergence in the
+      ontological equivalence of a target system and its digital representation.
+    </p>
+    <p>
+      I prove this five ways: by cardinality, by thermodynamics, by quantum mechanics, by mappings,
+      and by signals. The conclusion is that regardless of increased fidelity, there exists a
+      mathematical, physical and ontological limitation for equivalence that is contradictory to
+      the laws of nature.
+    </p>
+    <p style="font-size:14.5px;color:var(--muted)">
+      <strong style="color:var(--fg-2)">Keywords</strong> — digital twins, modeling, information
+      theory, ontology, systems
+    </p>
+  </div>
+</div>
+
+<section id="introduction">
+  <div class="col">
+    <h2><span class="s">1</span>Introduction</h2>
+    <p>
+      A digital twin (DT) is a mirror image of a target physical process or system that is
+      articulated. As computing moves toward high-fidelity modelling — the push for artificial
+      general intelligence, world models, extensive mappings of the physical world for predictive
+      capacity — a philosophical question emerges. Can digital twins, and every technology under
+      that category, ever reach a fidelity that simulates real-time phenomena to absolute accuracy
+      with no <em>ontological residue</em>, and perhaps even predict future events within the
+      system it represents?
+    </p>
+    <p>
+      Batty (2018) states that a target system and its DT cannot be equivalent, because at
+      equivalence they become merged and identical, which contradicts the DT's existence
+      <em>as</em> a twin and collapses it. In other words, the DT becomes an identity of the target
+      system. Tomko and Winter (2019) claim Batty's argument is "plagued by a variety of
+      misinterpretations" — arguing for its relevance where Batty initially claims irrelevance,
+      only to state relevance by the end of his work.
+    </p>
+    <p>
+      Here, instead of debating those matters, I investigate the ontology itself, and its
+      equivalence to the physical realities DTs attempt to capture, predict and are trained on. By
+      Landauer (1991)'s claim that information is physical, I use physical law and mathematical
+      logic to prove the non-equivalence of DTs and their target system, within the framework of
+      ontological analysis provided by Gehlert and Esswein.
+    </p>
+    <p>
+      The scope focuses on global and local systems without targeting any system by choice. I will
+      not be delving into the intricacies of artificial neural networks themselves, as that would
+      reach into epistemological discussion and present a stacked overflow of philosophical
+      problems. DTs here are inclusive of their subcategories: CAD modelling, artificial
+      intelligence, and other simulations of physical phenomena that can be measured empirically,
+      exclusive of the <em>human</em> aspect of information, in a perspective similar to Shannon's.
+    </p>
+    <p>This paper aims to achieve two things:</p>
+    <ol>
+      <li>
+        An improved understanding of the fundamental limitations of computational modelling with
+        discrete, silicon-based computers, even at hypothetically highest fidelity.
+      </li>
+      <li>
+        A concise, physically-grounded means of ontologically analysing artificial intelligence,
+        digital twins and computational models.
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section id="notation">
+  <div class="col">
+    <h2><span class="s">2</span>Notation</h2>
+    <p>
+      The argument runs on a small vocabulary. These symbols recur throughout the proofs; where
+      they appear in the prose below they carry a dotted underline, and hovering one shows its
+      definition.
+    </p>
+    <div class="gloss" id="gloss"></div>
+  </div>
+</section>
+
+<section id="axioms">
+  <div class="col">
+    <h2><span class="s">3</span>Axioms</h2>
+    <p>
+      Eight axioms carry the whole argument. Each proof in section 5 draws on a different subset of
+      them, which is what makes the result robust: no single axiom, if contested, takes down every
+      proof at once. The dependency matrix in Figure 2 makes that structure explicit.
+    </p>
+    <div class="claims" id="axioms-list"></div>
+  </div>
+</section>
+
+<section id="criteria">
+  <div class="col">
+    <h2><span class="s">4</span>Criteria for ontological equivalence</h2>
+    <p>
+      The formalization of March and Allen (2007)'s <em>Ontological Foundations for Active
+      Information Systems</em> by Gehlert and Esswein (2007) is one of the foundational frameworks
+      used here. They formalize ontological analysis mathematically and define four requirements
+      used both for evaluating ontological frameworks and ontology-in-itself. I use their
+      requirements in the evaluation of ontological equivalence, plus one additional criterion
+      which may also be considered under the requirements: the Einstein-Podolsky-Rosen paradox.
+    </p>
+    <div class="claims" id="reqs-list"></div>
+    <p>
+      I use select terminologies interchangeably, particularly the <em>modeling grammar</em>, which
+      may also be <em>theory</em>, in the context of EPR the digital twin itself, the digital
+      substrate, and symbolically, most commonly, <span class="s-ref" data-sym="D">D</span>, wherein
+      <span class="s-ref" data-sym="D">D</span> contains elements of a digital substrate
+      <span class="s-ref" data-sym="d">d</span>.
+    </p>
+    <p>
+      Ontology, as used in the framework, is what I use as the <em>target system</em> or the
+      <em>reality</em> itself. Note that target systems are not always reality, but I use reality as
+      the target system here, as measurements must be made in reality to be twinned.
+    </p>
+
+    <h3>The four mapping pathologies</h3>
+    <p>
+      A <strong>construct deficit</strong> refers to a lack in the representation of the modeling
+      grammar <span class="s-ref" data-sym="D">D</span> to the ontology
+      <span class="s-ref" data-sym="R">R</span>. A <strong>construct excess</strong> means there is
+      excess information or element in <span class="s-ref" data-sym="D">D</span> that is lacking in
+      <span class="s-ref" data-sym="R">R</span>. An <strong>ontological overload</strong> is where
+      an element of <span class="s-ref" data-sym="D">D</span> is mapped to represent more than one
+      element of <span class="s-ref" data-sym="R">R</span>. <strong>Construct redundancy</strong> is
+      the converse: several elements of <span class="s-ref" data-sym="D">D</span> standing for one
+      element of <span class="s-ref" data-sym="R">R</span>.
+    </p>
+  </div>
+
+  <figure class="bleed">
+    <div class="fig-head">
+      <div>
+        <span class="fig-id">Figure 1</span>
+        <div class="fig-title">Mapping between a continuous target system and a discrete twin</div>
+        <div class="fig-sub">After Gehlert and Esswein (2007). Select a pathology to isolate it</div>
+      </div>
+      <div class="ctl" id="map-ctl"></div>
+    </div>
+    <div class="diagram" id="fig-mapping"></div>
+    <figcaption id="map-caption"></figcaption>
+  </figure>
+
+  <div class="col">
+    <h3>The EPR criterion for completeness</h3>
+    <p>
+      If a physical element <span class="s-ref" data-sym="r">r</span> of the physical reality
+      <span class="s-ref" data-sym="R">R</span> can be predicted with certainty in
+      <span class="s-ref" data-sym="D">D</span>, without a disturbance in the system, there must
+      exist a counterpart in the physical theory, which in this case is our modeling grammar
+      <span class="s-ref" data-sym="D">D</span> (Einstein et al., 1935). Denoted:
+    </p>
+    <p>$$comp(D, R) \equiv \forall r \in R,\ \exists d \in D$$</p>
+    <p>
+      such that $f(d) = r$ for a digital substrate to be ontologically equivalent to its target
+      system.
+    </p>
+  </div>
+</section>
+
+<section id="proofs">
+  <div class="col">
+    <h2><span class="s">5</span>Proofs</h2>
+    <p>
+      Five independent routes to the same conclusion. Each one invokes a different subset of the
+      axioms, and each lands on a status: either <span class="mono">sim(D, R)</span> — the mapping
+      is merely similar, not equivalent — or <span class="mono">Δ(D, R)</span>, where the two are
+      outright separate physical entities.
+    </p>
+  </div>
+
+  <figure class="bleed">
+    <div class="fig-head">
+      <div>
+        <span class="fig-id">Figure 2</span>
+        <div class="fig-title">Which axioms each proof depends on</div>
+        <div class="fig-sub">Select a proof or an axiom to trace the dependency</div>
+      </div>
+      <div class="ctl">
+        <button id="mx-reset">Clear selection</button>
+      </div>
+    </div>
+    <div class="matrix" id="fig-matrix"></div>
+    <div class="mx-readout" id="mx-readout"></div>
+    <figcaption>
+      <b>Reading it</b> — only two rows are load-bearing for every proof:
+      <span class="mono">A7</span>, which defines equivalence as completeness, and EPR, which is the
+      criterion itself. Reject either and nothing survives. Of the remaining axioms,
+      <span class="mono">A2</span> — the continuity of reality — carries the most weight: reject it
+      and only the quantum proof stands. That is exactly the scenario section 7.1 takes up. Every
+      other axiom leaves two or three proofs intact, which is the point of proving this five ways
+      rather than once.
+    </figcaption>
+  </figure>
+
+  <div class="col">
+    <h3 id="p51">5.1 — Proof by cardinality</h3>
+    <p>Writing in terms of bijective mapping:</p>
+    <p>$$equiv(D, R) \supset f : |R| \xrightarrow{\sim} |D|$$</p>
+    <p>
+      By Axiom 2, <span class="s-ref" data-sym="R">R</span> is a continuous manifold in real-valued
+      fields, in set theory of cardinality $|R| = 2^{\aleph_0}$. By Axiom 6, the digital substrate
+      is limited to discrete operations, thus countably infinite, $|D| = \aleph_0$. The criterion
+      wants all elements $r \in R$ mapped by a value $d \in D$ regardless of whether the system is
+      locally or globally defined over its domain.
+    </p>
+    <p>
+      It is mathematically impossible for a discrete set to be bijectively mapped onto a continuous
+      set and vice versa, due to the difference in cardinality. Therefore a contradiction and a
+      collapse emerges from the conditions of completeness and equivalence, as there exist construct
+      deficits:
+    </p>
+    <p>
+      $$1 :\ \sim ( f : |R| \xrightarrow{\sim} |D| )$$
+      $$2 :\ equiv(D,R) \supset ( f : |R| \xrightarrow{\sim} |D| = \forall r \in R, \exists d \in D )$$
+      $$\therefore\ \sim equiv(D, R) \quad \text{(2,1 MT)}$$
+    </p>
+    <p>
+      There is an infinite construct deficit: uncountably many points in the continuum
+      <span class="s-ref" data-sym="R">R</span> are unaccounted for in
+      <span class="s-ref" data-sym="D">D</span>. Recall that states in
+      <span class="s-ref" data-sym="R">R</span> must be accounted for in
+      <span class="s-ref" data-sym="D">D</span>. Therefore the mapping is only
+      <em>similar</em>, by requirement 3.
+    </p>
+
+    <h3 id="p52">5.2 — Proof by thermodynamics</h3>
+    <p>
+      By Landauer (1991)'s principle, any increase in the resolution of
+      <span class="s-ref" data-sym="D">D</span> with respect to
+      <span class="s-ref" data-sym="R">R</span> leads to a proportional increase in entropy,
+      $\Delta S > 0$. The erasure of one bit posits an exact change of $k_B \ln 2$.
+    </p>
+    <p>
+      As we increase the resolution and complexity of <span class="s-ref" data-sym="D">D</span>, the
+      information that must be processed increases as we decrease
+      <span class="s-ref" data-sym="delta">δ</span>. By Axiom 1, the work required for the digital
+      substrate to update its state is limited to the erasure of its bits, because it cannot store
+      infinite information. By Axiom 4, there always exists a continuous change in the states as the
+      model updates and erases the previous ones.
+    </p>
+    <p>
+      Since <span class="s-ref" data-sym="R">R</span> is a continuous manifold by Axiom 2, its state
+      contains infinite information. For <span class="s-ref" data-sym="D">D</span> to achieve
+      equivalence there must be an infinite erasure rate to keep up with the continuity of
+      <span class="s-ref" data-sym="R">R</span>. To achieve it identically, with
+      <span class="s-ref" data-sym="delta">δ</span> = 0, there would be an infinite number of bit
+      erasures and updates within every infinitesimal moment. The total Landauer cost therefore
+      approaches infinity as the fidelity of the twin approaches the continuous limit of reality,
+      $\Delta t \to 0$:
+    </p>
+    <p>$$L = \lim_{\Delta t \to 0} \sum \frac{k_B T \ln 2}{\Delta t} \qquad \therefore\ L \to \infty$$</p>
+  </div>
+
+  <figure class="bleed">
+    <div class="fig-head">
+      <div>
+        <span class="fig-id">Figure 3</span>
+        <div class="fig-title">Landauer cost as the twin's time step approaches the continuum</div>
+        <div class="fig-sub">The paper's own expression evaluated at T = 300 K. Not measured data</div>
+      </div>
+    </div>
+    <div class="diagram" id="fig-landauer"></div>
+    <figcaption>
+      <b>Reading it</b> — both axes are logarithmic, so the straight line <em>is</em> the divergence:
+      every factor of ten of extra temporal fidelity costs a factor of ten more energy, without
+      bound. There is no resolution at which the curve turns over. If equivalence could be achieved
+      without an infinite energy source, there would be infinite capacity to process information
+      without increasing the environment's entropy — which is Maxwell's Demon.
+    </figcaption>
+  </figure>
+
+  <div class="col">
+    <p>
+      By Axiom 1, a physical substrate cannot support a complete digital twin without violating the
+      Second Law of Thermodynamics. By the framework, there must exist a construct residue that is
+      unaccounted for if we assume a global system.
+    </p>
+
+    <h3 id="p53">5.3 — Proof by quantum mechanics</h3>
+    <p>
+      Here I use Wootters and Zurek (1982)'s No-Cloning Theorem, which posits that it is impossible
+      to create an identical, independent copy of an arbitrary unknown quantum state. Define
+      <span class="s-ref" data-sym="Q">ℚ</span> as the quantum state of an element
+      $r \in R$, and <span class="s-ref" data-sym="C">ℂ</span> as the boolean possibility of cloning
+      it. Recall that equivalence must mean that elements, including quantum states and information,
+      are equivalent:
+    </p>
+    <p>$$equiv(D,R) \equiv \forall r \in R, \exists d \in D \mid |\mathbb{Q}_d\rangle = |\mathbb{Q}_r\rangle$$</p>
+    <p>
+      Let $s_D$ represent the blank slate of the digital substrate before initialization and $U$ the
+      unitary twinning operator. Formally, no unitary operator $U$ can copy an arbitrary quantum
+      state. If <span class="s-ref" data-sym="Q">ℚ</span> is a superposition, then any attempt to
+      copy a state results in collapse:
+    </p>
+    <p>$$\nexists U \mid U(\mathbb{Q}_R \otimes s_D) = \mathbb{Q}_R \otimes \mathbb{Q}_D$$</p>
+    <p>
+      Any copy equated from the unitary operator in <span class="s-ref" data-sym="D">D</span> would
+      be a classical, reduced approximation — a measurement outcome $Q_D$ — with an unlike quantum
+      state to the real system $\mathbb{Q}_R$. Such measurements are necessary for either
+      initialization or assimilation by Axiom 4. If the two are inequivalent by the act of
+      measurement, there exists a divergence <span class="s-ref" data-sym="delta">δ</span> ≠ 0.
+    </p>
+    <p>
+      If we attempt to force a duplication of states, <span class="s-ref" data-sym="R">R</span> and
+      <span class="s-ref" data-sym="D">D</span> become entangled — made inseparable. Entanglement,
+      where measurement on one subsystem constrains the outcomes of another, posits that the two are
+      no longer independent entities. Therefore, to be a twin, $D = R$. But by Axiom 8, $D \neq R$.
+      This violates Axiom 8. This is the one proof whose status is <span class="mono">Δ(D, R)</span>
+      rather than similarity: the two are not merely approximate, they are separate physical
+      entities.
+    </p>
+
+    <h3 id="p54">5.4 — Proof by mappings</h3>
+    <p>
+      Here I focus on a much smaller system, looking at intervals rather than global sets. By Axioms
+      2 and 6, the shift from a continuum to a discrete substrate fundamentally collapses the causal
+      continuity of reality.
+    </p>
+    <p>
+      In a continuous manifold <span class="s-ref" data-sym="R">R</span>, for any two points
+      $r_1, r_2$ there exists an infinite number of intermediate states in their interval
+      $I(r_1, r_2)$. By Axiom 6 there must exist a minimum distance to move from $r_1$ to $r_2$ in
+      intervals. Thus an ontological residue emerges in
+      <span class="s-ref" data-sym="delta">δ</span> > 0. In a way, this perspective may be likened
+      to Zeno's Paradox, in reality and in theory.
+    </p>
+    <p>
+      Physical laws in <span class="s-ref" data-sym="R">R</span> are defined by equations that use
+      approximations of infinity and zero. Discrete representations cannot do such a thing. Take a
+      Riemann sum and the formal integral: there always exist intervals in the space. By Axiom 3,
+      each block is a physical state. Applying Landauer's principle, placing each hypothetical block
+      to approximate a hill's area would require infinite energy, and infinite heat — which by the
+      proof of thermodynamics violates the Second Law, and therefore Axiom 1.
+    </p>
+
+    <h3 id="p55">5.5 — Proof by signals</h3>
+    <p>
+      The Nyquist-Shannon theorem (Nyquist, 1928; Shannon, 1949) posits that a continuous time
+      signal can be perfectly reconstructed from its samples if the sampling rate $f_s$ is greater
+      than twice the highest frequency component.
+    </p>
+    <p>
+      In a continuous system <span class="s-ref" data-sym="R">R</span>, there are fluctuations at
+      arbitrarily small scales. If <span class="s-ref" data-sym="R">R</span> possesses infinite
+      bandwidth, then the highest frequency approaches infinity as well. A requisite to equivalence
+      would be an infinite sampling rate, necessitating infinite memory and processing power, which
+      conclusively violates Axiom 3 and thermodynamics.
+    </p>
+  </div>
+
+  <figure class="bleed">
+    <div class="fig-head">
+      <div>
+        <span class="fig-id">Figure 4</span>
+        <div class="fig-title">Residue under asymptotic scaling of the sampling rate</div>
+        <div class="fig-sub">Schematic of the stated limit. Illustrative, not measured</div>
+      </div>
+    </div>
+    <div class="diagram" id="fig-nyquist"></div>
+    <figcaption>
+      <b>Reading it</b> — scale the parameters, the computing power, the model complexity; add data
+      centres and GPUs. As $f_s$ increases the divergence
+      <span class="s-ref" data-sym="delta">δ</span> falls, and keeps falling — but so long as $f_s$
+      remains discretely finite while the highest frequency in the continuous manifold remains
+      infinite, then δ → 0 and δ ≠ 0. The curve approaches the axis and never touches it. For
+      equivalence to be valid, there must be a construct excess regardless.
+    </figcaption>
+  </figure>
+</section>
+
+<section id="conclusion">
+  <div class="col">
+    <h2><span class="s">6</span>Conclusion</h2>
+    <p>
+      The representation mapping of <span class="s-ref" data-sym="D">D</span> will always be
+      ontologically barred from equivalence with <span class="s-ref" data-sym="R">R</span>,
+      incomplete by the EPR, and similar by the framework. As fidelity increases, there exists a
+      fundamental physical limitation for ontological equivalence by construct excess, and a
+      mathematical limitation of construct deficit. Therefore there exists information <em>noise</em>
+      generated by complexity scaling that contributes to the physical excess.
+    </p>
+  </div>
+</section>
+
+<section id="supplementary">
+  <div class="col">
+    <h2><span class="s">7</span>Supplementary cases</h2>
+
+    <h3>7.1 — The argument of a binary universe</h3>
+    <p>
+      There is a reasonable dilemma when a fundamental axiom is challenged. Suppose Wheeler (1989)'s
+      postulate of It-from-Bit is correct, so <span class="s-ref" data-sym="R">R</span> is not a
+      continuous manifold. In this case we operate in a world where Axiom 2 is discarded: reality is
+      fundamentally discrete and informational, and the fundamental stuff is
+      <em>information</em>, emerging from binary units. The universe would then be an exponentially
+      complex binary composite of operations — in which the proofs by cardinality and mappings fall
+      short.
+    </p>
+    <p>
+      If <span class="s-ref" data-sym="R">R</span> is already digital, then a digital substrate of
+      it could theoretically achieve ontological equivalence and completeness by mapping bijectively.
+      However, for <span class="s-ref" data-sym="D">D</span> to be a twin, it must exist on a
+      substrate within <span class="s-ref" data-sym="R">R</span> independently. If the universe were
+      a computer, then <span class="s-ref" data-sym="D">D</span> is a simulation within that
+      computer, sort of like the philosophical equivalent of a <em>virtual machine</em>. To represent
+      its target system perfectly, it would need more bits than the target system itself, by
+      Bekenstein.
+    </p>
+  </div>
+
+  <figure class="bleed">
+    <div class="fig-head">
+      <div>
+        <span class="fig-id">Figure 5</span>
+        <div class="fig-title">A model of virtual realism under binary fundamentalism</div>
+        <div class="fig-sub">After Wheeler (1989) and Chalmers (2017). Add an order to see the regression</div>
+      </div>
+      <div class="ctl">
+        <button id="order-less">Remove order</button>
+        <button id="order-more">Add order</button>
+      </div>
+    </div>
+    <div class="diagram" id="fig-orders"></div>
+    <figcaption>
+      <b>Reading it</b> — each nested order is a twin running inside the substrate of the one that
+      contains it, and each needs more bits than its host to represent it completely. Keep adding
+      orders and the demand never closes: if a complete twin were possible, the target reality itself
+      must be in another digital substrate, hence an infinite regression of substrates. Even if
+      <span class="s-ref" data-sym="R">R</span> is discrete, copying its state into
+      <span class="s-ref" data-sym="D">D</span> requires energy and generates entropy, so the proof
+      of thermodynamics still holds.
+    </figcaption>
+  </figure>
+
+  <div class="col">
+    <h3>7.2 — Floridi's levels of abstraction</h3>
+    <p>
+      I had initially considered Floridi (2010)'s Levels of Abstraction as a fundamental axiom, but
+      that in itself would create an epistemological <em>leap</em> of sorts. All possible outcomes of
+      twinning would posit an <strong>abstraction</strong>. When a proponent claims they have
+      achieved formal isomorphism and ontological equivalence, they are simply making a claim about
+      an abstraction of fundamental reality that is uninterpretable. In addition, such a claim would
+      in fact be practically impossible, as there emerges an immutable perspectival boundary between
+      an observer and the natural world.
+    </p>
+
+    <h3>7.3 — Turing's argument from continuity of the nervous system</h3>
+    <p>
+      In <em>Computing Machinery and Intelligence</em>, one of the objections to the question 'Can
+      Machines Think' by Turing (1950) was the continuous nature of the nervous system as an analog
+      system, against the possibility of a discrete machine — both the analog computer of his time
+      and the computer of now — ever being able to think.
+    </p>
+    <p>
+      In a way, and largely in fact, this is very similar to the central proofs presented in this
+      paper. However, it is important to acknowledge that this rests under the fundamental
+      assumption of the continuity of physical reality, which up to now is being debated in
+      fundamental physics — a debate that I hope this paper will at the very least contribute to,
+      ever so slightly.
+    </p>
+  </div>
+</section>
+
+<section id="discussion">
+  <div class="col">
+    <h2><span class="s">8</span>Discussion</h2>
+
+    <h3>8.1 — On world models and functional equivalence</h3>
+    <p>
+      As we conclude that ontological equivalence is physically impossible and fundamentally limited
+      for digital twins, the contemporary push for world models as a prospect in modern AI remains
+      trivial in its pursuit of accuracy. However, as we also conclude, it is not necessarily a
+      limitation for <em>functional</em> equivalence. In fact, they may be considered similar.
+    </p>
+    <p>
+      It has become apparent that the prospect of digital twinning is widely what the industry wishes
+      to pursue as the next step in this technology. However it must come to their realization that
+      such models may never achieve the absolute minimum of error. It is, however, not really the
+      goal to reach such a threshold of error.
+    </p>
+    <p>
+      Still, I argue that even as we increase epochs, nodes, layers and data centres, we may never
+      reach the fidelity of the continuum of the universe. It remains unclear whether AGI, world
+      models, or actual copied neurons <em>are</em> actual intelligence, actual "realities", and are
+      actual <em>living</em> beings. It is only clear to us that they will never become of the same
+      quality as what is ontological.
+    </p>
+
+    <h3>8.2 — On Wheeler's It-from-Bit</h3>
+    <p>
+      As with section 7.1, there may exist a challenging outcome with the acceptance of a digital
+      reality. However, by Landauer's physicality, although information is physical, a binary unit is
+      not necessarily the fundamental stuff. Instead it exists as a separate physical manifestation
+      that generates entropy. A perfect "copy" of such a binary world would need more bits than the
+      target system contains.
+    </p>
+    <p>
+      Reality cannot be information alone, and it cannot be the fundamental stuff, as there remains a
+      structure of reality that is unmapped by any hypothetical digital representation, as they are
+      both mathematically and physically constrained.
+    </p>
+
+    <h3>8.3 — On simulation theory</h3>
+    <p>
+      In the possibility that our lived system of reality is not necessarily what our target reality
+      is, and we are incomprehensibly complex simulacra in an incomprehensibly complex simulation,
+      then there exists a reality of a magnitude higher than us that is the true target reality, and
+      we are an imperfect imitation in a substrate.
+    </p>
+    <p>
+      There are two possibilities here. If we are living in a digital substrate in highly complex
+      hypothetical computers, then we are fundamentally barred from being <em>real</em>. If we are
+      living in a hypothetical continuum — a hypothetical, infinitely complex analog computer — then
+      we may be in a reality that is not fundamentally barred, and there may exist worlds like ours
+      in the same fidelity, and we may even be of the same fidelity as the precedence of our world.
+    </p>
+
+    <h3>8.4 — On temporality</h3>
+    <p>
+      It is important to consider the question of <em>time</em>. Although we can model local systems
+      fairly easily — so much so as a feat of the ingenuity of physics and engineering, where we may
+      model aerodynamics, thermodynamics, chemical reactions and so on — a global model, or even a
+      model that just accounts for more than one physical object at a time, its interactions and its
+      dynamics, remains significantly difficult to both maintain and create.
+    </p>
+    <p>
+      Artificial neural networks, with the likes of physics-informed neural networks, have managed to
+      solve some of these problems, as with AlphaFold where millions of proteins were finally given
+      3D molecular structures, which would have taken centuries to accomplish with manual work.
+    </p>
+    <p>
+      So then, will time-series models be able to account for such a vast amount of calculation and
+      information processing as the real world? To this, I say no. It is important to consider the
+      finiteness of both resources and of the universe, as shown with thermodynamic limits in section
+      5.2. Hypothetically, should a digital twin be able to become independent and equivalent, only
+      then will it become able to predict <em>everything</em>. As we prove that it is a fundamental
+      limitation, exact phenomena of both global and local systems may never be convergent. At a
+      certain point in time, there will always be divergence. In a global model of a target system,
+      from its inception, it will always be divergent.
+    </p>
+  </div>
+</section>
+
+<div class="col">
+  <footer>
+    <p>
+      Presented at <em>Analysis: The Emmanuel Q. Fernando Philosophy Undergraduate Conference</em>,
+      UP Diliman Department of Philosophy, April 2026, under the Philosophy of Science category.
+      Figures 1 and 5 are redrawings of the paper's own diagrams; Figure 2 is its Table 1; Figures 3
+      and 4 evaluate expressions stated in the text and are illustrative rather than empirical.
+    </p>
+    <h3 style="margin-top:28px">References</h3>
+    <ul class="refs">
+      <li>Batty, M. (2018). Digital twins. <em>Environment and Planning B: Urban Analytics and City Science, 45</em>(5), 817–820. <a href="https://doi.org/10.1177/2399808318796416">doi:10.1177/2399808318796416</a></li>
+      <li>Chalmers, D. J. (2017). The virtual and the real. <em>Disputatio, 9</em>(46), 309–352. <a href="https://doi.org/10.1515/disp-2017-0009">doi:10.1515/disp-2017-0009</a></li>
+      <li>Chattopadhyay, P., Misra, A., Pandit, T., &amp; Paul, G. (2025). Landauer principle and thermodynamics of computation. <a href="https://doi.org/10.48550/arXiv.2506.10876">arXiv:2506.10876</a></li>
+      <li>Ding, J., et al. (2025). Understanding world or predicting future? A comprehensive survey of world models. <em>ACM Computing Surveys, 58</em>(3). <a href="https://doi.org/10.1145/3746449">doi:10.1145/3746449</a></li>
+      <li>Einstein, A., Podolsky, B., &amp; Rosen, N. (1935). Can quantum-mechanical description of physical reality be considered complete? <em>Physical Review, 47</em>(10), 777–780. <a href="https://doi.org/10.1103/PhysRev.47.777">doi:10.1103/PhysRev.47.777</a></li>
+      <li>Floridi, L. (2010). Levels of abstraction and the Turing test. <em>Kybernetes, 39</em>(3), 423–440.</li>
+      <li>Gehlert, A., &amp; Esswein, W. (2007). Toward a formal research framework for ontological analyses. <em>Advanced Engineering Informatics, 21</em>(2), 119–131. <a href="https://doi.org/10.1016/j.aei.2006.11.004">doi:10.1016/j.aei.2006.11.004</a></li>
+      <li>Landauer, R. (1991). Information is physical. <em>Physics Today, 44</em>(5), 23–29. <a href="https://doi.org/10.1063/1.881299">doi:10.1063/1.881299</a></li>
+      <li>March, S. T., &amp; Allen, G. N. (2007). Ontological foundations for active information systems. <em>International Journal of Intelligent Information Technologies, 3</em>(1), 1–13.</li>
+      <li>Matsuo, Y., et al. (2022). Deep learning, reinforcement learning, and world models. <em>Neural Networks, 152</em>, 267–275.</li>
+      <li>Nyquist, H. (1928). Certain topics in telegraph transmission theory. <em>Transactions of the AIEE, 47</em>(2), 617–644.</li>
+      <li>Shannon, C. E. (1949). Communication in the presence of noise. <em>Proceedings of the IRE, 37</em>(1), 10–21.</li>
+      <li>Tomko, M., &amp; Winter, S. (2019). Beyond digital twins — a commentary. <em>Environment and Planning B, 46</em>(2), 395–399.</li>
+      <li>Turing, A. M. (1950). Computing machinery and intelligence. <em>Mind, 59</em>(236), 433–460.</li>
+      <li>Weingram, A., et al. (2025). A definition and taxonomy of digital twins. <em>Frontiers in High Performance Computing, 3</em>.</li>
+      <li>Wheeler, J. A. (1989). Information, physics, quantum: the search for links. In <em>Proceedings III International Symposium on Foundations of Quantum Mechanics</em> (pp. 354–358).</li>
+      <li>Wootters, W. K., &amp; Zurek, W. H. (1982). A single quantum cannot be cloned. <em>Nature, 299</em>(5886), 802–803. <a href="https://doi.org/10.1038/299802a0">doi:10.1038/299802a0</a></li>
+    </ul>
+  </footer>
+</div>
+
+</div>
+
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   THEME — synced with artemiui.github.io through shared
+   localStorage (same origin) and postMessage from the host page.
+   ============================================================ */
+function updateThemeIcon() {
+  const dark = document.documentElement.classList.contains('dark');
+  const i = document.getElementById('theme-icon');
+  if (i) i.innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+}
+function initTheme() {
+  try {
+    const saved = localStorage.getItem('theme');
+    const prefers = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.classList.toggle('dark', saved === 'dark' || (!saved && prefers));
+  } catch (e) {}
+  updateThemeIcon();
+}
+initTheme();
+
+document.getElementById('btn-theme').addEventListener('click', () => {
+  const dark = document.documentElement.classList.toggle('dark');
+  try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (e) {}
+  updateThemeIcon();
+  renderAll();
+  // tell the host so its own chrome follows
+  try { parent.postMessage({ type: 'rendition-theme', theme: dark ? 'dark' : 'light' }, '*'); } catch (e) {}
+});
+
+window.addEventListener('storage', e => { if (e.key === 'theme') { initTheme(); renderAll(); } });
+window.addEventListener('message', e => {
+  if (e.data && e.data.theme) {
+    document.documentElement.classList.toggle('dark', e.data.theme === 'dark');
+    updateThemeIcon();
+    renderAll();
+  }
+});
+
+/* ============================================================
+   HEIGHT — report document height so the host can size the
+   frame and the page scrolls as one document.
+   ============================================================ */
+let lastH = 0;
+function reportHeight() {
+  const h = Math.ceil(document.documentElement.scrollHeight);
+  if (Math.abs(h - lastH) < 2) return;
+  lastH = h;
+  try { parent.postMessage({ type: 'rendition-height', height: h }, '*'); } catch (e) {}
+}
+if (window.ResizeObserver) {
+  new ResizeObserver(reportHeight).observe(document.documentElement);
+}
+window.addEventListener('load', reportHeight);
+setTimeout(reportHeight, 300);
+setTimeout(reportHeight, 1200);
+
+
+</script>
+<script>
+/* ============================================================
+   DATA — transcribed from the paper's own notation table,
+   axiom list and Table 1. Nothing here is inferred.
+   ============================================================ */
+const NOTATION = [
+  { sym: 'R', def: 'Target physical system (reality / object-in-itself)' },
+  { sym: 'D', def: 'Digital twin / digital representation of R' },
+  { sym: 'd', def: 'An element of the digital substrate, contained in D' },
+  { sym: 'r', def: 'An element of the physical reality R' },
+  { sym: 'δ', def: 'Structural divergence of D and R', key: 'delta' },
+  { sym: 'S<sub>t</sub>', def: 'True state of system R at time t', key: 'S' },
+  { sym: 'ℚ', def: 'Quantum state |ψ⟩ associated with element r ∈ R', key: 'Q' },
+  { sym: 'ℂ', def: 'The possibility of cloning an arbitrary unknown quantum state', key: 'C' },
+  { sym: 'L', def: 'Landauer cost: minimum thermodynamic cost of bit erasure' },
+  { sym: 'k<sub>B</sub>', def: 'Boltzmann constant: Landauer principle scaling factor', key: 'kB' },
+  { sym: 'equiv(D, R)', def: 'Ontological equivalence of state systems D and R', key: 'equiv' },
+  { sym: 'sim(D, R)', def: 'Ontological similarity of D and R, where certain elements are either unrepresented or in excess', key: 'sim' },
+  { sym: 'Δ(D, R)', def: 'D and R exist as separate, different physical entities', key: 'delta-cap' },
+  { sym: 'comp(D, R)', def: 'Valid completeness according to the Einstein-Podolsky-Rosen paradox', key: 'comp' },
+];
+
+const AXIOMS = [
+  { id: 'A1', text: 'Information is physical and tangible; it is a dissipative state of matter that incurs a non-zero thermodynamic cost L = ΔS > 0 (Chattopadhyay et al., 2025; Landauer, 1991).' },
+  { id: 'A2', text: 'The target system Reality R is a continuous manifold defined by real-valued fields.' },
+  { id: 'A3', text: 'Information is not the fundamental stuff of the universe. It is a necessary condition that there exists a physical substrate for an it from bit to manifest.' },
+  { id: 'A4', text: 'To assimilate information to a DT D, there must be a measurement made on R.' },
+  { id: 'A5', text: 'There exists a changed system R′ from observations of R, as the act of measurement M(R) ⊃ R′ creates a disturbance in which the initialization of an observation perturbs the system itself.' },
+  { id: 'A6', text: 'By definition, an entity within a digital substrate d must operate discretely regardless of high-power computing. Therefore its composite D must be fundamentally limited in discrete operations.' },
+  { id: 'A7', text: 'Any physical description, theory, or representation of reality is considered ontologically equivalent only if it is considered complete.' },
+  { id: 'A8', text: 'R and D are independent systems as D ≠ R in its definition as a separate representation.' },
+];
+
+const REQUIREMENTS = [
+  { id: '1', text: 'Analysis must be based on the same ontological constructs.' },
+  { id: '2', text: 'The analysis must specify the constructs of the modeling grammar that is used.' },
+  { id: '3', text: 'Each pairwise mapping of a system must be represented as equivalent, similar, or different.' },
+  { id: '4', text: 'For each similarity mapping type, the criteria must be made explicit.' },
+  { id: 'EPR', text: 'Einstein-Podolsky-Rosen criterion for completeness: if a physical element r of R can be predicted with certainty in D without disturbing the system, there must exist a counterpart in D.' },
+];
+
+/* Table 1 of the paper, verbatim. rows = axioms + EPR, cols = proofs. */
+const PROOFS = [
+  { id: '5.1', name: 'Cardinality', status: 'sim(D, R)', href: '#p51',
+    gist: 'A continuum cannot be put in bijection with a countable substrate, so an infinite construct deficit is unavoidable.' },
+  { id: '5.2', name: 'Thermodynamics', status: 'sim(D, R)', href: '#p52',
+    gist: 'Matching a continuous system demands an infinite bit-erasure rate, so the Landauer cost diverges.' },
+  { id: '5.3', name: 'Quantum mechanics', status: 'Δ(D, R)', href: '#p53',
+    gist: 'No-cloning forbids copying an arbitrary quantum state; forcing it entangles the two, destroying their independence.' },
+  { id: '5.4', name: 'Mappings', status: 'sim(D, R)', href: '#p54',
+    gist: 'Between any two points of a continuum lie infinitely many states; a minimum step size leaves an ontological residue.' },
+  { id: '5.5', name: 'Signals', status: 'sim(D, R)', href: '#p55',
+    gist: 'Infinite bandwidth would require an infinite sampling rate, hence infinite memory and processing.' },
+];
+
+const DEPENDS = {
+  A1:  ['5.2', '5.3', '5.5'],
+  A2:  ['5.1', '5.2', '5.4', '5.5'],
+  A3:  ['5.2', '5.5'],
+  A4:  ['5.3', '5.5'],
+  A5:  ['5.2', '5.3', '5.5'],
+  A6:  ['5.1', '5.4', '5.5'],
+  A7:  ['5.1', '5.2', '5.3', '5.4', '5.5'],
+  A8:  ['5.2', '5.5'],
+  EPR: ['5.1', '5.2', '5.3', '5.4', '5.5'],
+};
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const tip = document.getElementById('tip');
+const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+function showTip(html, evt) { tip.innerHTML = html; tip.style.opacity = 1; moveTip(evt); }
+function moveTip(evt) {
+  const pad = 14, w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = evt.pageX + pad, y = evt.pageY - h - pad;
+  if (x + w > window.scrollX + document.documentElement.clientWidth - 8) x = evt.pageX - w - pad;
+  if (y < window.scrollY + 8) y = evt.pageY + pad;
+  tip.style.left = x + 'px'; tip.style.top = y + 'px';
+}
+function hideTip() { tip.style.opacity = 0; }
+
+const svgNS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs = {}, parent) {
+  const n = document.createElementNS(svgNS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function newSvg(host, w, h) {
+  host.innerHTML = '';
+  const s = el('svg', { viewBox: `0 0 ${w} ${h}`, preserveAspectRatio: 'xMidYMid meet' }, host);
+  s.style.maxHeight = h + 'px';
+  return s;
+}
+
+/* ============================================================
+   NOTATION GLOSSARY + inline symbol references
+   ============================================================ */
+function renderGlossary() {
+  const host = document.getElementById('gloss');
+  host.innerHTML = '';
+  NOTATION.forEach(n => {
+    const row = document.createElement('div');
+    row.className = 'g';
+    row.innerHTML = `<div class="sym">${n.sym}</div><div class="def">${n.def}</div>`;
+    host.appendChild(row);
+  });
+
+  const byKey = {};
+  NOTATION.forEach(n => { byKey[n.key || n.sym] = n; });
+  document.querySelectorAll('.s-ref').forEach(ref => {
+    const n = byKey[ref.dataset.sym];
+    if (!n) return;
+    ref.addEventListener('mouseenter', e =>
+      showTip(`<div class="t-title">${n.sym}</div><div style="font-size:12.5px">${n.def}</div>`, e));
+    ref.addEventListener('mousemove', moveTip);
+    ref.addEventListener('mouseleave', hideTip);
+  });
+}
+
+/* ============================================================
+   AXIOM + REQUIREMENT LISTS
+   ============================================================ */
+function renderClaims() {
+  const ax = document.getElementById('axioms-list');
+  ax.innerHTML = '';
+  AXIOMS.forEach(a => {
+    const d = document.createElement('div');
+    d.className = 'claim';
+    d.id = 'ax-' + a.id;
+    d.innerHTML = `<div class="tag">${a.id}</div><div class="txt">${a.text}</div>`;
+    ax.appendChild(d);
+  });
+
+  const rq = document.getElementById('reqs-list');
+  rq.innerHTML = '';
+  REQUIREMENTS.forEach(r => {
+    const d = document.createElement('div');
+    d.className = 'claim';
+    d.innerHTML = `<div class="tag">${r.id === 'EPR' ? 'EPR' : 'R' + r.id}</div><div class="txt">${r.text}</div>`;
+    rq.appendChild(d);
+  });
+}
+
+/* ============================================================
+   FIGURE 2 — axiom × proof dependency matrix
+   ============================================================ */
+let mxSel = null;   // {kind:'proof'|'axiom', id}
+
+function renderMatrix() {
+  const host = document.getElementById('fig-matrix');
+  const rows = [...AXIOMS.map(a => a.id), 'EPR'];
+  let html = '<table class="mx"><thead><tr><th class="rowh"></th>';
+  PROOFS.forEach(p => {
+    html += `<th class="colh" data-proof="${p.id}">${p.id}<span>${p.name}</span></th>`;
+  });
+  html += '</tr></thead><tbody>';
+  rows.forEach(rid => {
+    const cls = rid === 'EPR' ? ' class="sep-row"' : '';
+    html += `<tr${cls} data-axiom="${rid}"><td class="rowh" data-axiom="${rid}">${rid}</td>`;
+    PROOFS.forEach(p => {
+      const on = DEPENDS[rid].includes(p.id);
+      html += `<td class="cell" data-axiom="${rid}" data-proof="${p.id}">` +
+        (on ? '<div class="dot"></div>' : '<div class="dot none"></div>') + '</td>';
+    });
+    html += '</tr>';
+  });
+  html += '<tr class="sep"><td class="rowh"></td>';
+  PROOFS.forEach(() => { html += '<td></td>'; });
+  html += '</tr><tr><td class="rowh" style="color:var(--muted)">Status</td>';
+  PROOFS.forEach(p => { html += `<td class="status">${p.status}</td>`; });
+  html += '</tr></tbody>';
+  html += '<caption>Table 1 of the paper: which axioms and requirements each proof invokes.</caption>';
+  html += '</table>';
+  host.innerHTML = html;
+
+  host.querySelectorAll('th.colh').forEach(th =>
+    th.addEventListener('click', () => select('proof', th.dataset.proof)));
+  host.querySelectorAll('td.rowh[data-axiom]').forEach(td =>
+    td.addEventListener('click', () => select('axiom', td.dataset.axiom)));
+
+  paintMatrix();
+}
+
+function select(kind, id) {
+  if (mxSel && mxSel.kind === kind && mxSel.id === id) mxSel = null;
+  else mxSel = { kind, id };
+  paintMatrix();
+}
+
+function paintMatrix() {
+  const host = document.getElementById('fig-matrix');
+  host.querySelectorAll('tr').forEach(tr => tr.classList.remove('hot'));
+  host.querySelectorAll('th.colh').forEach(th => th.classList.remove('hot'));
+  host.querySelectorAll('td.cell').forEach(td => td.classList.remove('hot'));
+
+  const out = document.getElementById('mx-readout');
+
+  if (!mxSel) {
+    document.querySelectorAll('.claim').forEach(c => c.classList.remove('lit'));
+    const counts = PROOFS.map(p =>
+      Object.keys(DEPENDS).filter(a => DEPENDS[a].includes(p.id)).length);
+    out.innerHTML = `<div class="h">Five proofs, eight axioms, one shared criterion</div>
+      <div>Each proof leans on between ${Math.min(...counts)} and ${Math.max(...counts)} of the
+      nine rows. Select a column to see what a proof assumes, or a row to see which proofs would
+      fall if that axiom were rejected.</div>`;
+    return;
+  }
+
+  if (mxSel.kind === 'proof') {
+    const p = PROOFS.find(x => x.id === mxSel.id);
+    const used = Object.keys(DEPENDS).filter(a => DEPENDS[a].includes(p.id));
+    host.querySelector(`th.colh[data-proof="${p.id}"]`).classList.add('hot');
+    used.forEach(a => {
+      host.querySelector(`td.cell[data-axiom="${a}"][data-proof="${p.id}"]`).classList.add('hot');
+      const tr = host.querySelector(`tr[data-axiom="${a}"]`);
+      if (tr) tr.classList.add('hot');
+    });
+    document.querySelectorAll('.claim').forEach(c => c.classList.remove('lit'));
+    used.forEach(a => {
+      const c = document.getElementById('ax-' + a);
+      if (c) c.classList.add('lit');
+    });
+    out.innerHTML = `<div class="h">${p.id} — Proof by ${p.name.toLowerCase()}</div>
+      <div>${p.gist}</div>
+      <div class="l" style="margin-top:8px">Assumes ${used.join(', ')} · resolves to ${p.status}
+      · <a href="${p.href}">read the proof</a></div>`;
+  } else {
+    const a = mxSel.id;
+    const hits = DEPENDS[a];
+    const tr = host.querySelector(`tr[data-axiom="${a}"]`);
+    if (tr) tr.classList.add('hot');
+    hits.forEach(pid => {
+      host.querySelector(`td.cell[data-axiom="${a}"][data-proof="${pid}"]`).classList.add('hot');
+      host.querySelector(`th.colh[data-proof="${pid}"]`).classList.add('hot');
+    });
+    document.querySelectorAll('.claim').forEach(c => c.classList.remove('lit'));
+    const c = document.getElementById('ax-' + a);
+    if (c) { c.classList.add('lit'); }
+    const survivors = PROOFS.filter(p => !hits.includes(p.id)).map(p => p.id);
+    const label = a === 'EPR'
+      ? 'The EPR criterion for completeness'
+      : (AXIOMS.find(x => x.id === a) || {}).text;
+    out.innerHTML = `<div class="h">${a}</div><div>${label}</div>
+      <div class="l" style="margin-top:8px">Used by ${hits.join(', ')} —
+      ${survivors.length ? 'rejecting it leaves ' + survivors.join(', ') + ' standing'
+                         : 'rejecting it would take down every proof'}</div>`;
+  }
+}
+
+document.getElementById('mx-reset').addEventListener('click', () => { mxSel = null; paintMatrix(); });
+
+/* ============================================================
+   FIGURE 1 — mapping pathologies
+   ============================================================ */
+const PATHOLOGIES = [
+  { id: 'all', label: 'All', note: 'A complete, equivalent mapping would have every element of the target system meet exactly one element of the twin, with nothing left over on either side. None of the four pathologies below would appear.' },
+  { id: 'deficit', label: 'Construct deficit', note: 'An element of the target system has no counterpart in the twin. By cardinality this is not a shortfall of engineering but of set size: uncountably many points of the continuum can never be reached.' },
+  { id: 'excess', label: 'Construct excess', note: 'The twin holds structure that corresponds to nothing in the target system, including the entropy its own operation adds to the global system — energy that will always be unaccounted for. This is the Maxwell’s Demon case.' },
+  { id: 'overload', label: 'Ontological overload', note: 'One element of the twin is made to stand for more than one element of reality. The map is total but no longer faithful: distinct states of the world become indistinguishable inside the model.' },
+  { id: 'redundancy', label: 'Construct redundancy', note: 'Several elements of the twin represent a single element of reality. Harmless to fidelity, costly to the substrate, and still a failure of one-to-one correspondence.' },
+];
+let pathology = 'all';
+
+function renderMapping() {
+  const host = document.getElementById('fig-mapping');
+  const W = 860, H = 380;
+  const s = newSvg(host, W, H);
+  const ink = cssv('--fg-2'), muted = cssv('--muted'), accent = cssv('--series-1'),
+        rule = cssv('--rule-strong');
+
+  const dim = v => (pathology === 'all' || pathology === v) ? 1 : 0.14;
+  const hot = v => pathology === v ? accent : ink;
+
+  // the two containers
+  el('rect', { x: 60, y: 40, width: 220, height: 300, rx: 110, fill: 'none', stroke: rule, 'stroke-width': 1.2 }, s);
+  el('rect', { x: 420, y: 40, width: 220, height: 300, rx: 110, fill: 'none', stroke: rule, 'stroke-width': 1.2 }, s);
+
+  const t = el('text', { x: 170, y: 364, 'text-anchor': 'middle', class: 'dg-label' }, s);
+  t.textContent = 'Target system';
+  const t2 = el('text', { x: 170, y: 378, 'text-anchor': 'middle', class: 'dg-small' }, s);
+  t2.textContent = 'continuous reality';
+  const t3 = el('text', { x: 530, y: 364, 'text-anchor': 'middle', class: 'dg-label' }, s);
+  t3.textContent = 'Digital twin';
+  const t4 = el('text', { x: 530, y: 378, 'text-anchor': 'middle', class: 'dg-small' }, s);
+  t4.textContent = 'discrete representation';
+
+  // left: circles (continuous elements); right: squares (discrete elements)
+  const L = [[120,90],[185,120],[110,150],[175,185],[120,215],[185,250],[115,285]];
+  const R = [[480,105],[555,135],[490,175],[560,215],[485,245],[555,285]];
+
+  L.forEach((p, i) => el('circle', { cx: p[0], cy: p[1], r: 13, fill: ink, 'fill-opacity': 0.26,
+    stroke: ink, 'stroke-opacity': 0.4, 'stroke-width': 1 }, s));
+  R.forEach((p, i) => el('rect', { x: p[0] - 13, y: p[1] - 13, width: 26, height: 26, rx: 4,
+    fill: ink, 'fill-opacity': 0.26, stroke: ink, 'stroke-opacity': 0.4, 'stroke-width': 1 }, s));
+
+  function arrow(from, to, kind, label) {
+    const o = dim(kind);
+    const c = hot(kind);
+    const g = el('g', { opacity: o }, s);
+    el('line', { x1: from[0] + 15, y1: from[1], x2: to[0] - 16, y2: to[1],
+      stroke: c, 'stroke-width': pathology === kind ? 1.8 : 1.1,
+      'marker-end': 'url(#ah)' }, g);
+    if (label && (pathology === 'all' || pathology === kind)) {
+      const mx = (from[0] + to[0]) / 2, my = (from[1] + to[1]) / 2 - 7;
+      const tx = el('text', { x: mx, y: my, 'text-anchor': 'middle', class: 'dg-small',
+        fill: pathology === kind ? accent : muted }, g);
+      tx.textContent = label;
+    }
+  }
+
+  // arrow head
+  const defs = el('defs', {}, s);
+  const mk = el('marker', { id: 'ah', viewBox: '0 0 10 10', refX: 8, refY: 5,
+    markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse' }, defs);
+  el('path', { d: 'M 0 0 L 10 5 L 0 10 z', fill: ink, 'fill-opacity': 0.55 }, mk);
+
+  // 1 — deficit: a left element with no arrow at all (marked)
+  if (pathology === 'all' || pathology === 'deficit') {
+    const p = L[0];
+    const g = el('g', { opacity: dim('deficit') }, s);
+    el('circle', { cx: p[0], cy: p[1], r: 19, fill: 'none',
+      stroke: hot('deficit'), 'stroke-width': 1.4, 'stroke-dasharray': '3 3' }, g);
+    const tx = el('text', { x: p[0] - 34, y: p[1] + 4, 'text-anchor': 'end', class: 'dg-small',
+      fill: pathology === 'deficit' ? accent : muted }, g);
+    tx.textContent = 'unmapped';
+  }
+
+  // 2 — excess: a right element with no source, plus the entropy cloud
+  if (pathology === 'all' || pathology === 'excess') {
+    const p = R[5];
+    const g = el('g', { opacity: dim('excess') }, s);
+    el('rect', { x: p[0] - 19, y: p[1] - 19, width: 38, height: 38, rx: 7, fill: 'none',
+      stroke: hot('excess'), 'stroke-width': 1.4, 'stroke-dasharray': '3 3' }, g);
+    const tx = el('text', { x: p[0] + 34, y: p[1] + 4, class: 'dg-small',
+      fill: pathology === 'excess' ? accent : muted }, g);
+    tx.textContent = 'no counterpart';
+
+    const g2 = el('g', { opacity: dim('excess') }, s);
+    [[710, 110], [780, 145], [705, 185], [775, 220]].forEach(q => {
+      el('path', { d: star(q[0], q[1], 13, 6, 6), fill: hot('excess'), 'fill-opacity': 0.55 }, g2);
+    });
+    const e1 = el('text', { x: 700, y: 262, class: 'dg-small',
+      fill: pathology === 'excess' ? accent : muted }, g2);
+    e1.textContent = 'entropy added to the global';
+    const e2 = el('text', { x: 700, y: 276, class: 'dg-small',
+      fill: pathology === 'excess' ? accent : muted }, g2);
+    e2.textContent = 'system, always unaccounted for';
+  }
+
+  // normal one-to-one links
+  arrow(L[1], R[0], 'ok');
+  arrow(L[3], R[2], 'ok');
+  arrow(L[5], R[4], 'ok');
+
+  // 3 — overload: two left elements into one right element
+  arrow(L[4], R[3], 'overload', null);
+  arrow(L[6], R[3], 'overload', 'overload');
+
+  // 4 — redundancy: one left element into two right elements
+  arrow(L[2], R[1], 'redundancy', 'redundancy');
+  arrow(L[2], R[5 - 2], 'redundancy', null);
+
+  document.getElementById('map-caption').innerHTML =
+    '<b>Reading it</b> — ' + PATHOLOGIES.find(p => p.id === pathology).note;
+}
+
+function star(cx, cy, rOuter, rInner, points) {
+  let d = '';
+  for (let i = 0; i < points * 2; i++) {
+    const r = i % 2 ? rInner : rOuter;
+    const a = (Math.PI / points) * i - Math.PI / 2;
+    d += (i ? 'L' : 'M') + (cx + r * Math.cos(a)) + ' ' + (cy + r * Math.sin(a)) + ' ';
+  }
+  return d + 'Z';
+}
+
+function renderMapCtl() {
+  const host = document.getElementById('map-ctl');
+  host.innerHTML = '';
+  PATHOLOGIES.forEach(p => {
+    const b = document.createElement('button');
+    b.textContent = p.label;
+    if (p.id === pathology) b.className = 'on';
+    b.addEventListener('click', () => { pathology = p.id; renderMapCtl(); renderMapping(); });
+    host.appendChild(b);
+  });
+}
+
+/* ============================================================
+   FIGURE 3 — Landauer cost divergence (log–log)
+   ============================================================ */
+function renderLandauer() {
+  const host = document.getElementById('fig-landauer');
+  const W = 860, H = 340, m = { t: 20, r: 26, b: 56, l: 76 };
+  const s = newSvg(host, W, H);
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const ink = cssv('--fg-2'), muted = cssv('--muted'), accent = cssv('--series-1'),
+        grid = cssv('--grid'), axis = cssv('--axis');
+
+  const kB = 1.380649e-23, T = 300, ln2 = Math.LN2;
+  // L(Δt) = kB T ln2 / Δt, one erasure per step
+  const dtMin = 1e-18, dtMax = 1e0;
+  const lx = v => Math.log10(v);
+  const xs = d => m.l + (lx(d) - lx(dtMax)) / (lx(dtMin) - lx(dtMax)) * iw;
+  const cost = d => kB * T * ln2 / d;
+  const yMin = lx(cost(dtMax)), yMax = lx(cost(dtMin));
+  const ys = v => m.t + ih - (lx(v) - yMin) / (yMax - yMin) * ih;
+
+  const g = el('g', {}, s);
+  // grid + ticks
+  for (let e = 0; e >= -18; e -= 3) {
+    const x = xs(Math.pow(10, e));
+    el('line', { x1: x, y1: m.t, x2: x, y2: m.t + ih, stroke: grid, 'stroke-width': 1 }, g);
+    const t = el('text', { x, y: m.t + ih + 18, 'text-anchor': 'middle', class: 'dg-small' }, g);
+    t.textContent = e === 0 ? '1 s' : '10' + sup(e) + ' s';
+  }
+  for (let e = -24; e <= 6; e += 6) {
+    const v = Math.pow(10, e);
+    if (lx(v) < yMin || lx(v) > yMax) continue;
+    const y = ys(v);
+    el('line', { x1: m.l, y1: y, x2: m.l + iw, y2: y, stroke: grid, 'stroke-width': 1 }, g);
+    const t = el('text', { x: m.l - 10, y: y + 3.5, 'text-anchor': 'end', class: 'dg-small' }, g);
+    t.textContent = '10' + sup(e) + ' J/s';
+  }
+  el('line', { x1: m.l, y1: m.t + ih, x2: m.l + iw, y2: m.t + ih, stroke: axis, 'stroke-width': 1 }, g);
+  el('line', { x1: m.l, y1: m.t, x2: m.l, y2: m.t + ih, stroke: axis, 'stroke-width': 1 }, g);
+
+  // the curve
+  let d = '';
+  for (let e = 0; e >= -18; e -= 0.25) {
+    const dt = Math.pow(10, e);
+    d += (d ? 'L' : 'M') + xs(dt) + ' ' + ys(cost(dt)) + ' ';
+  }
+  el('path', { d, fill: 'none', stroke: accent, 'stroke-width': 2, 'stroke-linecap': 'round' }, g);
+
+  const xa = el('text', { x: m.l + iw / 2, y: H - 14, 'text-anchor': 'middle', class: 'dg-label' }, g);
+  xa.textContent = 'time step Δt — finer temporal fidelity to the right';
+  const ya = el('text', { x: 18, y: m.t + ih / 2, 'text-anchor': 'middle', class: 'dg-label',
+    transform: `rotate(-90 18 ${m.t + ih / 2})` }, g);
+  ya.textContent = 'minimum dissipated power';
+
+  const note = el('text', { x: m.l + iw - 6, y: m.t + 16, 'text-anchor': 'end', class: 'dg-small',
+    fill: muted }, g);
+  note.textContent = 'L = k_B T ln2 / Δt,  T = 300 K';
+
+  // hover readout
+  const hit = el('rect', { x: m.l, y: m.t, width: iw, height: ih, fill: 'transparent' }, g);
+  const mark = el('circle', { cx: -99, cy: -99, r: 4.5, fill: accent, stroke: cssv('--bg'),
+    'stroke-width': 2 }, g);
+  hit.addEventListener('mousemove', ev => {
+    const r = host.querySelector('svg').getBoundingClientRect();
+    const px = (ev.clientX - r.left) / r.width * W;
+    const frac = Math.min(1, Math.max(0, (px - m.l) / iw));
+    const e = lx(dtMax) + frac * (lx(dtMin) - lx(dtMax));
+    const dt = Math.pow(10, e), c = cost(dt);
+    mark.setAttribute('cx', xs(dt)); mark.setAttribute('cy', ys(c));
+    showTip(`<div class="t-title">Δt = 10${sup(Math.round(e))} s</div>
+      <div class="t-row"><span>power floor</span><span>${c.toExponential(2)} W</span></div>
+      <div class="t-note">one bit erased per step, per degree of freedom</div>`, ev);
+  });
+  hit.addEventListener('mouseleave', () => { hideTip(); mark.setAttribute('cx', -99); });
+}
+function sup(n) {
+  const map = { '-': '⁻', 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴',
+                5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
+  return String(n).split('').map(c => map[c] || c).join('');
+}
+
+/* ============================================================
+   FIGURE 4 — Nyquist residue
+   ============================================================ */
+function renderNyquist() {
+  const host = document.getElementById('fig-nyquist');
+  const W = 860, H = 300, m = { t: 22, r: 150, b: 56, l: 72 };
+  const s = newSvg(host, W, H);
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const muted = cssv('--muted'), accent = cssv('--series-1'), grid = cssv('--grid'),
+        axis = cssv('--axis'), ink = cssv('--fg-2');
+
+  const g = el('g', {}, s);
+  for (let i = 0; i <= 4; i++) {
+    const y = m.t + ih * i / 4;
+    el('line', { x1: m.l, y1: y, x2: m.l + iw, y2: y, stroke: grid, 'stroke-width': 1 }, g);
+  }
+  el('line', { x1: m.l, y1: m.t + ih, x2: m.l + iw, y2: m.t + ih, stroke: axis, 'stroke-width': 1 }, g);
+  el('line', { x1: m.l, y1: m.t, x2: m.l, y2: m.t + ih, stroke: axis, 'stroke-width': 1 }, g);
+
+  // δ(f_s) ~ 1/f_s — approaches zero, never reaches it
+  let d = '';
+  for (let i = 0; i <= 200; i++) {
+    const f = 1 + (i / 200) * 40;
+    const x = m.l + (i / 200) * iw;
+    const y = m.t + ih - (1 / f) / 1 * ih * 0.94;
+    d += (d ? 'L' : 'M') + x + ' ' + (m.t + ih - ih * 0.94 / f) + ' ';
+  }
+  el('path', { d, fill: 'none', stroke: accent, 'stroke-width': 2, 'stroke-linecap': 'round' }, g);
+
+  // the asymptote: δ = 0, never attained
+  el('line', { x1: m.l, y1: m.t + ih, x2: m.l + iw, y2: m.t + ih,
+    stroke: accent, 'stroke-width': 1, 'stroke-dasharray': '4 4', opacity: 0.5 }, g);
+
+  const lab = el('text', { x: m.l + iw + 12, y: m.t + ih + 4, class: 'dg-small', fill: accent }, g);
+  lab.textContent = 'δ = 0 — never attained';
+
+  const y0 = el('text', { x: m.l - 10, y: m.t + 10, 'text-anchor': 'end', class: 'dg-small' }, g);
+  y0.textContent = 'δ large';
+  const y1 = el('text', { x: m.l - 10, y: m.t + ih + 3, 'text-anchor': 'end', class: 'dg-small' }, g);
+  y1.textContent = '0';
+
+  const xa = el('text', { x: m.l + iw / 2, y: H - 14, 'text-anchor': 'middle', class: 'dg-label' }, g);
+  xa.textContent = 'sampling rate f_s — more compute, more sensors, finer models →';
+  const ya = el('text', { x: 16, y: m.t + ih / 2, 'text-anchor': 'middle', class: 'dg-label',
+    transform: `rotate(-90 16 ${m.t + ih / 2})` }, g);
+  ya.textContent = 'divergence δ';
+
+  const n1 = el('text', { x: m.l + iw + 12, y: m.t + 36, class: 'dg-small', fill: muted }, g);
+  n1.textContent = 'Reality: infinite bandwidth,';
+  const n2 = el('text', { x: m.l + iw + 12, y: m.t + 50, class: 'dg-small', fill: muted }, g);
+  n2.textContent = 'so the required f_s is infinite.';
+  const n3 = el('text', { x: m.l + iw + 12, y: m.t + 70, class: 'dg-small', fill: muted }, g);
+  n3.textContent = 'Any finite substrate sits';
+  const n4 = el('text', { x: m.l + iw + 12, y: m.t + 84, class: 'dg-small', fill: muted }, g);
+  n4.textContent = 'somewhere on this curve.';
+}
+
+/* ============================================================
+   FIGURE 5 — nested substrate regression
+   ============================================================ */
+let orders = 3;
+
+function renderOrders() {
+  const host = document.getElementById('fig-orders');
+  const W = 860, H = 420;
+  const s = newSvg(host, W, H);
+  const ink = cssv('--fg-2'), muted = cssv('--muted'), accent = cssv('--series-1'),
+        rule = cssv('--rule-strong');
+  const cx = 330, cy = 210;
+  const names = ['First order', 'Second order', 'Third order', 'Fourth order', 'Fifth order'];
+  const sub = ['ontology, reality', 'twin', 'twin', 'twin', 'twin'];
+
+  for (let i = 0; i < orders; i++) {
+    const r = 180 - i * 46;
+    if (r < 18) break;
+    el('circle', { cx, cy, r, fill: 'none', stroke: i === 0 ? rule : rule,
+      'stroke-width': 1.2, 'stroke-dasharray': i === 0 ? '3 3' : 'none' }, s);
+    // bit-units inside the shell
+    const n = Math.max(4, 22 - i * 6);
+    for (let k = 0; k < n; k++) {
+      const a = (k / n) * Math.PI * 2 + i * 0.5;
+      const rr = r - 20 - (k % 3) * 9;
+      if (rr < 8) continue;
+      const x = cx + rr * Math.cos(a), y = cy + rr * Math.sin(a);
+      el('path', { d: `M ${x} ${y - 5} L ${x + 5} ${y + 4} L ${x - 5} ${y + 4} Z`,
+        fill: i === orders - 1 ? accent : ink, 'fill-opacity': i === orders - 1 ? 0.5 : 0.25 }, s);
+    }
+    const lx = cx + (i === 0 ? -r - 10 : 0), ly = i === 0 ? cy - r + 26 : cy - r + 14;
+    const t = el('text', {
+      x: i === 0 ? cx - r - 12 : cx,
+      y: i === 0 ? cy - 4 : cy - r + 15,
+      'text-anchor': i === 0 ? 'end' : 'middle', class: 'dg-label'
+    }, s);
+    t.textContent = names[i];
+    const t2 = el('text', {
+      x: i === 0 ? cx - r - 12 : cx,
+      y: i === 0 ? cy + 11 : cy - r + 28,
+      'text-anchor': i === 0 ? 'end' : 'middle', class: 'dg-small'
+    }, s);
+    t2.textContent = sub[i];
+  }
+
+  // the bits that will not fit
+  const bx = 660;
+  for (let k = 0; k < 4; k++) {
+    const x = bx + (k % 2) * 62, y = 150 + Math.floor(k / 2) * 66;
+    el('path', { d: `M ${x} ${y - 13} L ${x + 13} ${y + 10} L ${x - 13} ${y + 10} Z`,
+      fill: ink, 'fill-opacity': 0.55 }, s);
+  }
+  const b1 = el('text', { x: bx - 16, y: 262, class: 'dg-small' }, s);
+  b1.textContent = 'more bits than the target';
+  const b2 = el('text', { x: bx - 16, y: 276, class: 'dg-small' }, s);
+  b2.textContent = 'system itself contains';
+
+  const title = el('text', { x: cx, y: 24, 'text-anchor': 'middle', class: 'dg-title' }, s);
+  title.textContent = `Virtual realism — ${orders} order${orders > 1 ? 's' : ''} deep`;
+}
+
+document.getElementById('order-more').addEventListener('click', () => {
+  orders = Math.min(5, orders + 1); renderOrders();
+});
+document.getElementById('order-less').addEventListener('click', () => {
+  orders = Math.max(1, orders - 1); renderOrders();
+});
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function renderAll() {
+  renderGlossary();
+  renderClaims();
+  renderMatrix();
+  renderMapCtl();
+  renderMapping();
+  renderLandauer();
+  renderNyquist();
+  renderOrders();
+  if (typeof reportHeight === 'function') reportHeight();
+}
+renderAll();
+
+let rt;
+window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(renderAll, 180); });
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }],
+      throwOnError: false,
+    });
+  }
+});
+
+</script>
+</body>
+</html>

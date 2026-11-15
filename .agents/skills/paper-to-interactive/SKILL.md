@@ -90,6 +90,33 @@ why before continuing. This check is how you know the rendition is faithful.
 **If a number is not in the data and not printed in the paper, it does not go on the page.**
 Values eyeballed off a bar chart in a PDF are fabrication. Drop the series.
 
+### 2a. When the paper has no dataset
+
+Philosophy, theory and formal papers have no CSV to recompute from. The rule does not relax — it
+changes target. **Find the structure the author actually built, and make that the interactive
+object.** Do not invent charts to fill the space; a fabricated figure is worse than no figure.
+
+What usually qualifies as real structure:
+
+| In the paper | Becomes |
+| :--- | :--- |
+| A dependency table (which assumption each proof uses) | A click-to-trace matrix — the highest-value element, because it shows robustness no prose can |
+| Numbered axioms, premises, requirements | A ruled list with ids the figures cross-highlight |
+| A notation table | A glossary, with every symbol in the prose carrying a hover definition |
+| An argument from premises to a conclusion | An argument map, with the objection branch toggleable |
+| A hand-drawn diagram in the PDF | A redrawn SVG with its cases isolatable one at a time |
+| A stated limit or formula | A plot of **that expression**, labelled as evaluated, not measured |
+
+Two hard rules specific to this case:
+
+- **Label evaluated formulas as such.** A curve of the paper's own $L = k_B T \ln 2 / \Delta t$ is
+  legitimate; the caption must say it is the stated expression evaluated at a named constant, never
+  implying empirical data.
+- **Check your own captions against the structure you built.** When a matrix is interactive, every
+  claim about it is falsifiable in one line of script — so write the script and check. A caption
+  claiming "any single axiom leaves three proofs standing" was wrong by inspection; the true
+  minimum was one, and the corrected caption turned out to be the more interesting observation.
+
 ### 2b. Write in Artem's voice, not a house style
 
 The rendition carries the paper's prose, so it has to sound like him. Pull the voice from the
@@ -309,9 +336,24 @@ re-run later — in which case put it beside the raw data inside the gitignored 
 - **Captions whose light/dark wording contradicts the ramp.** "Darker means stronger" is false in
   one of the two themes; describe the ramp by its endpoints instead.
 
-## Worked example
+## Worked examples
 
-`public/ds102-phytochemical/index.html` + `content/posts/article15.mdx` — a 37-page docking
-notebook reduced to seven interactive sections from a 7,619-row dataset, with the extraction
-verified against the paper's reported row counts, means, and correlation values, and two
+**Data paper** — `public/ds102-phytochemical/index.html` + `content/posts/article15.mdx`. A
+37-page docking notebook reduced to seven interactive sections from a 7,619-row dataset, with the
+extraction verified against the paper's reported row counts, means and correlation values, and two
 model-comparison series dropped outright because their numbers existed only as bar heights in a PDF.
+
+**Formal paper** — `public/dt-ontology/index.html` + `content/posts/article16.mdx`. No dataset; the
+interactive object is the paper's own Table 1, an axiom × proof dependency matrix. Click a proof to
+see what it assumes, or an axiom to see which proofs fall without it. Plus a notation glossary wired
+to the prose, a redrawn mapping diagram with its four pathologies isolatable, and two curves that
+evaluate the paper's stated limits.
+
+**Argumentative paper** — `public/machine-assisted-proofs/index.html` +
+`content/posts/article17.mdx`. Six pages with no formal apparatus at all. The structure is the
+argument itself: a premise-to-conclusion map with a toggleable objection branch, a staged Chinese
+Room diagram, and a two-readings panel that names what each interpretation costs its holder.
+
+All three share one shell: `shell_head.html` with `__TITLE__`, `__D3__` and `__EXTRA_CSS__`
+placeholders, assembled by a build script that substitutes per-paper body, CSS and app code. Keep
+the shell in the scratchpad or beside the raw data — not in the repo.

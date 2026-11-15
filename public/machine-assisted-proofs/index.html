@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine-Assisted Proofs & Syntactic Manipulation</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --fg: #16161a;
+  --fg-2: #52525b;
+  --muted: #8b8b93;
+  --rule: rgba(22, 22, 26, 0.11);
+  --rule-strong: rgba(22, 22, 26, 0.22);
+  --wash: rgba(22, 22, 26, 0.035);
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --neutral-mark: #a1a1aa;
+  --pos: #2a78d6;
+  --neg: #d03b3b;
+  --seq-0: #e7f0fc; --seq-1: #cde2fb; --seq-2: #9ec5f4; --seq-3: #6da7ec;
+  --seq-4: #3987e5; --seq-5: #256abf; --seq-6: #184f95; --seq-7: #0d366b;
+  --grid: rgba(22, 22, 26, 0.07);
+  --axis: rgba(22, 22, 26, 0.26);
+  --selection: rgba(42, 120, 214, 0.16);
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --measure: 68ch;
+  --gutter: 24px;
+}
+html.dark, :root.dark {
+  color-scheme: dark;
+  --bg: #09090b;
+  --surface: #09090b;
+  --fg: #ededea;
+  --fg-2: #a3a3ab;
+  --muted: #76767e;
+  --rule: rgba(255, 255, 255, 0.12);
+  --rule-strong: rgba(255, 255, 255, 0.24);
+  --wash: rgba(255, 255, 255, 0.04);
+  --neutral-mark: #52525b;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --seq-0: #11203a; --seq-1: #0d366b; --seq-2: #104281; --seq-3: #184f95;
+  --seq-4: #256abf; --seq-5: #3987e5; --seq-6: #6da7ec; --seq-7: #9ec5f4;
+  --grid: rgba(255, 255, 255, 0.07);
+  --axis: rgba(255, 255, 255, 0.26);
+  --selection: rgba(57, 135, 229, 0.26);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+
+::selection { background: var(--selection); color: var(--fg); }
+:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; border-radius: 2px; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--rule-strong); border-radius: 8px; border: 3px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.65;
+  caret-color: var(--series-1);
+  transition: background-color .2s ease, color .2s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; animation: none !important; }
+}
+
+/* ---------- measure & bleed ----------
+   Text sits in a reading column. Figures break out wider, the way a journal
+   sets a plate across the gutter. */
+/* Text and figures share a left edge. Prose stops at the reading measure;
+   figures run on to the full width of the page, the way a journal sets a
+   plate wider than its column. */
+.page { max-width: 936px; margin: 0 auto; padding: 0 var(--gutter) 128px; }
+.col { max-width: var(--measure); margin-left: 0; margin-right: 0; }
+.bleed { max-width: 100%; margin-left: 0; margin-right: 0; }
+@media (min-width: 1080px) { .page { max-width: 1000px; } }
+
+/* ---------- top bar ---------- */
+.bar {
+  position: sticky; top: 0; z-index: 60;
+  display: flex; align-items: center; gap: 4px;
+  padding: 12px 0; margin-bottom: 56px;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--rule);
+}
+.bar nav { display: flex; gap: 2px; flex: 1 1 auto; overflow-x: auto; scrollbar-width: none; }
+.bar nav::-webkit-scrollbar { display: none; }
+.bar nav a {
+  font-size: 13px; color: var(--muted); text-decoration: none;
+  padding: 4px 9px; border-radius: 6px; white-space: nowrap;
+  transition: color .14s var(--ease-out), background-color .14s var(--ease-out);
+}
+.bar nav a:hover { color: var(--fg); background: var(--wash); }
+.bar nav a .n {
+  font-family: var(--font-mono); font-size: 11px; color: var(--muted);
+  margin-right: 5px; font-variant-numeric: tabular-nums;
+}
+
+button {
+  font-family: inherit; font-size: 13px; color: var(--fg-2);
+  background: transparent; border: 1px solid var(--rule);
+  border-radius: 8px; padding: 5px 11px; cursor: pointer;
+  white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;
+  transition: color .14s var(--ease-out), background-color .14s var(--ease-out),
+              border-color .14s var(--ease-out), transform .12s var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  button:hover { color: var(--fg); background: var(--wash); }
+}
+button:active { transform: scale(0.97); }
+button[aria-pressed="true"], button.on {
+  color: var(--fg); background: var(--wash); border-color: var(--rule-strong);
+}
+
+/* ---------- title block ---------- */
+.title-block { padding-bottom: 40px; border-bottom: 1px solid var(--rule); }
+h1 {
+  font-size: clamp(30px, 4.6vw, 44px); line-height: 1.12;
+  font-weight: 600; letter-spacing: -0.021em; text-wrap: balance;
+  margin-bottom: 20px;
+}
+.authors { font-size: 16px; color: var(--fg); margin-bottom: 4px; }
+.affil { font-size: 14.5px; color: var(--muted); }
+.abstract { margin-top: 36px; }
+.abstract p { font-size: 17px; }
+.abstract p:first-of-type { }
+
+/* ---------- prose ---------- */
+section { margin-top: 72px; scroll-margin-top: 76px; }
+h2 {
+  font-size: 23px; font-weight: 600; letter-spacing: -0.014em;
+  margin-bottom: 20px; text-wrap: balance;
+}
+h2 .s {
+  font-family: var(--font-mono); font-size: 14px; font-weight: 400;
+  color: var(--muted); margin-right: 12px; font-variant-numeric: tabular-nums;
+}
+h3 { font-size: 16.5px; font-weight: 600; margin: 40px 0 12px; letter-spacing: -0.008em; }
+p { color: var(--fg-2); margin-bottom: 18px; }
+p:last-child { margin-bottom: 0; }
+strong { color: var(--fg); font-weight: 600; }
+em { font-style: italic; }
+a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--rule-strong);
+    text-underline-offset: 3px; text-decoration-thickness: 1px;
+    transition: text-decoration-color .14s var(--ease-out); }
+a:hover { text-decoration-color: var(--series-1); }
+ul, ol { color: var(--fg-2); margin: 0 0 18px 0; padding-left: 22px; }
+li { margin-bottom: 9px; }
+li::marker { color: var(--muted); }
+code {
+  font-family: var(--font-mono); font-size: .86em;
+  background: var(--wash); padding: 1.5px 5px; border-radius: 4px; color: var(--fg);
+}
+.katex { font-size: 1.04em; }
+.katex-display { margin: 26px 0; overflow-x: auto; overflow-y: hidden; }
+
+/* ---------- dataset summary (ruled, not tiles) ---------- */
+.facts { margin-top: 32px; border-top: 1px solid var(--rule); }
+.facts .row {
+  display: flex; align-items: baseline; gap: 16px;
+  padding: 9px 0; border-bottom: 1px solid var(--rule);
+}
+.facts .k { flex: 1 1 auto; font-size: 14.5px; color: var(--fg-2); }
+.facts .v {
+  font-family: var(--font-mono); font-size: 14.5px; color: var(--fg);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.facts .u { color: var(--muted); }
+
+/* ---------- figures as plates, not cards ---------- */
+figure { margin: 48px 0; }
+.fig-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap;
+  padding-bottom: 10px; border-bottom: 1px solid var(--rule-strong);
+}
+.fig-id {
+  font-family: var(--font-mono); font-size: 12px; color: var(--muted);
+  display: block; margin-bottom: 5px;
+}
+.fig-title { font-size: 15px; font-weight: 600; color: var(--fg); letter-spacing: -0.008em; }
+.fig-sub { font-size: 13.5px; color: var(--muted); margin-top: 3px; }
+.ctl { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.ctl .lab { font-size: 12.5px; color: var(--muted); margin-right: 2px; }
+.ctl button { font-size: 12.5px; padding: 4px 9px; border-radius: 7px; }
+.plot { padding: 20px 0 4px; position: relative; }
+figcaption {
+  font-size: 13.5px; color: var(--muted); max-width: 78ch;
+  padding-top: 12px; border-top: 1px solid var(--rule);
+}
+figcaption b { color: var(--fg-2); font-weight: 600; }
+
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+.grid line { stroke: var(--grid); stroke-width: 1; shape-rendering: crispEdges; }
+.axis path, .axis line { stroke: var(--axis); shape-rendering: crispEdges; }
+.axis text { fill: var(--muted); font-family: var(--font-mono); font-size: 10px; font-variant-numeric: tabular-nums; }
+.axis-title { fill: var(--fg-2); font-family: var(--font-sans); font-size: 11.5px; font-weight: 500; }
+.ref-line { stroke: var(--axis); stroke-width: 1; stroke-dasharray: 3 3; }
+.ref-text { fill: var(--muted); font-family: var(--font-mono); font-size: 10px; }
+.dlabel {
+  fill: var(--fg); font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  paint-order: stroke; stroke: var(--bg); stroke-width: 3px; stroke-linejoin: round;
+}
+
+.legend { display: flex; gap: 18px; flex-wrap: wrap; padding: 4px 0 14px; }
+.legend .item { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--fg-2); }
+.swatch { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+.swatch.line { height: 2px; border-radius: 1px; width: 16px; }
+
+/* ---------- tooltip ---------- */
+.tip {
+  position: absolute; pointer-events: none; opacity: 0; z-index: 40;
+  background: var(--bg); border: 1px solid var(--rule-strong); border-radius: 9px;
+  padding: 10px 12px; font-size: 12.5px; color: var(--fg-2);
+  box-shadow: 0 4px 16px rgba(0,0,0,.10), 0 1px 3px rgba(0,0,0,.06);
+  min-width: 158px; max-width: 272px;
+  transition: opacity .12s var(--ease-out);
+}
+.tip .t-title { font-weight: 600; color: var(--fg); font-size: 13px; margin-bottom: 6px; }
+.tip .t-row { display: flex; justify-content: space-between; gap: 16px; font-family: var(--font-mono); font-size: 11px; }
+.tip .t-row span:last-child { color: var(--fg); font-variant-numeric: tabular-nums; }
+.tip .t-note { margin-top: 7px; font-size: 11.5px; color: var(--muted); font-style: italic; }
+
+/* ---------- tables ---------- */
+.tablewrap { display: none; padding-top: 16px; max-height: 360px; overflow: auto; }
+.tablewrap.on { display: block; }
+table.data { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.data th, table.data td { text-align: left; padding: 7px 10px 7px 0; border-bottom: 1px solid var(--rule); }
+table.data th {
+  position: sticky; top: 0; background: var(--bg);
+  font-size: 12.5px; color: var(--muted); font-weight: 500;
+  border-bottom: 1px solid var(--rule-strong);
+}
+table.data td { color: var(--fg-2); font-variant-numeric: tabular-nums; }
+table.data td.num { text-align: right; font-family: var(--font-mono); padding-right: 14px; }
+table.data th.num { text-align: right; padding-right: 14px; }
+table.data tr:hover td { color: var(--fg); }
+
+input.search {
+  font-family: inherit; font-size: 13px; padding: 5px 10px;
+  border: 1px solid var(--rule); border-radius: 8px;
+  background: transparent; color: var(--fg); width: 168px;
+  transition: border-color .14s var(--ease-out);
+}
+input.search::placeholder { color: var(--muted); }
+input.search:focus { outline: none; border-color: var(--series-1); }
+
+/* ---------- aside note ---------- */
+.aside {
+  margin: 32px 0; padding: 2px 0 2px 22px;
+  border-left: 1px solid var(--rule-strong);
+}
+.aside p { font-size: 15px; margin-bottom: 10px; }
+.aside p:last-child { margin-bottom: 0; }
+
+.pin {
+  display: none; align-items: center; gap: 7px;
+  font-size: 12.5px; color: var(--fg);
+  background: var(--wash); border: 1px solid var(--rule);
+  border-radius: 7px; padding: 4px 9px; cursor: pointer;
+}
+.pin.on { display: inline-flex; }
+.pin .x { color: var(--muted); }
+
+footer {
+  margin-top: 88px; padding-top: 28px; border-top: 1px solid var(--rule);
+  font-size: 13.5px; color: var(--muted);
+}
+footer p { font-size: 13.5px; color: var(--muted); margin-bottom: 12px; }
+.refs { list-style: none; padding-left: 0; }
+.refs li { font-size: 13.5px; color: var(--muted); margin-bottom: 11px; padding-left: 24px; text-indent: -24px; }
+
+@media (max-width: 760px) {
+  :root { --gutter: 18px; }
+  body { font-size: 15.5px; }
+  .page { padding-bottom: 80px; }
+  section { margin-top: 56px; }
+  .plot { padding: 14px 0 4px; }
+  .bar nav a .n { display: none; }
+}
+
+/* ---------- argument map ---------- */
+.argmap { padding: 22px 0 6px; }
+.argmap svg { max-width: 100%; }
+.node-box {
+  fill: var(--bg); stroke: var(--rule-strong); stroke-width: 1.2;
+  transition: stroke .16s var(--ease-out), fill .16s var(--ease-out);
+  cursor: pointer;
+}
+.node-box.on { stroke: var(--series-1); stroke-width: 1.8; }
+.node-box.obj { stroke-dasharray: 4 3; }
+.node-t { font-family: var(--font-sans); font-size: 12.5px; fill: var(--fg); pointer-events: none; }
+.node-k {
+  font-family: var(--font-mono); font-size: 10px; fill: var(--muted);
+  pointer-events: none; text-transform: none;
+}
+.edge { stroke: var(--rule-strong); stroke-width: 1.2; fill: none; }
+.edge.on { stroke: var(--series-1); stroke-width: 1.8; }
+.edge.obj { stroke-dasharray: 4 3; }
+
+.arg-readout {
+  margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--rule);
+  font-size: 14.5px; color: var(--fg-2); min-height: 86px;
+}
+.arg-readout .h { color: var(--fg); font-weight: 600; margin-bottom: 6px; }
+.arg-readout .l { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+
+/* ---------- two-reading comparison ---------- */
+.readings { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: 26px 0 8px; }
+@media (max-width: 720px) { .readings { grid-template-columns: 1fr; } }
+.reading {
+  padding: 18px 22px 20px 0; border-top: 1px solid var(--rule-strong);
+  cursor: pointer; transition: opacity .16s var(--ease-out);
+}
+.reading + .reading { padding-left: 24px; border-left: 1px solid var(--rule); }
+@media (max-width: 720px) { .reading + .reading { padding-left: 0; border-left: none; } }
+.reading .k { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); margin-bottom: 7px; }
+.reading .t { font-size: 16px; font-weight: 600; color: var(--fg); margin-bottom: 9px; letter-spacing: -0.008em; }
+.reading .d { font-size: 14.5px; color: var(--fg-2); }
+.reading.dim { opacity: .4; }
+.reading.sel { border-top-color: var(--series-1); }
+.reading.sel .k { color: var(--series-1); }
+
+/* ---------- chinese room ---------- */
+.room { padding: 22px 0 6px; }
+.room svg { max-width: 100%; }
+.rm-l { font-family: var(--font-sans); font-size: 12px; fill: var(--fg-2); }
+.rm-s { font-family: var(--font-mono); font-size: 10.5px; fill: var(--muted); }
+.rm-t { font-family: var(--font-sans); font-size: 12.5px; font-weight: 600; fill: var(--fg); }
+
+/* ---------- PSSH triple ---------- */
+.triple { border-top: 1px solid var(--rule); margin: 22px 0; }
+.triple .row {
+  display: grid; grid-template-columns: 34px 1fr; gap: 14px;
+  padding: 13px 0; border-bottom: 1px solid var(--rule);
+}
+.triple .n { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+.triple .b { font-size: 15.5px; color: var(--fg-2); }
+
+/* ---------- problem statement ---------- */
+.stmt {
+  font-family: var(--font-mono); font-size: 13.5px; line-height: 1.75;
+  color: var(--fg); background: var(--wash);
+  padding: 18px 20px; border-radius: 10px; margin: 22px 0;
+  overflow-x: auto;
+}
+
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="bar">
+  <nav>
+    <a href="#framework"><span class="n">1</span>Framework</a>
+    <a href="#problem"><span class="n">2</span>Problem #728</a>
+    <a href="#argument"><span class="n">3</span>The argument</a>
+    <a href="#intentionality"><span class="n">4</span>Intentionality</a>
+  </nav>
+  <button id="btn-theme" aria-label="Toggle theme">
+    <svg id="theme-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+  </button>
+</div>
+
+<div class="col">
+  <div class="title-block">
+    <h1>Machine-assisted proofs &amp; syntactic manipulation</h1>
+    <div class="authors">Artemio S. Arcega III</div>
+    <div class="affil">
+      Department of Philosophy, College of Social Sciences and Philosophy,
+      University of the Philippines – Diliman
+    </div>
+    <div class="affil" style="margin-top:8px">
+      Submitted for PHILO 197, Philosophic Questions · May 2026
+    </div>
+  </div>
+
+  <div class="abstract">
+    <p>
+      The Erdős problems are a set of open combinatorial and number theoretical conjectures that
+      require proofs demanding extensive mathematical ability, expertise, and most especially a
+      creative intuition. Recently it was remarkably shown that one of these problems — #728 — was
+      solved machine-autonomously with a combination of two deep learning models, Barretto and
+      GPT-5.2, without reproduction of methods from any known, existing literature.
+    </p>
+    <p>
+      This is an extreme case of what is called a machine-assisted proof, in which machines
+      autonomously solve such problems. It became an interesting prospect that with these novel
+      instances, I am able to argue against the Chinese Room argument, in which such outputs would
+      be merely 'clever syntactic manipulation'.
+    </p>
+    <p>
+      It may be argued that it is made even more likely due to the nature of proof-solving,
+      literature, and the tools used to verify it; pertaining to the format of literature in LaTeX,
+      proof assistance languages like Lean. So in this case it is logically valid to say that it is
+      all syntax, no semantics, and hence a set of meaningless predicted symbols. However, as its
+      training set is closed — meaning it contains only syntax involved in propositional logic,
+      symbolic proofs, and mathematical deduction — I show why it is unlikely the case that such
+      lone syntactic manipulation is the correct interpretation of the origin of such proofs, and
+      that the novel autonomous proof showcases the case that we are seeing the rise of Strong AI.
+    </p>
+    <p style="font-size:14.5px;color:var(--muted)">
+      <strong style="color:var(--fg-2)">Keywords</strong> — philosophy of AI, Chinese Room argument,
+      deep learning, philosophy of mind and language
+    </p>
+  </div>
+</div>
+
+<section id="framework">
+  <div class="col">
+    <h2><span class="s">1</span>Introduction &amp; framework</h2>
+
+    <h3>1.1 — What is AI?</h3>
+    <p>
+      When I pertain to artificial intelligence, I am pertaining not exclusively to a large language
+      model, but extending to its other siblings — extensively, but not exclusively, the likes of
+      deep learning algorithms like AlphaFold, GNoME, NVIDIA Modulus. A majority of the conceptual
+      formations in this paper come from Yingjin's lectures compiled in <em>Fifteen Lectures on
+      Artificial Intelligence Philosophy</em> (2026).
+    </p>
+    <p>
+      Let us assume our philosophical premise of AI to be the Physical Symbol System Hypothesis,
+      which Yingjin defines as composing of three elements:
+    </p>
+    <div class="triple" id="pssh"></div>
+    <p>
+      Although it is not the case that we use the LLM as the strict definition for what AI is, it is
+      important to realize that most of the processes involved in all sorts of such remain, and are
+      by nature, similar in its use of symbols — and hence, syntax.
+    </p>
+
+    <h3>1.2 — Searle's concept of strong and weak AI</h3>
+    <p>
+      In <em>Minds, Brains and Programs</em> (1984), Searle creates a clear distinction between the
+      concepts Strong and Weak AI. Strong AI is denoted as a computer properly programmed, a mind.
+      Weak AI is, at most, a tool used to investigate an abstraction of activities of the mind.
+    </p>
+    <p>
+      The Chinese Room illustrates the following: a native speaker of English is locked in a room,
+      communicating with people outside only by passing notes under the door. The paper notes can
+      only be written in Chinese; the test subject is unable to semantically nor syntactically
+      comprehend the Chinese language, and the examiner does not know whether the test subject
+      understands it. Suppose also that the test subject is able to carry out specific instructions
+      from a manual written in English, but does not know the semantics of the Chinese symbols he
+      slides.
+    </p>
+  </div>
+
+  <figure class="bleed">
+    <div class="fig-head">
+      <div>
+        <span class="fig-id">Figure 1</span>
+        <div class="fig-title">The Chinese Room, and where a machine-assisted proof sits in it</div>
+        <div class="fig-sub">Select a stage to follow what the thought experiment does and does not establish</div>
+      </div>
+      <div class="ctl" id="room-ctl"></div>
+    </div>
+    <div class="room" id="fig-room"></div>
+    <figcaption id="room-caption"></figcaption>
+  </figure>
+
+  <div class="col">
+    <p>
+      In the case that he passes the language test — that is to say, the examiner cannot tell the
+      difference between the syntactic and the semantic understanding of the test subject — then
+      likewise with the Turing test and the modern LLM, in hindsight it seems to be the case that it
+      is just mere syntactic manipulation at hand here.
+    </p>
+    <p>
+      That is to say, Yingjin criticizes this notion as modern developments have already far
+      surpassed such simple games of semantics. As he puts it, "if we suppose that such a machine is
+      already created, can we genuinely say that it has a mind?". I, for one, think this is a
+      reasonable place to start disassembling this initial notion of mere syntactic manipulation.
+    </p>
+
+    <h3>1.3 — Tao's concept of machine-assisted proofs</h3>
+    <p>
+      Tao's paper for the American Mathematical Society, <em>Machine Assisted Proof</em> (2025),
+      discusses the contemporary development, the history, and the general definition of what a
+      machine-assisted proof is. In its essence, it is a combination of machine learning algorithms
+      and proof assistants. Recent history, as Tao discusses, shows that such assistants are not
+      ineffable, but remain widely used, and even a standard for the state of the field of
+      mathematics and logic.
+    </p>
+    <p>
+      The basic operation of using proof assistants and AI for developing, discovering and creating
+      proofs is, in its simplest, the use of the syntax of mathematical language — a higher-order
+      abstraction of the binary logic in the computer, as a programming language of sorts. Basic
+      rules of the axiomatic system are defined and hence are able to verify the validity of such
+      proofs for describing a specific theorem or conjecture.
+    </p>
+    <p>
+      Suppose then that we utilize a proof assistant for proving any problem from a given ballot of
+      open mathematical problems. We are given its full description, its axiomatic system. The
+      reasonable case is for a mathematician, or at least a well-adept person fluent in mathematical
+      language, to use proof assistants in tandem with their rationality and intuition. However,
+      there exists a case emerging as a consequence of modern AI prospects, such as the transformer
+      and the integration of big data, that there emerge <em>autonomous proofs</em>.
+    </p>
+  </div>
+</section>
+
+<section id="problem">
+  <div class="col">
+    <h2><span class="s">2</span>Problem #728</h2>
+    <p>
+      Prior to our discussion, although not essential to its essence, the <em>Erdős problems</em> are
+      a set of open problems and conjectures developed by mathematician Paul Erdős et al. Such
+      problems span the areas of number theory and combinatorics.
+    </p>
+    <div class="stmt">
+For any ε &gt; 0 and sufficiently large n0, there exist infinitely many
+integers n ≥ n0 such that φ(n) &lt; nε and φ(n+1) &lt; (n+1)ε.
+    </div>
+    <p>
+      Originally posed by Erdős, Graham, Ruzsa and Straus, the problem builds upon Erdős's prior
+      proof that φ(n) &lt; nε holds for ε &lt; 1. While the initial formulation allowed for trivial
+      solutions, such as those involving divisors, analysis suggests the condition was intended to
+      imply ε → 0. Recent progress by Barretto and ChatGPT-5.2 confirms this interpretation,
+      successfully proving that for any ε, there are infinitely many such integers n satisfying the
+      constraints.
+    </p>
+    <p>So then, what do we make of such?</p>
+  </div>
+</section>
+
+<section id="argument">
+  <div class="col">
+    <h2><span class="s">3</span>Against claims of syntactic manipulation</h2>
+    <p>
+      As simple as such a proof may seem, the reason why this case became a point of interest is
+      because it was solved purely autonomously by a proof assistant and an OpenAI model. Consider
+      how such things work: when we talk about the state of artificial intelligence, we consider only
+      syntactic manipulation, and the stochastic parrot concept. That is, the only thing such models
+      output are what is fed, processed, controlled, condensed. In other words, particularly through
+      the lens of Searle, we only consider that what is illustrated is that it is a Weak AI.
+    </p>
+    <p>
+      The problem emerges when we consider its origin. We first reasonably infer that creating proofs
+      would require a mathematician — in other words, an actual, general intelligence enacting upon a
+      tool, which we claim to be Weak AI. However, since it is the case that such were solved
+      autonomously, by a person with no postdoctorate nor mathematical background at that, not even
+      as extremely defined as autodidacts like Ramanujan, the problem was solved through extensive
+      "reasoning", or at least what is defined by the consensus as "reasoning" for most deep learning
+      models as of late by companies like Google, OpenAI and Anthropic.
+    </p>
+    <p>
+      So what exactly is the nature and the origin of the proof? What was discovered, primarily, was
+      a link between two fields of mathematics that was not considered — namely, the connection
+      between discrete geometry and algebraic number theory. That is, although some patterns have
+      been observed between the use of inter-area concept development in mathematics, such exact
+      ideas to solve such a problem had not been done nor suggested yet, as a review of the existing
+      literature on either area would say. And so, it is not merely a showcase of general intelligence
+      that we see, as is described in Weak AI, but rather there must have also existed a certain
+      semantic understanding of causal links between the two areas, and the nature of the problem
+      itself that must have posited such a connection.
+    </p>
+  </div>
+
+  <figure class="bleed">
+    <div class="fig-head">
+      <div>
+        <span class="fig-id">Figure 2</span>
+        <div class="fig-title">The argument from the autonomous proof to Strong AI</div>
+        <div class="fig-sub">Select any step to see what it rests on and what it is doing</div>
+      </div>
+      <div class="ctl">
+        <button id="arg-reset">Clear selection</button>
+        <button id="arg-obj">Show the objection</button>
+      </div>
+    </div>
+    <div class="argmap" id="fig-argmap"></div>
+    <div class="arg-readout" id="arg-readout"></div>
+    <figcaption>
+      <b>Reading it</b> — the load-bearing step is <span class="mono">P4</span>, the claim that the
+      link between discrete geometry and algebraic number theory was genuinely novel rather than
+      recombined from the literature. Everything downstream of it depends on that being true, which
+      is why the objection in section 3.1 attacks exactly there.
+    </figcaption>
+  </figure>
+
+  <div class="col">
+    <p>
+      And so, such a capacity for general reasoning, and the linking of such areas, are not exclusive
+      to biological intelligence, so it seems. Suppose the case that we are to develop a drug, but a
+      solution is hidden within a myriad, a labyrinth of a library. We are unable to process each of
+      these books to infer a reasonable link, and we are limited in the capacity of memory for such.
+      I argue then that the link for such, and the discovery of such a link, is the necessary
+      condition of the intelligent being — and hence such models do not only hold a capacity for
+      syntactic links, but for semantic links as well, as the link itself can very well be
+      established as a new unit of knowledge.
+    </p>
+    <p>
+      Consider the link between light, mass and energy, by Einstein. Such an idea is, arguably, not
+      only a mere new concept or idea emerging from nothing, but an idea emerging from the existing
+      that Einstein discovered a link to. That is, if such is the basis for extraordinary
+      intelligence, then what is to say that a model discovering a link between fields and concepts
+      is not?
+    </p>
+
+    <h3>3.1 — The two readings</h3>
+    <p>
+      Everything turns on which of two interpretations of the same event we accept. Both are
+      consistent with the output; they differ on what produced it.
+    </p>
+    <div class="readings" id="readings"></div>
+    <p id="readings-note" style="margin-top:20px"></p>
+  </div>
+</section>
+
+<section id="intentionality">
+  <div class="col">
+    <h2><span class="s">4</span>On intentionality</h2>
+    <p>
+      Intentionality is, as it is commonly defined, the power of the mind to <em>be about</em>, or to
+      stand for things, for states of affairs. It is not within the scope of mathematical language
+      that we may define intentionality, and hence it is requiring of qualitative description. It is
+      such a concept that we are concerned of when trying to evaluate the characteristic of an AI to
+      be strong or to be weak. The challenge of intentionality stems from the disconnect of the model
+      to meaningfully interpret natural language in the same way that we do when pertaining to both
+      <em>a</em> thing, and <em>the</em> thing.
+    </p>
+    <div class="aside">
+      <p>
+        Suppose that we are pertaining to the Pokémon <em>Reshiram</em>. It is either the case that
+        we are pertaining to my Reshiram, or some other person's Reshiram, or we are pertaining to
+        Reshiram, in intentionality, as <em>the</em> Reshiram of the Pokémon canon — the concept of
+        Reshiram as dictated by Nintendo.
+      </p>
+      <p>
+        When we create such an input to a model, we are unable to know whether the model truly
+        understands which Reshiram we are pertaining to. That is to say, it is not a limitation of
+        models alone. A human could also suffer the same problem, supposing that they are lacking of
+        the necessary context, or unable to read the context, or are unknowing of the existence of
+        what we are pertaining to at all.
+      </p>
+    </div>
+    <p>
+      Diverging from the necessary groundwork of this paper, we now introduce the use of AI in
+      developing mathematical proofs. It is either the case that such use is merely syntactic
+      manipulation of mathematical language, or that such use indicates that AI is understanding of
+      the semantics, the nature, and the ideas of mathematics not merely as a language, but in either
+      the Platonic or the descriptive sense.
+    </p>
+    <p>
+      Interestingly enough, it does not matter whether the interpretation of mathematical language
+      and mathematical concepts is Platonic or a description of reality alone, as the mere process of
+      understanding the intentionality behind mathematical knowledge is already an indication of
+      Strong AI — regardless of whether such a definition is preferable or not. Hence, even if we
+      consider language as simply and essentially a description of the reality instead of pertaining
+      to actual states of affairs in reality, the general case of general intelligence is unaffected.
+    </p>
+    <p>
+      As we discussed earlier, we conclude that it is unimportant whether the mathematical language
+      is descriptive or actual floating points, ideas in a state space in another dimension as Plato
+      would presume. However, when we consider intentionality, we are unsure of whether the reasoning
+      or the thinking [as operationally used in artificial intelligence research] is pertaining to
+      either. I, for one, think that such consideration is important as to know whether the AI
+      <em>knows</em> what it is describing. Although a link is established, and new knowledge, and
+      therefore intelligence is showcased, it is not the case that we are thinking of the same
+      mathematical objects or ideas as the model. And hence, if we [and the model] are not thinking
+      of the same arbitrary or non-arbitrary objects, then what are we or the model thinking of?
+    </p>
+    <p>
+      On the other hand, and to play devil's advocate, this could very well simply be an anomalous
+      case in which the patterns observed from a paper or a set of papers, as with the rational
+      inference would be, is observed and used by the model to come up with a coincidentally correct,
+      and valid proof. Hence, it is only a coincidence and consequence of parroting that came to such
+      a conclusion, and that the AI could very well not possess intentionality, and not possess the
+      intelligence we consider. This is, in part, due to the nature of modern AI technologies pushing
+      not only for single-tokenization practice, but with more extensive developments in progressing
+      the technologies for block tokenizations, embeddings and so on.
+    </p>
+    <p>
+      However, if such were the case, then it could very likely be that our thinking may not be that
+      different from models after all.
+    </p>
+  </div>
+</section>
+
+<div class="col">
+  <footer>
+    <p>
+      Submitted for PHILO 197, Philosophic Questions, Department of Philosophy, UP Diliman, May 2026.
+      Figures 1 and 2 are structural readings of the paper's own argument, not additions to it.
+    </p>
+    <h3 style="margin-top:28px">References</h3>
+    <ul class="refs">
+      <li>Achim, T., Best, A., Bietti, A., Der, K., Fédérico, M., Gukov, S., Halpern-Leistner, D., … Wu, L. (2025). Aristotle: IMO-level automated theorem proving. <a href="https://arxiv.org/abs/2510.01346">arXiv:2510.01346</a></li>
+      <li>Burge, T. (1992). Philosophy of language and mind: 1950–1990. <em>The Philosophical Review, 101</em>(1), 3. <a href="https://doi.org/10.2307/2185043">doi:10.2307/2185043</a></li>
+      <li>Cole, D. (2026). The Chinese Room argument. In E. N. Zalta &amp; U. Nodelman (Eds.), <em>The Stanford Encyclopedia of Philosophy</em> (Spring 2026). <a href="https://plato.stanford.edu/archives/spr2026/entries/chinese-room/">plato.stanford.edu</a></li>
+      <li>Crane, T. (2024). On the explanation of intentionality. <em>Australasian Philosophical Review, 8</em>(1), 5–19. <a href="https://doi.org/10.1080/24740500.2024.2485164">doi:10.1080/24740500.2024.2485164</a></li>
+      <li>Georgiev, B., Gómez-Serrano, J., Tao, T., &amp; Wagner, A. Z. (2025). Mathematical exploration and discovery at scale. <a href="https://arxiv.org/abs/2511.02864">arXiv:2511.02864</a></li>
+      <li>Grindrod, J. (2024). Large language models and linguistic intentionality. <em>Synthese, 204</em>(2). <a href="https://doi.org/10.1007/s11229-024-04723-8">doi:10.1007/s11229-024-04723-8</a></li>
+      <li>Müller, V. C. (2025). Philosophy of AI: a structured overview. In N. A. Smuha (Ed.), <em>Cambridge Handbook on the Law, Ethics and Policy of Artificial Intelligence</em> (pp. 40–58). Cambridge University Press.</li>
+      <li>Searle, J. R. (1980). Minds, brains, and programs. <em>Behavioral and Brain Sciences, 3</em>(3), 417–424. <a href="https://doi.org/10.1017/S0140525X00005756">doi:10.1017/S0140525X00005756</a></li>
+      <li>Sothanaphan, N. (2026). Resolution of Erdős Problem #728: a writeup of Aristotle's Lean proof. <a href="https://arxiv.org/abs/2601.07421">arXiv:2601.07421</a></li>
+      <li>Tao, T. (2025). Machine-assisted proof. <em>Notices of the American Mathematical Society, 72</em>(1), 6–13.</li>
+      <li>Yingjin, X. (2026). <em>Fifteen Lectures on Artificial Intelligence Philosophy</em>. University of Toronto Press.</li>
+    </ul>
+  </footer>
+</div>
+
+</div>
+
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   THEME — synced with artemiui.github.io through shared
+   localStorage (same origin) and postMessage from the host page.
+   ============================================================ */
+function updateThemeIcon() {
+  const dark = document.documentElement.classList.contains('dark');
+  const i = document.getElementById('theme-icon');
+  if (i) i.innerHTML = dark
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+    : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+}
+function initTheme() {
+  try {
+    const saved = localStorage.getItem('theme');
+    const prefers = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.classList.toggle('dark', saved === 'dark' || (!saved && prefers));
+  } catch (e) {}
+  updateThemeIcon();
+}
+initTheme();
+
+document.getElementById('btn-theme').addEventListener('click', () => {
+  const dark = document.documentElement.classList.toggle('dark');
+  try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (e) {}
+  updateThemeIcon();
+  renderAll();
+  // tell the host so its own chrome follows
+  try { parent.postMessage({ type: 'rendition-theme', theme: dark ? 'dark' : 'light' }, '*'); } catch (e) {}
+});
+
+window.addEventListener('storage', e => { if (e.key === 'theme') { initTheme(); renderAll(); } });
+window.addEventListener('message', e => {
+  if (e.data && e.data.theme) {
+    document.documentElement.classList.toggle('dark', e.data.theme === 'dark');
+    updateThemeIcon();
+    renderAll();
+  }
+});
+
+/* ============================================================
+   HEIGHT — report document height so the host can size the
+   frame and the page scrolls as one document.
+   ============================================================ */
+let lastH = 0;
+function reportHeight() {
+  const h = Math.ceil(document.documentElement.scrollHeight);
+  if (Math.abs(h - lastH) < 2) return;
+  lastH = h;
+  try { parent.postMessage({ type: 'rendition-height', height: h }, '*'); } catch (e) {}
+}
+if (window.ResizeObserver) {
+  new ResizeObserver(reportHeight).observe(document.documentElement);
+}
+window.addEventListener('load', reportHeight);
+setTimeout(reportHeight, 300);
+setTimeout(reportHeight, 1200);
+
+
+</script>
+<script>
+/* ============================================================
+   DATA — the paper's own structure. Every node text is the
+   paper's claim; nothing is added to the argument.
+   ============================================================ */
+const PSSH = [
+  'A subsystem with built-in symbolic recognition for interpreting particular physical marks as symbols.',
+  'A subsystem with built-in syntactic regulation.',
+  'An expression-processing procedure, which Yingjin describes as referring to the general model of computation proposed by Turing, i.e. read-control-write.',
+];
+
+const NODES = [
+  { id: 'P1', kind: 'premise', x: 0, y: 0, w: 196, label: 'Erdős #728 was solved\nautonomously',
+    detail: 'Problem #728 was proved by a combination of two deep-learning models, Barretto and GPT-5.2, without a mathematician directing the proof.',
+    rests: 'The reported fact of the solve.' },
+  { id: 'P2', kind: 'premise', x: 0, y: 1, w: 196, label: 'No mathematician\nsupplied the method',
+    detail: 'It was solved by a person with no postdoctorate nor mathematical background, not even an autodidact in the mould of Ramanujan.',
+    rests: 'Removes the obvious deflation that a human did the real work and the model was a Weak-AI tool.' },
+  { id: 'P3', kind: 'premise', x: 0, y: 2, w: 196, label: 'The training set is\nclosed syntax',
+    detail: 'It contains only syntax involved in propositional logic, symbolic proofs, and mathematical deduction. This is what makes the syntactic reading initially plausible.',
+    rests: 'Granting the strongest form of the opposing case before arguing against it.' },
+  { id: 'P4', kind: 'key', x: 1, y: 0.5, w: 196, label: 'The proof linked two\nunconnected fields',
+    detail: 'What was discovered was a connection between discrete geometry and algebraic number theory. Such exact ideas had not been done nor suggested, as a review of the existing literature on either area would say.',
+    rests: 'The novelty claim. Everything downstream depends on this link being genuinely new rather than recombined.' },
+  { id: 'P5', kind: 'premise', x: 1, y: 2, w: 196, label: 'Linking fields is the mark\nof intelligence',
+    detail: 'Consider the link between light, mass and energy, by Einstein. Such an idea is not a concept emerging from nothing, but one emerging from the existing that Einstein discovered a link to.',
+    rests: 'An analogy that sets the standard for what counts as intelligent discovery, drawn from a case nobody disputes.' },
+  { id: 'C1', kind: 'inter', x: 2, y: 1, w: 196, label: 'A semantic grasp of the\ncausal link was required',
+    detail: 'It is not merely a showcase of general intelligence as described in Weak AI; there must have also existed a certain semantic understanding of causal links between the two areas, and of the nature of the problem itself.',
+    rests: 'P4 and P5 together. If the link is novel, and novel linking is the mark of intelligence, the model did more than manipulate symbols.' },
+  { id: 'C2', kind: 'concl', x: 3, y: 1, w: 196, label: 'This is the rise of\nStrong AI',
+    detail: 'Such models do not only hold a capacity for syntactic links, but for semantic links as well, as the link itself can very well be established as a new unit of knowledge.',
+    rests: 'C1, plus Searle’s own distinction: a system with semantics is not the Chinese Room’s occupant.' },
+  { id: 'O1', kind: 'obj', x: 2, y: 2.35, w: 196, label: 'Objection: coincidental\nparroting',
+    detail: 'To play devil’s advocate: this could be an anomalous case in which patterns observed from a paper or set of papers are used by the model to arrive at a coincidentally correct and valid proof. Hence only a coincidence and a consequence of parroting.',
+    rests: 'Attacks P4 directly — denies the link was novel rather than recombined.' },
+  { id: 'O2', kind: 'obj', x: 3, y: 2.35, w: 196, label: 'But then our thinking\nmay be no different',
+    detail: 'However, if such were the case, then it could very likely be that our thinking may not be that different from models after all.',
+    rests: 'The reply. Accepting the parroting account for the model invites the same account of human discovery.' },
+];
+
+const EDGES = [
+  ['P1', 'P4'], ['P2', 'P4'], ['P3', 'P4'],
+  ['P4', 'C1'], ['P5', 'C1'], ['C1', 'C2'],
+  ['P4', 'O1', 'obj'], ['O1', 'O2', 'obj'],
+];
+
+const READINGS = [
+  { id: 'syntactic', k: 'Reading A', t: 'All syntax, no semantics',
+    d: 'The training set is closed and contains only formal mathematical language. LaTeX and Lean are syntax; a proof is a well-formed string. So the output is a set of meaningless predicted symbols that happens to typecheck. The Chinese Room holds, and this is Weak AI.',
+    note: 'Reading A is logically valid, and the paper grants it in section 1.3. Its weakness is that it has to treat the discovery of an unattested link between discrete geometry and algebraic number theory as an accident of symbol prediction.' },
+  { id: 'semantic', k: 'Reading B', t: 'A semantic link was formed',
+    d: 'The proof required connecting two areas that the literature had never connected. A link is not a string: it is a relation that has to be about something. Establishing it is itself a new unit of knowledge, which is what we credit as intelligence in Einstein’s case.',
+    note: 'Reading B is the paper’s position. Its cost is that it must defend the novelty claim (P4) against the charge that the link was latent in the training corpus all along — which is precisely what the objection presses.' },
+];
+
+const ROOM = [
+  { id: 'setup', label: 'The setup',
+    note: 'A native English speaker is locked in a room. Notes written in Chinese come under the door. He cannot comprehend Chinese semantically or syntactically, but he has an English manual of instructions for which symbols to slide back out.' },
+  { id: 'pass', label: 'He passes the test',
+    note: 'The examiner cannot tell the difference between syntactic and semantic understanding from the outside. Searle’s conclusion: passing the test shows nothing about understanding. Likewise with the Turing test and the modern LLM.' },
+  { id: 'proof', label: 'Now put #728 in the room',
+    note: 'Here is where the analogy strains. The manual contains only what the literature already holds. A manual cannot contain an instruction for a link that no paper in either field has ever drawn — yet a correct, novel proof came out of the room anyway.' },
+];
+let roomStage = 'setup';
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const tip = document.getElementById('tip');
+const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const svgNS = 'http://www.w3.org/2000/svg';
+
+function el(tag, attrs = {}, parent) {
+  const n = document.createElementNS(svgNS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function newSvg(host, w, h) {
+  host.innerHTML = '';
+  const s = el('svg', { viewBox: `0 0 ${w} ${h}`, preserveAspectRatio: 'xMidYMid meet' }, host);
+  s.style.maxHeight = h + 'px';
+  return s;
+}
+function showTip(html, evt) { tip.innerHTML = html; tip.style.opacity = 1; moveTip(evt); }
+function moveTip(evt) {
+  const pad = 14, w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = evt.pageX + pad, y = evt.pageY - h - pad;
+  if (x + w > window.scrollX + document.documentElement.clientWidth - 8) x = evt.pageX - w - pad;
+  if (y < window.scrollY + 8) y = evt.pageY + pad;
+  tip.style.left = x + 'px'; tip.style.top = y + 'px';
+}
+function hideTip() { tip.style.opacity = 0; }
+
+/* ============================================================
+   PSSH triple
+   ============================================================ */
+function renderPssh() {
+  const host = document.getElementById('pssh');
+  host.innerHTML = '';
+  PSSH.forEach((t, i) => {
+    const d = document.createElement('div');
+    d.className = 'row';
+    d.innerHTML = `<div class="n">(${i + 1})</div><div class="b">${t}</div>`;
+    host.appendChild(d);
+  });
+}
+
+/* ============================================================
+   FIGURE 1 — the Chinese Room
+   ============================================================ */
+function renderRoomCtl() {
+  const host = document.getElementById('room-ctl');
+  host.innerHTML = '';
+  ROOM.forEach(r => {
+    const b = document.createElement('button');
+    b.textContent = r.label;
+    if (r.id === roomStage) b.className = 'on';
+    b.addEventListener('click', () => { roomStage = r.id; renderRoomCtl(); renderRoom(); });
+    host.appendChild(b);
+  });
+}
+
+function renderRoom() {
+  const host = document.getElementById('fig-room');
+  const W = 860, H = 300;
+  const s = newSvg(host, W, H);
+  const rule = cssv('--rule-strong'), ink = cssv('--fg-2'), muted = cssv('--muted'),
+        accent = cssv('--series-1'), bg = cssv('--bg');
+  const stage = roomStage;
+
+  // the room
+  el('rect', { x: 250, y: 60, width: 320, height: 180, rx: 12, fill: 'none',
+    stroke: rule, 'stroke-width': 1.4 }, s);
+  const rt = el('text', { x: 410, y: 88, 'text-anchor': 'middle', class: 'rm-t' }, s);
+  rt.textContent = 'The room';
+
+  // occupant
+  el('circle', { cx: 410, cy: 140, r: 20, fill: 'none', stroke: ink, 'stroke-width': 1.3 }, s);
+  const ot = el('text', { x: 410, y: 145, 'text-anchor': 'middle', class: 'rm-s' }, s);
+  ot.textContent = 'EN';
+
+  // the manual
+  const manualHot = stage === 'proof';
+  el('rect', { x: 368, y: 182, width: 84, height: 32, rx: 6, fill: 'none',
+    stroke: manualHot ? accent : rule, 'stroke-width': manualHot ? 1.8 : 1.2,
+    'stroke-dasharray': manualHot ? '4 3' : 'none' }, s);
+  const mt = el('text', { x: 410, y: 202, 'text-anchor': 'middle', class: 'rm-s',
+    fill: manualHot ? accent : muted }, s);
+  mt.textContent = 'manual';
+
+  // in / out
+  const inHot = stage === 'setup', outHot = stage === 'pass' || stage === 'proof';
+  el('path', { d: 'M 90 130 L 240 130', stroke: inHot ? accent : rule,
+    'stroke-width': inHot ? 1.8 : 1.2, 'marker-end': 'url(#a2)' }, s);
+  el('path', { d: 'M 580 170 L 730 170', stroke: outHot ? accent : rule,
+    'stroke-width': outHot ? 1.8 : 1.2, 'marker-end': 'url(#a2)' }, s);
+
+  const defs = el('defs', {}, s);
+  const mk = el('marker', { id: 'a2', viewBox: '0 0 10 10', refX: 8, refY: 5,
+    markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse' }, defs);
+  el('path', { d: 'M 0 0 L 10 5 L 0 10 z', fill: ink, 'fill-opacity': 0.6 }, mk);
+
+  const i1 = el('text', { x: 90, y: 118, class: 'rm-l' }, s);
+  i1.textContent = 'question in Chinese';
+  const o1 = el('text', { x: 730, y: 158, 'text-anchor': 'end', class: 'rm-l' }, s);
+  o1.textContent = stage === 'proof' ? 'a novel, correct proof' : 'answer in Chinese';
+
+  const e1 = el('text', { x: 90, y: 230, class: 'rm-l', fill: muted }, s);
+  e1.textContent = 'Examiner';
+  const e2 = el('text', { x: 90, y: 248, class: 'rm-s' }, s);
+  e2.textContent = 'cannot tell syntax from semantics';
+
+  if (stage === 'proof') {
+    const q = el('text', { x: 730, y: 200, 'text-anchor': 'end', class: 'rm-s', fill: accent }, s);
+    q.textContent = 'not derivable from the manual';
+    const q2 = el('text', { x: 730, y: 216, 'text-anchor': 'end', class: 'rm-s', fill: accent }, s);
+    q2.textContent = 'because no paper contains the link';
+  }
+
+  document.getElementById('room-caption').innerHTML =
+    '<b>Reading it</b> — ' + ROOM.find(r => r.id === stage).note;
+}
+
+/* ============================================================
+   FIGURE 2 — argument map
+   ============================================================ */
+let argSel = null, showObj = false;
+
+function nodePos(n, W) {
+  const colW = (W - 36) / 4;
+  return {
+    x: 18 + n.x * colW + (colW - n.w) / 2,
+    y: 20 + n.y * 86,
+    w: n.w,
+    h: 56,
+  };
+}
+
+function renderArgmap() {
+  const host = document.getElementById('fig-argmap');
+  const W = 1020;
+  const vis = NODES.filter(n => showObj || n.kind !== 'obj');
+  const maxY = Math.max(...vis.map(n => n.y));
+  const H = 20 + maxY * 86 + 56 + 24;
+  const s = newSvg(host, W, H);
+  const ink = cssv('--fg-2');
+
+  const defs = el('defs', {}, s);
+  const mk = el('marker', { id: 'ae', viewBox: '0 0 10 10', refX: 9, refY: 5,
+    markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse' }, defs);
+  el('path', { d: 'M 0 0 L 10 5 L 0 10 z', fill: ink, 'fill-opacity': 0.6 }, mk);
+
+  const pos = {};
+  vis.forEach(n => { pos[n.id] = nodePos(n, W); });
+
+  // edges first
+  EDGES.forEach(([a, b, kind]) => {
+    if (!pos[a] || !pos[b]) return;
+    const A = pos[a], B = pos[b];
+    const x1 = A.x + A.w, y1 = A.y + A.h / 2;
+    const x2 = B.x, y2 = B.y + B.h / 2;
+    const mx = (x1 + x2) / 2;
+    const on = argSel && (argSel === a || argSel === b);
+    const cls = 'edge' + (kind === 'obj' ? ' obj' : '') + (on ? ' on' : '');
+    el('path', { d: `M ${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}`,
+      class: cls, 'marker-end': 'url(#ae)' }, s);
+  });
+
+  // nodes
+  vis.forEach(n => {
+    const p = pos[n.id];
+    const g = el('g', { style: 'cursor:pointer' }, s);
+    const cls = 'node-box' + (n.kind === 'obj' ? ' obj' : '') + (argSel === n.id ? ' on' : '');
+    el('rect', { x: p.x, y: p.y, width: p.w, height: p.h, rx: 9, class: cls }, g);
+    const k = el('text', { x: p.x + 12, y: p.y + 17, class: 'node-k' }, g);
+    k.textContent = n.id;
+    n.label.split('\n').forEach((line, i) => {
+      const t = el('text', { x: p.x + 12, y: p.y + 34 + i * 15, class: 'node-t' }, g);
+      t.textContent = line;
+    });
+    g.addEventListener('click', () => {
+      argSel = argSel === n.id ? null : n.id;
+      renderArgmap(); paintArg();
+    });
+    g.addEventListener('mouseenter', e =>
+      showTip(`<div class="t-title">${n.id}</div><div style="font-size:12.5px">${n.detail}</div>`, e));
+    g.addEventListener('mousemove', moveTip);
+    g.addEventListener('mouseleave', hideTip);
+  });
+
+  paintArg();
+}
+
+function paintArg() {
+  const out = document.getElementById('arg-readout');
+  if (!argSel) {
+    out.innerHTML = `<div class="h">Three premises, one pivot, one conclusion</div>
+      <div>The argument runs left to right. P1 to P3 establish the facts of the case, P4 is the
+      claim doing the real work, and C1 to C2 draw it out. Select any box to see what it asserts
+      and what it rests on.</div>`;
+    return;
+  }
+  const n = NODES.find(x => x.id === argSel);
+  const feeds = EDGES.filter(e => e[0] === n.id).map(e => e[1]);
+  const from = EDGES.filter(e => e[1] === n.id).map(e => e[0]);
+  const kindName = { premise: 'Premise', key: 'Pivotal premise', inter: 'Intermediate conclusion',
+                     concl: 'Conclusion', obj: 'Objection' }[n.kind];
+  out.innerHTML = `<div class="h">${n.id} · ${kindName}</div>
+    <div>${n.detail}</div>
+    <div class="l">Rests on: ${n.rests}</div>
+    <div class="l">${from.length ? 'Supported by ' + from.join(', ') + '. ' : ''}${
+      feeds.length ? 'Feeds ' + feeds.join(', ') + '.' : 'Terminal.'}</div>`;
+}
+
+document.getElementById('arg-reset').addEventListener('click', () => {
+  argSel = null; renderArgmap();
+});
+document.getElementById('arg-obj').addEventListener('click', e => {
+  showObj = !showObj;
+  e.currentTarget.textContent = showObj ? 'Hide the objection' : 'Show the objection';
+  e.currentTarget.classList.toggle('on', showObj);
+  if (!showObj && argSel && NODES.find(n => n.id === argSel).kind === 'obj') argSel = null;
+  renderArgmap();
+});
+
+/* ============================================================
+   The two readings
+   ============================================================ */
+let readingSel = null;
+
+function renderReadings() {
+  const host = document.getElementById('readings');
+  host.innerHTML = '';
+  READINGS.forEach(r => {
+    const d = document.createElement('div');
+    d.className = 'reading';
+    d.innerHTML = `<div class="k">${r.k}</div><div class="t">${r.t}</div><div class="d">${r.d}</div>`;
+    d.addEventListener('click', () => {
+      readingSel = readingSel === r.id ? null : r.id;
+      paintReadings();
+    });
+    host.appendChild(d);
+  });
+  paintReadings();
+}
+
+function paintReadings() {
+  const cards = document.querySelectorAll('.reading');
+  const note = document.getElementById('readings-note');
+  cards.forEach((c, i) => {
+    const r = READINGS[i];
+    c.classList.toggle('dim', !!readingSel && readingSel !== r.id);
+    c.classList.toggle('sel', readingSel === r.id);
+  });
+  if (!readingSel) {
+    note.innerHTML = 'Select a reading to see what it costs its holder. Both are consistent with ' +
+      'the output; they differ on what produced it.';
+    note.style.color = 'var(--muted)';
+  } else {
+    note.innerHTML = READINGS.find(r => r.id === readingSel).note;
+    note.style.color = 'var(--fg-2)';
+  }
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function renderAll() {
+  renderPssh();
+  renderRoomCtl();
+  renderRoom();
+  renderArgmap();
+  renderReadings();
+  if (typeof reportHeight === 'function') reportHeight();
+}
+renderAll();
+
+let rt;
+window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(renderAll, 180); });
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }],
+      throwOnError: false,
+    });
+  }
+});
+
+</script>
+</body>
+</html>
