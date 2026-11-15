@@ -414,6 +414,32 @@ const panelsData: PanelItem[] = [
         githubUrl: "https://github.com/artemiui/phi",
       },
       {
+        id: "narra",
+        title: "Narra",
+        subtitle: "Keyboard-native Markdown and LaTeX editor for Windows and Linux",
+        description:
+          "Narra is a single-file desktop editor built with Tauri, Rust, TypeScript, and CodeMirror. Markdown and KaTeX math render inline as you write, so the document looks finished without a separate preview pane. Ctrl+P opens a command palette of actions and templates, and Ctrl+O searches a dictionary of math symbols by name, category, or LaTeX.\n\nIt runs from the terminal like any other editor: \"narra notes.md\", piped input, or \"narra --wait\" as Git's commit editor. Named files autosave, and the backend watches the file on disk and reloads outside edits, so Narra can sit beside nvim as a live frontend. Themes, fonts, writing width, and caret style are set in Preferences.",
+        imageSrc: "/images/narra-preview-1.png",
+        gallery: [
+          {
+            src: "/images/narra-preview-1.png",
+            title: "Inline Markdown and math",
+            description: "Headings, lists, and KaTeX equations render in place while the source stays editable.",
+          },
+          {
+            src: "/images/narra-preview-2.png",
+            title: "Command palette",
+            description: "Ctrl+P searches formatting commands, math templates, and file actions.",
+          },
+          {
+            src: "/images/narra-preview-3.png",
+            title: "Nordic Slate theme",
+            description: "One of the built-in dark themes, alongside custom colors and fonts.",
+          },
+        ],
+        githubUrl: "https://github.com/artemiui/narra",
+      },
+      {
         id: "dev-2",
         title: "Philippine Junior Data Science Challenge 2026",
         subtitle: "Competition website for UP Data Science Society",
