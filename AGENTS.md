@@ -10,13 +10,17 @@ visualization, use the **Paper → Interactive Rendition** skill:
 
 - **Workspace Skill**: `.agents/skills/paper-to-interactive/SKILL.md`
 - **Interactive pages**: `public/<slug>/index.html` (standalone, self-contained, D3 from CDN)
-- **Embed component**: `components/InteractiveDiagram.tsx`
+- **Full-article host**: `components/InteractivePost.tsx` — mounts a rendition *as* the article
+  body via `layout: "interactive"` frontmatter (see `lib/mdx.ts`)
+- **Embed component**: `components/InteractiveDiagram.tsx` — a boxed figure inside normal prose
 - **Article**: `content/posts/articleN.mdx` with `category: "Papers"`
 
 Core rules: recompute every number from the raw dataset (never transcribe values off a rendered
 figure), verify the extraction against the paper's reported statistics, load the `dataviz` skill
-before writing any chart code, screenshot the result in both themes before calling it done, and
-keep raw research data in a gitignored directory (`.ds102/`).
+before writing any chart code and the `unslop` / `impeccable` / `emil-design-eng` skills before
+writing the page's chrome, write the prose in Artem's own voice from the source document,
+screenshot the result in both themes before calling it done, and keep raw research data in a
+gitignored directory (`.ds102/`).
 
 ### Media Logger Agent (`media_logger`)
 When logging, updating, or managing media entries (movies, anime, games, manga, books), act as or delegate to the **Media Logger**:

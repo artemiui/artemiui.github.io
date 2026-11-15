@@ -10,6 +10,14 @@ export type PostFrontmatter = {
   category: "Papers" | "Research" | "Knowledge Sharing" | "Culture" | "Commentary";
   tags?: string[];
   description?: string;
+  /**
+   * "interactive" renders the post as a full-bleed interactive rendition
+   * instead of MDX prose. The rendition at `interactive` owns the whole
+   * article: its own title block, body copy, figures and references.
+   */
+  layout?: "article" | "interactive";
+  /** Path under /public to the rendition's entry HTML, e.g. "/ds102-phytochemical/index.html". */
+  interactive?: string;
 };
 
 export type Post = {

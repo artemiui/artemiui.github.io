@@ -3,159 +3,212 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Phytochemical Multi-objective Optimization — Interactive Rendition</title>
+<title>ML-Based Phytochemical Analysis for Multi-objective Optimization with Efficacy and Toxicity Metrics</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap');
 
 :root {
   color-scheme: light;
   --bg: #ffffff;
   --surface: #ffffff;
-  --plane: #fafafa;
-  --fg: #0b0b0b;
-  --fg-2: #52514e;
-  --muted: #898781;
-  --border: #e4e4e7;
-  --grid: #ededea;
-  --axis: #c3c2b7;
+  --fg: #16161a;
+  --fg-2: #52525b;
+  --muted: #8b8b93;
+  --rule: rgba(22, 22, 26, 0.11);
+  --rule-strong: rgba(22, 22, 26, 0.22);
+  --wash: rgba(22, 22, 26, 0.035);
   --series-1: #2a78d6;
   --series-2: #eb6834;
   --neutral-mark: #a1a1aa;
   --pos: #2a78d6;
   --neg: #d03b3b;
-  --mid: #f0efec;
-  --seq-0: #e7f0fc;
-  --seq-1: #cde2fb;
-  --seq-2: #9ec5f4;
-  --seq-3: #6da7ec;
-  --seq-4: #3987e5;
-  --seq-5: #256abf;
-  --seq-6: #184f95;
-  --seq-7: #0d366b;
-  --chip: #f4f4f5;
+  --seq-0: #e7f0fc; --seq-1: #cde2fb; --seq-2: #9ec5f4; --seq-3: #6da7ec;
+  --seq-4: #3987e5; --seq-5: #256abf; --seq-6: #184f95; --seq-7: #0d366b;
+  --grid: rgba(22, 22, 26, 0.07);
+  --axis: rgba(22, 22, 26, 0.26);
+  --selection: rgba(42, 120, 214, 0.16);
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --measure: 68ch;
+  --gutter: 24px;
 }
 html.dark, :root.dark {
   color-scheme: dark;
   --bg: #09090b;
-  --surface: #0f0f12;
-  --plane: #09090b;
-  --fg: #f4f4f5;
-  --fg-2: #c3c2b7;
-  --muted: #898781;
-  --border: #27272a;
-  --grid: #1f1f23;
-  --axis: #383835;
+  --surface: #09090b;
+  --fg: #ededea;
+  --fg-2: #a3a3ab;
+  --muted: #76767e;
+  --rule: rgba(255, 255, 255, 0.12);
+  --rule-strong: rgba(255, 255, 255, 0.24);
+  --wash: rgba(255, 255, 255, 0.04);
+  --neutral-mark: #52525b;
   --series-1: #3987e5;
   --series-2: #d95926;
-  --neutral-mark: #52525b;
-  --pos: #3987e5;
-  --neg: #d03b3b;
-  --mid: #383835;
-  --seq-0: #11203a;
-  --seq-1: #0d366b;
-  --seq-2: #104281;
-  --seq-3: #184f95;
-  --seq-4: #256abf;
-  --seq-5: #3987e5;
-  --seq-6: #6da7ec;
-  --seq-7: #9ec5f4;
-  --chip: #18181b;
+  --seq-0: #11203a; --seq-1: #0d366b; --seq-2: #104281; --seq-3: #184f95;
+  --seq-4: #256abf; --seq-5: #3987e5; --seq-6: #6da7ec; --seq-7: #9ec5f4;
+  --grid: rgba(255, 255, 255, 0.07);
+  --axis: rgba(255, 255, 255, 0.26);
+  --selection: rgba(57, 135, 229, 0.26);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+
+::selection { background: var(--selection); color: var(--fg); }
+:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; border-radius: 2px; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--rule-strong); border-radius: 8px; border: 3px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+html { scroll-behavior: smooth; }
 body {
-  background: var(--bg); color: var(--fg); font-family: var(--font-sans);
-  font-size: 15px; line-height: 1.6;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.65;
+  caret-color: var(--series-1);
   transition: background-color .2s ease, color .2s ease;
 }
-.wrap { max-width: 1040px; margin: 0 auto; padding: 28px 20px 96px; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; animation: none !important; }
+}
+
+/* ---------- measure & bleed ----------
+   Text sits in a reading column. Figures break out wider, the way a journal
+   sets a plate across the gutter. */
+/* Text and figures share a left edge. Prose stops at the reading measure;
+   figures run on to the full width of the page, the way a journal sets a
+   plate wider than its column. */
+.page { max-width: 936px; margin: 0 auto; padding: 0 var(--gutter) 128px; }
+.col { max-width: var(--measure); margin-left: 0; margin-right: 0; }
+.bleed { max-width: 100%; margin-left: 0; margin-right: 0; }
+@media (min-width: 1080px) { .page { max-width: 1000px; } }
 
 /* ---------- top bar ---------- */
-.topbar {
+.bar {
   position: sticky; top: 0; z-index: 60;
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-  padding: 10px 0 10px; margin-bottom: 26px;
-  background: color-mix(in srgb, var(--bg) 92%, transparent);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 4px;
+  padding: 12px 0; margin-bottom: 56px;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--rule);
 }
-.navlinks { display: flex; gap: 2px; flex-wrap: wrap; flex: 1 1 auto; }
-.navlinks a {
-  font-family: var(--font-mono); font-size: 11px; letter-spacing: .02em;
-  color: var(--fg-2); text-decoration: none; padding: 4px 8px; border-radius: 4px;
-  white-space: nowrap;
+.bar nav { display: flex; gap: 2px; flex: 1 1 auto; overflow-x: auto; scrollbar-width: none; }
+.bar nav::-webkit-scrollbar { display: none; }
+.bar nav a {
+  font-size: 13px; color: var(--muted); text-decoration: none;
+  padding: 4px 9px; border-radius: 6px; white-space: nowrap;
+  transition: color .14s var(--ease-out), background-color .14s var(--ease-out);
 }
-.navlinks a:hover { background: var(--chip); color: var(--fg); }
-.btn {
-  font-family: var(--font-mono); font-size: 11px; font-weight: 500;
-  background: var(--surface); color: var(--fg-2);
-  border: 1px solid var(--border); border-radius: 5px;
-  padding: 5px 10px; cursor: pointer; white-space: nowrap;
-  display: inline-flex; align-items: center; gap: 5px;
-  transition: background .12s ease, color .12s ease, border-color .12s ease;
-}
-.btn:hover { background: var(--chip); color: var(--fg); }
-.btn[aria-pressed="true"], .btn.active {
-  background: var(--fg); color: var(--bg); border-color: var(--fg);
+.bar nav a:hover { color: var(--fg); background: var(--wash); }
+.bar nav a .n {
+  font-family: var(--font-mono); font-size: 11px; color: var(--muted);
+  margin-right: 5px; font-variant-numeric: tabular-nums;
 }
 
-/* ---------- header ---------- */
-header.doc { margin-bottom: 36px; }
-.eyebrow {
-  font-family: var(--font-mono); font-size: 11px; letter-spacing: .09em;
-  text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+button {
+  font-family: inherit; font-size: 13px; color: var(--fg-2);
+  background: transparent; border: 1px solid var(--rule);
+  border-radius: 8px; padding: 5px 11px; cursor: pointer;
+  white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;
+  transition: color .14s var(--ease-out), background-color .14s var(--ease-out),
+              border-color .14s var(--ease-out), transform .12s var(--ease-out);
 }
-h1 { font-size: clamp(26px, 4.4vw, 40px); line-height: 1.14; font-weight: 600; letter-spacing: -.02em; margin-bottom: 14px; }
-.byline { font-size: 14px; color: var(--fg-2); margin-bottom: 16px; }
-.pills { display: flex; gap: 6px; flex-wrap: wrap; }
-.pill {
-  font-family: var(--font-mono); font-size: 11px; color: var(--fg-2);
-  background: var(--chip); border: 1px solid var(--border);
-  border-radius: 999px; padding: 3px 10px;
+@media (hover: hover) and (pointer: fine) {
+  button:hover { color: var(--fg); background: var(--wash); }
 }
-.lede { font-size: 16px; color: var(--fg-2); margin-top: 20px; max-width: 70ch; }
+button:active { transform: scale(0.97); }
+button[aria-pressed="true"], button.on {
+  color: var(--fg); background: var(--wash); border-color: var(--rule-strong);
+}
 
-/* ---------- sections ---------- */
-section { margin-top: 56px; scroll-margin-top: 70px; }
-.sec-num { font-family: var(--font-mono); font-size: 11px; color: var(--muted); letter-spacing: .08em; }
-h2 { font-size: 22px; font-weight: 600; letter-spacing: -.01em; margin: 4px 0 10px; }
-h3 { font-size: 15px; font-weight: 600; margin: 24px 0 8px; }
-p { max-width: 70ch; color: var(--fg-2); margin-bottom: 12px; }
-p strong, li strong { color: var(--fg); font-weight: 600; }
-ul, ol { max-width: 70ch; color: var(--fg-2); margin: 0 0 14px 20px; }
-li { margin-bottom: 5px; }
-code, .mono { font-family: var(--font-mono); font-size: .88em; }
-code { background: var(--chip); padding: 1px 5px; border-radius: 4px; color: var(--fg); }
-
-/* ---------- stat tiles ---------- */
-.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 22px 0 8px; }
-.tile { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; background: var(--surface); }
-.tile .v { font-size: 26px; font-weight: 600; letter-spacing: -.02em; line-height: 1.1; }
-.tile .k { font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-top: 6px; }
-.tile .s { font-size: 12px; color: var(--fg-2); margin-top: 4px; }
-
-/* ---------- figure shell ---------- */
-figure {
-  margin: 22px 0 10px; border: 1px solid var(--border); border-radius: 12px;
-  background: var(--surface); overflow: hidden;
+/* ---------- title block ---------- */
+.title-block { padding-bottom: 40px; border-bottom: 1px solid var(--rule); }
+h1 {
+  font-size: clamp(30px, 4.6vw, 44px); line-height: 1.12;
+  font-weight: 600; letter-spacing: -0.021em; text-wrap: balance;
+  margin-bottom: 20px;
 }
-figcaption {
-  padding: 12px 16px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+.authors { font-size: 16px; color: var(--fg); margin-bottom: 4px; }
+.affil { font-size: 14.5px; color: var(--muted); }
+.abstract { margin-top: 36px; }
+.abstract p { font-size: 17px; }
+.abstract p:first-of-type { }
+
+/* ---------- prose ---------- */
+section { margin-top: 72px; scroll-margin-top: 76px; }
+h2 {
+  font-size: 23px; font-weight: 600; letter-spacing: -0.014em;
+  margin-bottom: 20px; text-wrap: balance;
 }
-.fig-title { font-size: 13.5px; font-weight: 600; color: var(--fg); }
-.fig-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+h2 .s {
+  font-family: var(--font-mono); font-size: 14px; font-weight: 400;
+  color: var(--muted); margin-right: 12px; font-variant-numeric: tabular-nums;
+}
+h3 { font-size: 16.5px; font-weight: 600; margin: 40px 0 12px; letter-spacing: -0.008em; }
+p { color: var(--fg-2); margin-bottom: 18px; }
+p:last-child { margin-bottom: 0; }
+strong { color: var(--fg); font-weight: 600; }
+em { font-style: italic; }
+a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--rule-strong);
+    text-underline-offset: 3px; text-decoration-thickness: 1px;
+    transition: text-decoration-color .14s var(--ease-out); }
+a:hover { text-decoration-color: var(--series-1); }
+ul, ol { color: var(--fg-2); margin: 0 0 18px 0; padding-left: 22px; }
+li { margin-bottom: 9px; }
+li::marker { color: var(--muted); }
+code {
+  font-family: var(--font-mono); font-size: .86em;
+  background: var(--wash); padding: 1.5px 5px; border-radius: 4px; color: var(--fg);
+}
+.katex { font-size: 1.04em; }
+.katex-display { margin: 26px 0; overflow-x: auto; overflow-y: hidden; }
+
+/* ---------- dataset summary (ruled, not tiles) ---------- */
+.facts { margin-top: 32px; border-top: 1px solid var(--rule); }
+.facts .row {
+  display: flex; align-items: baseline; gap: 16px;
+  padding: 9px 0; border-bottom: 1px solid var(--rule);
+}
+.facts .k { flex: 1 1 auto; font-size: 14.5px; color: var(--fg-2); }
+.facts .v {
+  font-family: var(--font-mono); font-size: 14.5px; color: var(--fg);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.facts .u { color: var(--muted); }
+
+/* ---------- figures as plates, not cards ---------- */
+figure { margin: 48px 0; }
+.fig-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap;
+  padding-bottom: 10px; border-bottom: 1px solid var(--rule-strong);
+}
+.fig-id {
+  font-family: var(--font-mono); font-size: 12px; color: var(--muted);
+  display: block; margin-bottom: 5px;
+}
+.fig-title { font-size: 15px; font-weight: 600; color: var(--fg); letter-spacing: -0.008em; }
+.fig-sub { font-size: 13.5px; color: var(--muted); margin-top: 3px; }
 .ctl { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-.ctl-label { font-family: var(--font-mono); font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-right: 2px; }
-.plot { padding: 14px 10px 10px; position: relative; }
-.note { padding: 0 16px 14px; font-size: 12.5px; color: var(--muted); max-width: 78ch; }
-.note b { color: var(--fg-2); font-weight: 600; }
+.ctl .lab { font-size: 12.5px; color: var(--muted); margin-right: 2px; }
+.ctl button { font-size: 12.5px; padding: 4px 9px; border-radius: 7px; }
+.plot { padding: 20px 0 4px; position: relative; }
+figcaption {
+  font-size: 13.5px; color: var(--muted); max-width: 78ch;
+  padding-top: 12px; border-top: 1px solid var(--rule);
+}
+figcaption b { color: var(--fg-2); font-weight: 600; }
 
 svg { display: block; width: 100%; height: auto; overflow: visible; }
 .grid line { stroke: var(--grid); stroke-width: 1; shape-rendering: crispEdges; }
@@ -164,419 +217,583 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
 .axis-title { fill: var(--fg-2); font-family: var(--font-sans); font-size: 11.5px; font-weight: 500; }
 .ref-line { stroke: var(--axis); stroke-width: 1; stroke-dasharray: 3 3; }
 .ref-text { fill: var(--muted); font-family: var(--font-mono); font-size: 10px; }
-.dlabel { fill: var(--fg); font-family: var(--font-sans); font-size: 11px; font-weight: 600; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; }
+.dlabel {
+  fill: var(--fg); font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  paint-order: stroke; stroke: var(--bg); stroke-width: 3px; stroke-linejoin: round;
+}
 
-/* ---------- legend ---------- */
-.legend { display: flex; gap: 16px; flex-wrap: wrap; padding: 2px 16px 12px; }
-.legend .item { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--fg-2); }
+.legend { display: flex; gap: 18px; flex-wrap: wrap; padding: 4px 0 14px; }
+.legend .item { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--fg-2); }
 .swatch { width: 11px; height: 11px; border-radius: 3px; flex: none; }
 .swatch.line { height: 2px; border-radius: 1px; width: 16px; }
 
 /* ---------- tooltip ---------- */
 .tip {
   position: absolute; pointer-events: none; opacity: 0; z-index: 40;
-  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
-  padding: 9px 11px; font-size: 12px; color: var(--fg-2);
-  box-shadow: 0 6px 20px rgba(0,0,0,.14); min-width: 150px; max-width: 260px;
-  transition: opacity .1s ease;
+  background: var(--bg); border: 1px solid var(--rule-strong); border-radius: 9px;
+  padding: 10px 12px; font-size: 12.5px; color: var(--fg-2);
+  box-shadow: 0 4px 16px rgba(0,0,0,.10), 0 1px 3px rgba(0,0,0,.06);
+  min-width: 158px; max-width: 272px;
+  transition: opacity .12s var(--ease-out);
 }
-.tip .t-title { font-weight: 600; color: var(--fg); font-size: 12.5px; margin-bottom: 5px; }
-.tip .t-row { display: flex; justify-content: space-between; gap: 14px; font-family: var(--font-mono); font-size: 11px; }
+.tip .t-title { font-weight: 600; color: var(--fg); font-size: 13px; margin-bottom: 6px; }
+.tip .t-row { display: flex; justify-content: space-between; gap: 16px; font-family: var(--font-mono); font-size: 11px; }
 .tip .t-row span:last-child { color: var(--fg); font-variant-numeric: tabular-nums; }
-.tip .t-note { margin-top: 6px; font-size: 11px; color: var(--muted); font-style: italic; }
+.tip .t-note { margin-top: 7px; font-size: 11.5px; color: var(--muted); font-style: italic; }
 
 /* ---------- tables ---------- */
-.tablewrap { display: none; padding: 0 16px 16px; max-height: 340px; overflow: auto; }
+.tablewrap { display: none; padding-top: 16px; max-height: 360px; overflow: auto; }
 .tablewrap.on { display: block; }
-table.data { width: 100%; border-collapse: collapse; font-size: 12px; }
-table.data th, table.data td { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--border); }
+table.data { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.data th, table.data td { text-align: left; padding: 7px 10px 7px 0; border-bottom: 1px solid var(--rule); }
 table.data th {
-  position: sticky; top: 0; background: var(--surface);
-  font-family: var(--font-mono); font-size: 10px; text-transform: uppercase;
-  letter-spacing: .05em; color: var(--muted); font-weight: 500;
+  position: sticky; top: 0; background: var(--bg);
+  font-size: 12.5px; color: var(--muted); font-weight: 500;
+  border-bottom: 1px solid var(--rule-strong);
 }
 table.data td { color: var(--fg-2); font-variant-numeric: tabular-nums; }
-table.data td.num { text-align: right; font-family: var(--font-mono); }
-table.data tr:hover td { background: var(--chip); }
+table.data td.num { text-align: right; font-family: var(--font-mono); padding-right: 14px; }
+table.data th.num { text-align: right; padding-right: 14px; }
+table.data tr:hover td { color: var(--fg); }
 
-.search {
-  font-family: var(--font-mono); font-size: 11px; padding: 5px 9px;
-  border: 1px solid var(--border); border-radius: 5px;
-  background: var(--bg); color: var(--fg); width: 150px;
+input.search {
+  font-family: inherit; font-size: 13px; padding: 5px 10px;
+  border: 1px solid var(--rule); border-radius: 8px;
+  background: transparent; color: var(--fg); width: 168px;
+  transition: border-color .14s var(--ease-out);
 }
-.search:focus { outline: none; border-color: var(--series-1); }
+input.search::placeholder { color: var(--muted); }
+input.search:focus { outline: none; border-color: var(--series-1); }
 
-/* ---------- callout ---------- */
-.callout {
-  border-left: 3px solid var(--series-2); background: var(--chip);
-  padding: 13px 16px; border-radius: 0 8px 8px 0; margin: 18px 0; max-width: 72ch;
+/* ---------- aside note ---------- */
+.aside {
+  margin: 32px 0; padding: 2px 0 2px 22px;
+  border-left: 1px solid var(--rule-strong);
 }
-.callout .ct { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--series-2); margin-bottom: 5px; font-weight: 700; }
-.callout p { margin: 0; font-size: 13.5px; }
+.aside p { font-size: 15px; margin-bottom: 10px; }
+.aside p:last-child { margin-bottom: 0; }
 
-footer.doc { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--border); font-size: 12.5px; color: var(--muted); }
-footer.doc a { color: var(--fg-2); }
-footer.doc p { font-size: 12.5px; color: var(--muted); }
-
-.selected-chip {
-  display: none; align-items: center; gap: 8px; font-family: var(--font-mono);
-  font-size: 11px; color: var(--fg); background: var(--chip);
-  border: 1px solid var(--border); border-radius: 5px; padding: 4px 8px;
+.pin {
+  display: none; align-items: center; gap: 7px;
+  font-size: 12.5px; color: var(--fg);
+  background: var(--wash); border: 1px solid var(--rule);
+  border-radius: 7px; padding: 4px 9px; cursor: pointer;
 }
-.selected-chip.on { display: inline-flex; }
+.pin.on { display: inline-flex; }
+.pin .x { color: var(--muted); }
 
-@media (max-width: 640px) {
-  .wrap { padding: 20px 14px 72px; }
-  .navlinks { display: none; }
-  .plot { padding: 10px 4px 6px; }
+footer {
+  margin-top: 88px; padding-top: 28px; border-top: 1px solid var(--rule);
+  font-size: 13.5px; color: var(--muted);
 }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+footer p { font-size: 13.5px; color: var(--muted); margin-bottom: 12px; }
+.refs { list-style: none; padding-left: 0; }
+.refs li { font-size: 13.5px; color: var(--muted); margin-bottom: 11px; padding-left: 24px; text-indent: -24px; }
+
+@media (max-width: 760px) {
+  :root { --gutter: 18px; }
+  body { font-size: 15.5px; }
+  .page { padding-bottom: 80px; }
+  section { margin-top: 56px; }
+  .plot { padding: 14px 0 4px; }
+  .bar nav a .n { display: none; }
+}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="page">
 
-<div class="topbar">
-  <nav class="navlinks">
-    <a href="#frontier">01 · Frontier</a>
-    <a href="#hallmarks">02 · Hallmarks</a>
-    <a href="#heatmap">03 · Ligand × target</a>
-    <a href="#correlates">04 · Correlates</a>
-    <a href="#models">05 · Models</a>
-    <a href="#reference">06 · Reference</a>
+<div class="bar">
+  <nav>
+    <a href="#frontier"><span class="n">1</span>Frontier</a>
+    <a href="#hallmarks"><span class="n">2</span>Hallmarks</a>
+    <a href="#matrix"><span class="n">3</span>Matrix</a>
+    <a href="#correlates"><span class="n">4</span>Correlates</a>
+    <a href="#models"><span class="n">5</span>Models</a>
+    <a href="#distribution"><span class="n">6</span>Distribution</a>
+    <a href="#limits"><span class="n">7</span>Limits</a>
   </nav>
-  <button class="btn" id="btn-tables" aria-pressed="false">Data tables</button>
-  <button class="btn" id="btn-theme" title="Toggle theme">
-    <svg id="theme-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></svg>
-    <span>Theme</span>
+  <button id="btn-tables" aria-pressed="false">Tables</button>
+  <button id="btn-theme" aria-label="Toggle theme">
+    <svg id="theme-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
   </button>
 </div>
 
-<header class="doc">
-  <div class="eyebrow">DS 102 · Final project · Computational biology</div>
-  <h1>ML-based phytochemical analysis for multi-objective optimization with efficacy and toxicity metrics</h1>
-  <div class="byline">Artemio S. Arcega III · UP Data Science Society Bootcamp · April 2026</div>
-  <div class="pills">
-    <span class="pill">molecular docking</span>
-    <span class="pill">ADMET</span>
-    <span class="pill">multi-objective optimization</span>
-    <span class="pill">AutoDock Vina</span>
-    <span class="pill">P2Rank</span>
+<div class="col">
+  <div class="title-block">
+    <h1>ML-based phytochemical analysis for multi-objective optimization with efficacy and toxicity metrics</h1>
+    <div class="authors">Artemio S. Arcega III</div>
+    <div class="affil">UP Data Science Society Bootcamp, Data Science 102 · April 2026</div>
   </div>
-  <p class="lede">
-    A self-curated screen of 33 plant-derived compounds against 90 protein targets, scored for
-    binding strength and predicted toxicity at once. This page is the interactive rendition of the
-    notebook: every figure below is drawn from the same 7,619-row dataset the paper reports on, and
-    every mark is yours to interrogate.
-  </p>
 
-  <div class="tiles" id="tiles"></div>
-</header>
+  <div class="abstract">
+    <p>
+      This is a solo project on computational biology and frontier drug discovery, built on static
+      docking and toxicity data. The ligands of choice are <strong>phytochemicals</strong>, also
+      known as green chemicals: the plant compounds you already eat, in fruit, tea, whole grains
+      and nuts.
+    </p>
+    <p>
+      I docked 33 of them against 90 protein targets spanning 35 biological hallmarks, which comes
+      out to 7,619 scored ligand–pocket pairs. Every compound carries a binding affinity
+      <em>and</em> a predicted toxicity score, so candidates can be ranked on both objectives at
+      once instead of one at a time. Four compounds clear both medians with room to spare:
+      <strong>rutin</strong>, <strong>(−)-epigallocatechin</strong>, <strong>α-amyrin</strong> and
+      <strong>paeoniflorin</strong>.
+    </p>
+    <p>
+      This remains a relatively simple project. No artificial neural networks, no dynamics, which
+      puts it well behind others in the same field. What I want to demonstrate through it is a
+      gauge of the possibility: that in-silico drug discovery and pre-screening can be made far
+      more accessible, for citizen scientists and researchers alike.
+    </p>
+    <p>
+      The notebook this came from is 37 pages of static figures. This version is the same analysis
+      rebuilt so you can reach into it — hover any mark for the numbers behind it, re-sort the
+      distributions, switch the axes, and open the data tables from the bar above.
+    </p>
+
+    <div class="facts" id="tiles"></div>
+  </div>
+</div>
 
 <section id="setup">
-  <div class="sec-num">00</div>
-  <h2>What was measured</h2>
-  <p>
-    Binding sites were located with <b>P2Rank</b>, each ligand docked into the top three pockets of
-    every protein with <b>AutoDock Vina</b>, and toxicity plus pharmacokinetics predicted with
-    <b>ADMET-AI</b>. Two numbers drive everything that follows:
-  </p>
-  <ul>
-    <li><strong>best_affinity</strong> — the strongest Vina pose for a ligand–pocket pair, in kcal/mol.
-      More negative means tighter binding.</li>
-    <li><strong>Composite_Tox_Score</strong> — a weighted roll-up of 20-odd ADMET toxicity endpoints.
-      Lower means safer.</li>
-  </ul>
-  <p>
-    The objective is a <em>frontier</em>: compounds that bind hard <em>and</em> score clean. Neither
-    metric alone is a drug candidate, which is exactly why the two have to be read on one plane.
-  </p>
+  <div class="col">
+    <h2><span class="s">1</span>What was measured</h2>
+    <p>
+      The dataset took about two days to build. It is self-curated and computed from scratch — not
+      taken from Kaggle or any other internet source. Five stages, all of them reproducible with
+      public tools:
+    </p>
+    <ol>
+      <li>
+        Find the binding sites. This was done with <a href="https://github.com/rdk/p2rank">P2Rank</a>,
+        an amazing tool for locating and ranking valid binding sites across proteins without having
+        to hand-specify a docking box for every ligand.
+      </li>
+      <li>
+        Dock everything. Each ligand goes into the top three pockets of every protein with
+        <a href="https://vina.scripps.edu/">AutoDock Vina</a> 1.2.7, ten poses per pocket, with only
+        the best pose carried forward.
+      </li>
+      <li>
+        Predict toxicity and pharmacokinetics with
+        <a href="https://doi.org/10.1093/bioinformatics/btae416">ADMET-AI</a>, roughly 40 endpoints
+        per compound, rolled into a weighted composite score.
+      </li>
+      <li>Append the hallmark signatures, so results can be read as biology and not just as PDB entries.</li>
+      <li>Analyse: exploratory statistics, frontier search, then supervised models.</li>
+    </ol>
+    <p>Two numbers drive everything that follows.</p>
+    <ul>
+      <li>
+        <strong>best_affinity</strong> — the strongest Vina pose for a ligand–pocket pair, in
+        kcal/mol. More negative means tighter binding.
+      </li>
+      <li>
+        <strong>Composite_Tox_Score</strong> — a weighted roll-up of around twenty ADMET toxicity
+        endpoints. Lower means safer.
+      </li>
+    </ul>
+    <p>
+      What I am after is a <em>frontier</em>: compounds that bind hard and score clean. Neither
+      number on its own is a drug candidate, which is exactly why the two have to be read on one
+      plane.
+    </p>
+
+    <h3>The scoring function</h3>
+    <p>
+      Vina's affinity score is an empirically weighted sum of five interaction terms with a
+      torsional penalty:
+    </p>
+    <p>
+      $$E_{\text{vina}} = w_1\,\text{gauss}_1 + w_2\,\text{gauss}_2 + w_3\,\text{repulsion} + w_4\,\text{hydrophobic} + w_5\,\text{Hbond} + w_6 \cdot N_{\text{rot}}$$
+    </p>
+    <p>
+      where $N_{\text{rot}}$ is the number of rotatable bonds and the $w_i$ are empirically fitted
+      weights. The final score approximates binding free energy in kcal/mol. Totally unnecessary to
+      include here, but I love this formula, so here it is.
+    </p>
+  </div>
 </section>
 
 <section id="frontier">
-  <div class="sec-num">01</div>
-  <h2>The efficacy–toxicity frontier</h2>
-  <p>
-    Each dot is one of the 33 phytochemicals, placed by its average binding affinity across all 90
-    targets and its composite toxicity score. The dashed lines are the medians of each axis; the
-    shaded quadrant is the one worth caring about — stronger than median binding, safer than median
-    toxicity. Hover any dot for its full profile; click to pin it.
-  </p>
+  <div class="col">
+    <h2><span class="s">2</span>The efficacy–toxicity frontier</h2>
+    <p>
+      Here is the whole project in one plot. Each dot is one of the 33 phytochemicals, placed by its
+      average binding affinity across all 90 targets and by its composite toxicity score. The dashed
+      lines are the medians of each axis. The shaded quadrant is the one worth caring about:
+      stronger than median binding, safer than median toxicity.
+    </p>
+    <p>Hover any dot for its full profile, and click to pin it.</p>
+  </div>
 
-  <figure>
-    <figcaption>
+  <figure class="bleed">
+    <div class="fig-head">
       <div>
+        <span class="fig-id">Figure 1</span>
         <div class="fig-title">Binding affinity against predicted toxicity, per compound</div>
-        <div class="fig-sub">33 compounds · dot size encodes molecular weight</div>
+        <div class="fig-sub">33 compounds, dot size encodes molecular weight</div>
       </div>
       <div class="ctl">
-        <span class="ctl-label">y-axis</span>
-        <button class="btn active" data-ymetric="tox">Composite toxicity</button>
-        <button class="btn" data-ymetric="ld50">LD50 (Zhu)</button>
-        <span class="selected-chip" id="pin-chip"></span>
+        <span class="lab">y-axis</span>
+        <button class="on" data-ymetric="tox">Composite toxicity</button>
+        <button data-ymetric="ld50">LD50</button>
+        <span class="pin" id="pin-chip"></span>
       </div>
-    </figcaption>
+    </div>
     <div class="plot" id="plot-frontier"></div>
     <div class="legend" id="legend-frontier"></div>
-    <div class="note">
-      <b>Reading it:</b> the bottom-right quadrant is the target region — strong binding, low toxicity.
-      Four compounds land there with margin and are named on the plot. Dot size is molecular weight,
-      a second channel that shows the frontier is not simply "bigger molecule binds harder."
-    </div>
+    <figcaption>
+      <b>Reading it</b> — the bottom-right quadrant is the target region: strong binding, low
+      toxicity. Four compounds land there with margin and are named on the plot. Dot size is
+      molecular weight, a second channel that shows the frontier is not simply a matter of bigger
+      molecules binding harder.
+    </figcaption>
     <div class="tablewrap" id="table-frontier"></div>
   </figure>
 
-  <div class="callout">
-    <div class="ct">What the frontier finds</div>
-    <p>
-      <strong>Rutin</strong> (CID 5280805), <strong>(−)-epigallocatechin</strong> (CID 72277),
-      <strong>α-amyrin</strong> (CID 73170) and <strong>paeoniflorin</strong> (CID 442534) clear both
-      medians. Rutin is the standout: the strongest mean affinity in the set at −6.58 kcal/mol with
-      the second-lowest toxicity score — though its molecular weight of 610 Da and single Lipinski
-      pass are a real liability for oral bioavailability.
-    </p>
+  <div class="col">
+    <div class="aside">
+      <p>
+        <strong>Rutin</strong> (CID 5280805) is the standout: the strongest mean affinity in the set
+        at −6.58 kcal/mol, with the second-lowest toxicity score. Though at 610 Da and a single
+        Lipinski pass, its oral bioavailability is a genuine problem that no docking score will
+        tell you about.
+      </p>
+      <p>
+        The other three — <strong>(−)-epigallocatechin</strong> (the green tea compound),
+        <strong>α-amyrin</strong> and <strong>paeoniflorin</strong> (from peony) — clear both
+        medians comfortably.
+      </p>
+    </div>
   </div>
 </section>
 
 <section id="hallmarks">
-  <div class="sec-num">02</div>
-  <h2>Which biology binds hardest</h2>
-  <p>
-    Every protein in the set carries a hallmark label — the biological process it stands in for.
-    Grouping all 7,619 docking scores by hallmark shows where this chemical library has leverage and
-    where it does not. Boxes are the interquartile range, the line is the median, whiskers run to
-    1.5× IQR.
-  </p>
+  <div class="col">
+    <h2><span class="s">3</span>Which biology binds hardest</h2>
+    <p>
+      Every protein in the set carries a hallmark label, the biological process it stands in for.
+      Grouping all 7,619 docking scores by hallmark shows where this chemical library has leverage
+      and where it does not. Boxes are the interquartile range, the line is the median, whiskers run
+      to 1.5× IQR.
+    </p>
+  </div>
 
-  <figure>
-    <figcaption>
+  <figure class="bleed">
+    <div class="fig-head">
       <div>
+        <span class="fig-id">Figure 2</span>
         <div class="fig-title">Binding affinity distribution by biological hallmark</div>
-        <div class="fig-sub">hallmarks with ≥ 20 docking runs · stronger binding to the left</div>
+        <div class="fig-sub">Hallmarks with at least 20 docking runs, stronger binding to the left</div>
       </div>
       <div class="ctl">
-        <span class="ctl-label">sort</span>
-        <button class="btn active" data-hsort="med">Median</button>
-        <button class="btn" data-hsort="spread">Spread</button>
-        <button class="btn" data-hsort="n">Sample size</button>
+        <span class="lab">Sort by</span>
+        <button class="on" data-hsort="med">Median</button>
+        <button data-hsort="spread">Spread</button>
+        <button data-hsort="n">Sample size</button>
       </div>
-    </figcaption>
-    <div class="plot" id="plot-hallmarks"></div>
-    <div class="note">
-      <b>Reading it:</b> the spread between the strongest and weakest hallmark medians is roughly
-      4 kcal/mol — a wide gap, and a reminder that a hallmark's median says as much about which
-      proteins were chosen to represent it as about the chemistry.
     </div>
+    <div class="plot" id="plot-hallmarks"></div>
+    <figcaption>
+      <b>Reading it</b> — the gap between the strongest and weakest hallmark medians is roughly
+      4 kcal/mol, which is wide. It is also a reminder that a hallmark's median says as much about
+      which proteins I picked to represent it as it does about the chemistry.
+    </figcaption>
     <div class="tablewrap" id="table-hallmarks"></div>
   </figure>
 </section>
 
-<section id="heatmap">
-  <div class="sec-num">03</div>
-  <h2>Every compound against every target</h2>
-  <p>
-    The full 33 × 90 matrix of mean binding affinity. Rows are compounds ordered by overall strength,
-    columns are protein targets; the colour ramp runs from weak binding to strong, clamped at the
-    2nd and 98th percentiles so the bulk of the matrix is legible. Hover any cell for the pair.
-  </p>
+<section id="matrix">
+  <div class="col">
+    <h2><span class="s">4</span>Every compound against every target</h2>
+    <p>
+      The full 33 × 90 matrix. Rows are compounds ordered by overall strength, columns are protein
+      targets. The colour ramp runs from weak binding to strong, clamped at the 2nd and 98th
+      percentiles so the bulk of the matrix stays legible. Hover any cell for the pair.
+    </p>
+  </div>
 
-  <figure>
-    <figcaption>
+  <figure class="bleed">
+    <div class="fig-head">
       <div>
-        <div class="fig-title">Mean best affinity, compound × protein target</div>
-        <div class="fig-sub">2,970 ligand–target pairs · kcal/mol · rows labelled by PubChem CID</div>
+        <span class="fig-id">Figure 3</span>
+        <div class="fig-title">Mean best affinity, compound against protein target</div>
+        <div class="fig-sub">2,970 ligand–target pairs in kcal/mol, rows labelled by PubChem CID</div>
       </div>
       <div class="ctl">
-        <span class="ctl-label">columns</span>
-        <button class="btn active" data-hmsort="strength">By target strength</button>
-        <button class="btn" data-hmsort="id">By PDB ID</button>
+        <span class="lab">Columns</span>
+        <button class="on" data-hmsort="strength">By target strength</button>
+        <button data-hmsort="id">By PDB ID</button>
       </div>
-    </figcaption>
+    </div>
     <div class="plot" id="plot-heatmap"></div>
     <div class="legend" id="legend-heatmap"></div>
-    <div class="note">
-      <b>Reading it:</b> the horizontal banding is the real signal — a compound that binds well tends
-      to bind well everywhere, which is promiscuity, not selectivity. Vertical banding marks targets
-      with pockets that accommodate almost anything.
-    </div>
+    <figcaption>
+      <b>Reading it</b> — the horizontal banding is the real signal. A compound that binds well
+      tends to bind well everywhere, which is promiscuity rather than selectivity. Vertical banding
+      marks targets whose pockets accommodate almost anything.
+    </figcaption>
   </figure>
 </section>
 
 <section id="correlates">
-  <div class="sec-num">04</div>
-  <h2>What actually predicts affinity</h2>
-  <p>
-    If a cheap molecular descriptor predicted binding affinity, screening would be free. This is the
-    correlation of eleven physicochemical and ADMET descriptors against the two scaled objectives.
-    Bars run right for positive correlation, left for negative.
-  </p>
+  <div class="col">
+    <h2><span class="s">5</span>What actually predicts affinity</h2>
+    <p>
+      If a cheap molecular descriptor predicted binding affinity, screening would be free. So the
+      question worth asking is whether any of our foundational metrics have a significant
+      relationship with the others — does something like lipophilicity, a subset of the
+      physicochemical metrics, correlate meaningfully with binding affinity? This has been attempted
+      before, by Parker et al. among others.
+    </p>
+    <p>Here are eleven physicochemical and ADMET descriptors against the two scaled objectives.</p>
+  </div>
 
-  <figure>
-    <figcaption>
+  <figure class="bleed">
+    <div class="fig-head">
       <div>
+        <span class="fig-id">Figure 4</span>
         <div class="fig-title">Descriptor correlation with scaled affinity and scaled toxicity</div>
         <div class="fig-sub">Pearson r across 7,619 docking runs</div>
       </div>
       <div class="ctl">
-        <span class="ctl-label">against</span>
-        <button class="btn active" data-corr="both">Both</button>
-        <button class="btn" data-corr="aff">Affinity</button>
-        <button class="btn" data-corr="tox">Toxicity</button>
+        <span class="lab">Against</span>
+        <button class="on" data-corr="both">Both</button>
+        <button data-corr="aff">Affinity</button>
+        <button data-corr="tox">Toxicity</button>
       </div>
-    </figcaption>
+    </div>
     <div class="plot" id="plot-corr"></div>
     <div class="legend" id="legend-corr"></div>
-    <div class="note">
-      <b>Reading it:</b> nothing clears r = 0.4 against affinity. The one strong relationship in the
-      panel — CYP3A4 inhibition against toxicity at r = 0.77 — is close to circular, since CYP
+    <figcaption>
+      <b>Reading it</b> — nothing clears r = 0.4 against affinity. The one strong relationship in
+      the panel, CYP3A4 inhibition against toxicity at r = 0.77, is close to circular, since CYP
       inhibition is itself one of the endpoints rolled into the composite score.
-    </div>
+    </figcaption>
     <div class="tablewrap" id="table-corr"></div>
   </figure>
 
-  <p>
-    This is the paper's quiet finding. <b>logP</b>, the descriptor most often assumed to track binding,
-    sits at r = 0.02. Multi-parameter modelling is not a stylistic preference here; no single
-    descriptor carries the signal.
-  </p>
-</section>
-
-<section id="models">
-  <div class="sec-num">05</div>
-  <h2>Where the models succeed, and where they do not</h2>
-  <p>
-    Two learning tasks were run on the same feature matrix: regress the binding affinity, and classify
-    the biological hallmark. The results split so sharply that the gap is the result.
-  </p>
-
-  <figure>
-    <figcaption>
-      <div>
-        <div class="fig-title">Regression — predicting binding affinity</div>
-        <div class="fig-sub">80/20 split · GridSearchCV, 3-fold · tuned estimators</div>
-      </div>
-      <div class="ctl">
-        <span class="ctl-label">metric</span>
-        <button class="btn active" data-regmetric="r2">R²</button>
-        <button class="btn" data-regmetric="rmse">RMSE</button>
-        <button class="btn" data-regmetric="mae">MAE</button>
-      </div>
-    </figcaption>
-    <div class="plot" id="plot-reg"></div>
-    <div class="legend" id="legend-reg"></div>
-    <div class="note">
-      <b>Reading it:</b> tuned XGBoost and SVR reach R² ≈ 0.999 with RMSE under 0.04. That is not a
-      good result — it is a warning. The feature matrix still contained <code>mean_affinity</code>,
-      which is near-collinear with the target (r = −0.97), so the models are largely reading the
-      answer off an adjacent column.
-    </div>
-    <div class="tablewrap" id="table-reg"></div>
-  </figure>
-
-  <figure>
-    <figcaption>
-      <div>
-        <div class="fig-title">Classification — predicting the biological hallmark</div>
-        <div class="fig-sub">35 classes · weighted F1</div>
-      </div>
-      <div class="ctl">
-        <span class="ctl-label">metric</span>
-        <button class="btn active" data-clfmetric="acc">Accuracy</button>
-        <button class="btn" data-clfmetric="f1">Weighted F1</button>
-      </div>
-    </figcaption>
-    <div class="plot" id="plot-clf"></div>
-    <div class="legend" id="legend-clf"></div>
-    <div class="note">
-      <b>Reading it:</b> the best classifier reaches 0.21 accuracy across 35 hallmark classes. Low in
-      absolute terms, but roughly seven times a uniform-random baseline of 0.029 — weak signal, not
-      no signal.
-    </div>
-    <div class="tablewrap" id="table-clf"></div>
-  </figure>
-
-  <div class="callout">
-    <div class="ct">The honest version</div>
+  <div class="col">
     <p>
-      A clean-featured gradient-boosting run on physicochemical and ADMET descriptors alone reaches
-      <strong>R² = 0.188</strong> — and a refined random forest, 0.188 as well. That number, not the
-      0.999, is what 2D descriptors are worth for binding affinity. Resolving the rest needs 3D
-      structural or graph representations.
+      This is the quiet finding of the whole project. <strong>logP</strong>, the descriptor most
+      often assumed to track binding, sits at r = 0.02. Multi-parameter modelling is not a stylistic
+      preference here — no single descriptor carries the signal, so screening on one of them would
+      be screening on noise.
+    </p>
+    <p>
+      For reference, CYP3A4 is a crucial enzyme found mostly in the liver and small intestine,
+      responsible for metabolising over half of all clinically used drugs. It is the major
+      detoxification enzyme, breaking down foreign organic molecules, toxins and medications. Its
+      activity is inhibited by, among other things, grapefruit juice.
     </p>
   </div>
 </section>
 
-<section id="reference">
-  <div class="sec-num">06</div>
-  <h2>The underlying distribution</h2>
-  <p>
-    All 7,619 binding scores, binned. The distribution is close to normal and centred near
-    −5.7 kcal/mol, which is roughly what a non-optimised natural-product library docked against
-    arbitrary pockets should look like.
-  </p>
+<section id="models">
+  <div class="col">
+    <h2><span class="s">6</span>Where the models succeed, and where they do not</h2>
+    <p>
+      Two learning tasks were run on the same feature matrix: regress the binding affinity, and
+      classify the biological hallmark. The results split so sharply that the gap between them
+      <em>is</em> the result.
+    </p>
+  </div>
 
-  <figure>
-    <figcaption>
+  <figure class="bleed">
+    <div class="fig-head">
       <div>
-        <div class="fig-title">Distribution of best binding affinity</div>
-        <div class="fig-sub">7,619 docking runs · 36 bins</div>
+        <span class="fig-id">Figure 5</span>
+        <div class="fig-title">Regression, predicting binding affinity</div>
+        <div class="fig-sub">80/20 split, GridSearchCV at 3 folds, tuned estimators</div>
       </div>
-    </figcaption>
-    <div class="plot" id="plot-hist"></div>
-    <div class="note">
-      <b>Reading it:</b> the left tail past −9 kcal/mol is where the interesting chemistry lives. It
-      is thin: strong poses are rare, which is the whole argument for screening computationally
-      before committing anything to a bench.
+      <div class="ctl">
+        <span class="lab">Metric</span>
+        <button class="on" data-regmetric="r2">R²</button>
+        <button data-regmetric="rmse">RMSE</button>
+        <button data-regmetric="mae">MAE</button>
+      </div>
     </div>
+    <div class="plot" id="plot-reg"></div>
+    <div class="legend" id="legend-reg"></div>
+    <figcaption>
+      <b>Reading it</b> — tuned XGBoost and SVR reach R² ≈ 0.999 with RMSE under 0.04. This is not a
+      good result, it is a warning. The feature matrix still contained <code>mean_affinity</code>,
+      which correlates with the target at r = −0.97, so the models are largely reading the answer
+      off an adjacent column.
+    </figcaption>
+    <div class="tablewrap" id="table-reg"></div>
   </figure>
 
-  <h3>Protein target reference</h3>
-  <p>All 90 targets, their hallmark assignment and their median binding affinity across the library.</p>
-  <figure>
-    <figcaption>
+  <figure class="bleed">
+    <div class="fig-head">
       <div>
-        <div class="fig-title">Targets</div>
+        <span class="fig-id">Figure 6</span>
+        <div class="fig-title">Classification, predicting the biological hallmark</div>
+        <div class="fig-sub">35 classes, weighted F1</div>
+      </div>
+      <div class="ctl">
+        <span class="lab">Metric</span>
+        <button class="on" data-clfmetric="acc">Accuracy</button>
+        <button data-clfmetric="f1">Weighted F1</button>
+      </div>
+    </div>
+    <div class="plot" id="plot-clf"></div>
+    <div class="legend" id="legend-clf"></div>
+    <figcaption>
+      <b>Reading it</b> — the best classifier reaches 0.21 accuracy across 35 hallmark classes. Low
+      in absolute terms, but roughly seven times a uniform-random baseline of 0.029. Weak signal,
+      not no signal.
+    </figcaption>
+    <div class="tablewrap" id="table-clf"></div>
+  </figure>
+
+  <div class="col">
+    <div class="aside">
+      <p>
+        A clean-featured gradient boosting run on physicochemical and ADMET descriptors alone
+        reaches <strong>R² = 0.188</strong>, and a refined random forest reaches 0.188 as well.
+        That number, not the 0.999, is what 2D descriptors are actually worth for predicting binding
+        affinity.
+      </p>
+      <p>
+        It confirms that simple 2D physicochemical and ADMET descriptors have limited predictive
+        power here, and suggests that 3D structural features or more complex representations are
+        necessary for a model that means anything.
+      </p>
+    </div>
+    <p>
+      The disparity between the two tasks is worth sitting with. Molecular properties directly
+      dictate binding thermodynamics, so the regression at least has something to grip. But those
+      same properties represent only a fraction of the complex features required to map a molecule
+      onto a broad biological cancer hallmark, which is why the classifier struggles.
+    </p>
+  </div>
+</section>
+
+<section id="distribution">
+  <div class="col">
+    <h2><span class="s">7</span>The underlying distribution</h2>
+    <p>
+      All 7,619 binding scores, binned. The distribution is close to normal and centred near
+      −5.7 kcal/mol, which is roughly what a non-optimised natural-product library docked against
+      arbitrary pockets ought to look like.
+    </p>
+  </div>
+
+  <figure class="bleed">
+    <div class="fig-head">
+      <div>
+        <span class="fig-id">Figure 7</span>
+        <div class="fig-title">Distribution of best binding affinity</div>
+        <div class="fig-sub">7,619 docking runs across 36 bins</div>
+      </div>
+    </div>
+    <div class="plot" id="plot-hist"></div>
+    <figcaption>
+      <b>Reading it</b> — the left tail past −9 kcal/mol is where the interesting chemistry lives,
+      and it is thin. Strong poses are rare, which is the whole argument for screening
+      computationally before committing anything to a bench.
+    </figcaption>
+  </figure>
+
+  <div class="col">
+    <h3>Protein target reference</h3>
+    <p>
+      All 90 targets, their hallmark assignment and their median binding affinity across the
+      library. Note that these are <em>not</em> the drug candidates — they were selected according
+      to the hallmarks, by building composite deep-research reports and asking which proteins are
+      associated with each one.
+    </p>
+  </div>
+
+  <figure class="bleed">
+    <div class="fig-head">
+      <div>
+        <span class="fig-id">Table 1</span>
+        <div class="fig-title">Protein targets</div>
         <div class="fig-sub">RCSB PDB identifiers</div>
       </div>
       <div class="ctl">
-        <input class="search" id="search-proteins" type="search" placeholder="filter targets…" aria-label="Filter protein targets">
+        <input class="search" id="search-proteins" type="search" placeholder="Filter targets" aria-label="Filter protein targets">
       </div>
-    </figcaption>
-    <div class="tablewrap on" id="table-proteins" style="max-height:420px"></div>
+    </div>
+    <div class="tablewrap on" id="table-proteins" style="max-height:440px"></div>
   </figure>
 </section>
 
 <section id="limits">
-  <div class="sec-num">07</div>
-  <h2>Limits worth stating</h2>
-  <ul>
-    <li><strong>Static docking only.</strong> No molecular dynamics, so no entropy, no solvent, no
-      induced fit. Vina scores are a pre-screen, not binding free energies.</li>
-    <li><strong>Toxicity is predicted, not measured.</strong> Composite_Tox_Score is a roll-up of
-      model outputs; its discrete banding is visible in the frontier plot as horizontal stripes.</li>
-    <li><strong>Hallmark labels are assignments.</strong> Each protein stands in for a process by
-      editorial choice, so hallmark-level medians inherit that choice.</li>
-    <li><strong>One pose per pocket.</strong> Only the best of ten poses per pocket is carried
-      forward, which discards the ensemble a dynamics run would use.</li>
-  </ul>
-  <p>
-    None of this sinks the pipeline. It sets what the pipeline is for: narrowing 33 × 90 pairs to a
-    handful worth the expensive simulation.
-  </p>
+  <div class="col">
+    <h2><span class="s">8</span>Limits worth stating</h2>
+    <ul>
+      <li>
+        <strong>Static docking only.</strong> No molecular dynamics, so no entropy, no solvent, no
+        induced fit. Vina scores are a pre-screen, not binding free energies.
+      </li>
+      <li>
+        <strong>Toxicity is predicted, not measured.</strong> The composite score is a roll-up of
+        model outputs. Its discrete banding is visible in Figure 1 as horizontal striping, and it is
+        clearly not continuous enough to use as a prediction target on its own.
+      </li>
+      <li>
+        <strong>Hallmark labels are assignments.</strong> Each protein stands in for a process by
+        editorial choice, so hallmark-level medians inherit that choice as much as they reflect
+        chemistry.
+      </li>
+      <li>
+        <strong>One pose per pocket.</strong> Only the best of ten poses is carried forward, which
+        discards the ensemble a dynamics run would use.
+      </li>
+    </ul>
+    <p>
+      None of this sinks the pipeline. It sets what the pipeline is <em>for</em>: narrowing 2,970
+      ligand–target pairs down to a handful worth the expensive simulation. It is important to
+      acknowledge that static analysis cannot fully gauge the potency of these chemicals in drug
+      development, but it is a considerable step as a pre-screening process, before anything even
+      more computationally expensive.
+    </p>
+
+    <h3>A plan for the future</h3>
+    <p>
+      It would be of interest in future iterations that I use neural networks and implement
+      reinforcement learning for better predictions, as is the case with tools like ADMET-AI and
+      ProTox-II, which is precisely what is used here.
+    </p>
+    <p>
+      As for the elephant in the room, and something I have yet to dwell on completely: molecular
+      dynamics. A future DS-103 project, I presume.
+    </p>
+
+    <h3>Acknowledgements</h3>
+    <p>
+      A massive thanks to my research team from the original paper — Kelly, Raf, Chad, Cauley, Paul,
+      Allan — and to my teachers, Sir Jojit, Ms. Florence and Ms. Colas. The basis of this project
+      wouldn't be as strong, or arguably wouldn't exist, if it weren't for them.
+    </p>
+  </div>
 </section>
 
-<footer class="doc">
-  <p>
-    Interactive rendition of <em>ML-based phytochemical analysis for multi-objective optimization with
-    efficacy and toxicity metrics</em> (DS 102 final project, April 2026). All figures are computed
-    from the project's own 7,619-row docking dataset.
-  </p>
-  <p style="margin-top:8px">
-    Tools: AutoDock Vina 1.2.7 · P2Rank · ADMET-AI · RDKit · scikit-learn · XGBoost.
-    Ligand set follows Fatma, Jameel &amp; Siddique (2023), <span class="mono">doi:10.3390/chemistry5010017</span>.
-    Protein structures from the RCSB Protein Data Bank.
-  </p>
-</footer>
+<div class="col">
+  <footer>
+    <p>
+      Every figure on this page is computed from the project's own 7,619-row docking dataset. The
+      ligand set follows Fatma, Jameel &amp; Siddique (2023); protein structures come from the RCSB
+      Protein Data Bank. Software: AutoDock Vina 1.2.7, P2Rank, ADMET-AI, RDKit, scikit-learn,
+      XGBoost.
+    </p>
+    <h3 style="margin-top:28px">References</h3>
+    <ul class="refs">
+      <li>Fatma, H., Jameel, M., &amp; Siddique, H. R. (2023). An update on phytochemicals in redox homeostasis: "virtuous or evil" in cancer chemoprevention? <em>Chemistry, 5</em>(1), 201–222. <a href="https://doi.org/10.3390/chemistry5010017">doi:10.3390/chemistry5010017</a></li>
+      <li>Swanson, K., Walther, P., Leitz, J., Mukherjee, S., Wu, J. C., Shivnaraine, R. V., &amp; Zou, J. (2024). ADMET-AI: a machine learning ADMET platform for evaluation of large-scale chemical libraries. <em>Bioinformatics, 40</em>(7), btae416. <a href="https://doi.org/10.1093/bioinformatics/btae416">doi:10.1093/bioinformatics/btae416</a></li>
+      <li>Krivák, R., &amp; Hoksza, D. (2018). P2Rank: machine learning based tool for rapid and accurate prediction of ligand binding sites from protein structure. <em>Journal of Cheminformatics.</em></li>
+      <li>Polák, L., Škoda, P., Riedlová, K., Krivák, R., Novotný, M., &amp; Hoksza, D. (2025). PrankWeb 4: a modular web server for protein–ligand binding site prediction and downstream analysis. <em>Nucleic Acids Research.</em></li>
+      <li>Burley, S. K., et al. (2022). RCSB Protein Data Bank: tools for visualizing and understanding biological macromolecules in 3D. <em>Protein Science, 31</em>(12), e4482. <a href="https://doi.org/10.1002/pro.4482">doi:10.1002/pro.4482</a></li>
+      <li>Kim, S., et al. (2025). PubChem 2025 update. <em>Nucleic Acids Research, 53</em>(D1), D1516–D1525. <a href="https://doi.org/10.1093/nar/gkae1059">doi:10.1093/nar/gkae1059</a></li>
+    </ul>
+  </footer>
+</div>
 
 </div>
 
@@ -587,13 +804,14 @@ const DATA = {"meta":{"rows":7619,"cols":118,"ligands":33,"proteins":90,"hallmar
 </script>
 <script>
 /* ============================================================
-   THEME — synced with artemiui.github.io via localStorage
+   THEME — synced with artemiui.github.io through shared
+   localStorage (same origin) and postMessage from the host page.
    ============================================================ */
 function updateThemeIcon() {
   const dark = document.documentElement.classList.contains('dark');
   const i = document.getElementById('theme-icon');
   if (i) i.innerHTML = dark
-    ? '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>'
+    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
     : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
 }
 function initTheme() {
@@ -605,18 +823,43 @@ function initTheme() {
   updateThemeIcon();
 }
 initTheme();
+
 document.getElementById('btn-theme').addEventListener('click', () => {
   const dark = document.documentElement.classList.toggle('dark');
   try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (e) {}
-  updateThemeIcon(); renderAll();
+  updateThemeIcon();
+  renderAll();
+  // tell the host so its own chrome follows
+  try { parent.postMessage({ type: 'rendition-theme', theme: dark ? 'dark' : 'light' }, '*'); } catch (e) {}
 });
+
 window.addEventListener('storage', e => { if (e.key === 'theme') { initTheme(); renderAll(); } });
 window.addEventListener('message', e => {
   if (e.data && e.data.theme) {
     document.documentElement.classList.toggle('dark', e.data.theme === 'dark');
-    updateThemeIcon(); renderAll();
+    updateThemeIcon();
+    renderAll();
   }
 });
+
+/* ============================================================
+   HEIGHT — report document height so the host can size the
+   frame and the page scrolls as one document.
+   ============================================================ */
+let lastH = 0;
+function reportHeight() {
+  const h = Math.ceil(document.documentElement.scrollHeight);
+  if (Math.abs(h - lastH) < 2) return;
+  lastH = h;
+  try { parent.postMessage({ type: 'rendition-height', height: h }, '*'); } catch (e) {}
+}
+if (window.ResizeObserver) {
+  new ResizeObserver(reportHeight).observe(document.documentElement);
+}
+window.addEventListener('load', reportHeight);
+setTimeout(reportHeight, 300);
+setTimeout(reportHeight, 1200);
+
 
 /* ============================================================
    HELPERS
@@ -669,7 +912,8 @@ function table(sel, cols, rows) {
   const wrap = d3.select(sel);
   wrap.selectAll('*').remove();
   const t = wrap.append('table').attr('class', 'data');
-  t.append('thead').append('tr').selectAll('th').data(cols).join('th').text(d => d.label);
+  t.append('thead').append('tr').selectAll('th').data(cols).join('th')
+    .attr('class', d => d.num ? 'num' : null).text(d => d.label);
   const tb = t.append('tbody');
   tb.selectAll('tr').data(rows).join('tr')
     .selectAll('td').data(r => cols.map(c => ({ v: c.get(r), num: !!c.num })))
@@ -683,18 +927,19 @@ const seqRamp = () => [cssv('--seq-0'), cssv('--seq-1'), cssv('--seq-2'), cssv('
    ============================================================ */
 function renderTiles() {
   const m = DATA.meta;
-  const items = [
-    { v: m.rows.toLocaleString(), k: 'docking runs', s: 'ligand × pocket pairs scored' },
-    { v: m.ligands, k: 'phytochemicals', s: 'from Fatma & Siddique (2023)' },
-    { v: m.proteins, k: 'protein targets', s: `across ${m.hallmarks} hallmarks` },
-    { v: fmt(m.affinity.mean) + ' ', k: 'mean affinity kcal/mol', s: `σ = ${fmt(m.affinity.std)}` },
+  const rows = [
+    { k: 'Docking runs scored', v: m.rows.toLocaleString(), u: 'ligand \u00d7 pocket pairs' },
+    { k: 'Phytochemicals', v: m.ligands, u: 'from Fatma & Siddique (2023)' },
+    { k: 'Protein targets', v: m.proteins, u: 'across ' + m.hallmarks + ' hallmarks' },
+    { k: 'Mean binding affinity', v: fmt(m.affinity.mean), u: 'kcal/mol, \u03c3 ' + fmt(m.affinity.std) },
+    { k: 'Range', v: fmt(m.affinity.min) + ' to ' + fmt(m.affinity.max), u: 'kcal/mol' },
   ];
   const el = d3.select('#tiles');
   el.selectAll('*').remove();
-  const t = el.selectAll('div.tile').data(items).join('div').attr('class', 'tile');
-  t.append('div').attr('class', 'v').text(d => d.v);
-  t.append('div').attr('class', 'k').text(d => d.k);
-  t.append('div').attr('class', 's').text(d => d.s);
+  const r = el.selectAll('div.row').data(rows).join('div').attr('class', 'row');
+  r.append('div').attr('class', 'k').text(d => d.k);
+  r.append('div').attr('class', 'v')
+    .html(d => d.v + ' <span class="u">' + d.u + '</span>');
 }
 
 /* ============================================================
@@ -839,8 +1084,8 @@ function updatePinChip() {
 }
 
 document.querySelectorAll('[data-ymetric]').forEach(b => b.addEventListener('click', () => {
-  document.querySelectorAll('[data-ymetric]').forEach(x => x.classList.remove('active'));
-  b.classList.add('active'); yMetric = b.dataset.ymetric; renderFrontier();
+  document.querySelectorAll('[data-ymetric]').forEach(x => x.classList.remove('on'));
+  b.classList.add('on'); yMetric = b.dataset.ymetric; renderFrontier();
 }));
 
 /* ============================================================
@@ -921,8 +1166,8 @@ function renderHallmarks() {
   ], rows);
 }
 document.querySelectorAll('[data-hsort]').forEach(b => b.addEventListener('click', () => {
-  document.querySelectorAll('[data-hsort]').forEach(x => x.classList.remove('active'));
-  b.classList.add('active'); hSort = b.dataset.hsort; renderHallmarks();
+  document.querySelectorAll('[data-hsort]').forEach(x => x.classList.remove('on'));
+  b.classList.add('on'); hSort = b.dataset.hsort; renderHallmarks();
 }));
 
 /* ============================================================
@@ -1007,26 +1252,26 @@ function renderHeatmap() {
   const lw = 190, lh = 9;
   const lsvg = le.append('div').attr('class', 'item')
     .style('gap', '9px').append('svg')
-    .attr('width', lw + 92).attr('height', 26).style('width', (lw + 92) + 'px');
+    .attr('width', lw + 110).attr('height', 38).style('width', (lw + 110) + 'px');
   const defs = lsvg.append('defs');
   const grad = defs.append('linearGradient').attr('id', 'hm-grad');
   seqRamp().forEach((c, i, a) => grad.append('stop')
     .attr('offset', (i / (a.length - 1) * 100) + '%').attr('stop-color', c));
-  lsvg.append('text').attr('x', 0).attr('y', 15)
+  lsvg.append('text').attr('x', 0).attr('y', 12)
     .style('font-family', 'var(--font-mono)').style('font-size', '10px')
     .style('fill', cssv('--muted')).text('≥ ' + fmt(hi, 1));
-  lsvg.append('rect').attr('x', 32).attr('y', 6).attr('width', lw).attr('height', lh)
+  lsvg.append('rect').attr('x', 38).attr('y', 3).attr('width', lw).attr('height', lh)
     .attr('rx', 2).attr('fill', 'url(#hm-grad)');
-  lsvg.append('text').attr('x', lw + 38).attr('y', 15)
+  lsvg.append('text').attr('x', lw + 44).attr('y', 12)
     .style('font-family', 'var(--font-mono)').style('font-size', '10px')
     .style('fill', cssv('--muted')).text('≤ ' + fmt(lo, 1));
-  lsvg.append('text').attr('x', 32).attr('y', 25)
+  lsvg.append('text').attr('x', 0).attr('y', 30)
     .style('font-family', 'var(--font-sans)').style('font-size', '10.5px')
     .style('fill', cssv('--muted')).text('weaker ← mean best affinity (kcal/mol) → stronger');
 }
 document.querySelectorAll('[data-hmsort]').forEach(b => b.addEventListener('click', () => {
-  document.querySelectorAll('[data-hmsort]').forEach(x => x.classList.remove('active'));
-  b.classList.add('active'); hmSort = b.dataset.hmsort; renderHeatmap();
+  document.querySelectorAll('[data-hmsort]').forEach(x => x.classList.remove('on'));
+  b.classList.add('on'); hmSort = b.dataset.hmsort; renderHeatmap();
 }));
 
 /* ============================================================
@@ -1116,8 +1361,8 @@ function renderCorr() {
   ], rows);
 }
 document.querySelectorAll('[data-corr]').forEach(b => b.addEventListener('click', () => {
-  document.querySelectorAll('[data-corr]').forEach(x => x.classList.remove('active'));
-  b.classList.add('active'); corrMode = b.dataset.corr; renderCorr();
+  document.querySelectorAll('[data-corr]').forEach(x => x.classList.remove('on'));
+  b.classList.add('on'); corrMode = b.dataset.corr; renderCorr();
 }));
 
 /* ============================================================
@@ -1133,7 +1378,8 @@ function groupedBars(sel, legendSel, rows, series, valueOf, axisLabel, fmtD) {
   const iw = W - m.l - m.r, ih = H - m.t - m.b;
   const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
 
-  const x0 = d3.scaleBand().domain(rows.map(d => d.model)).range([0, iw]).padding(0.28);
+  const x0 = d3.scaleBand().domain(rows.map(d => d.model)).range([0, iw])
+    .padding(rows.length <= 4 ? 0.52 : 0.28);
   const x1 = d3.scaleBand().domain(series.map(s => s.key)).range([0, x0.bandwidth()]).padding(0.16);
   const maxV = d3.max(rows, d => d3.max(series, s => valueOf(d, s.key) ?? 0));
   const yd = d3.scaleLinear().domain([0, maxV * 1.16 || 1]).nice().range([ih, 0]);
@@ -1144,7 +1390,7 @@ function groupedBars(sel, legendSel, rows, series, valueOf, axisLabel, fmtD) {
     .call(d3.axisBottom(x0).tickSize(0))
     .selectAll('text').style('font-family', 'var(--font-sans)').style('font-size', '11.5px')
     .style('fill', cssv('--fg-2'));
-  g.append('g').attr('class', 'axis').call(d3.axisLeft(yd).ticks(5).tickFormat(fmtD));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(yd).ticks(5).tickFormat(d3.format('.2f')));
   svg.append('text').attr('class', 'axis-title')
     .attr('transform', `translate(14,${m.t + ih / 2}) rotate(-90)`).attr('text-anchor', 'middle')
     .text(axisLabel);
@@ -1214,12 +1460,12 @@ function renderClf() {
   ], DATA.models.classification);
 }
 document.querySelectorAll('[data-regmetric]').forEach(b => b.addEventListener('click', () => {
-  document.querySelectorAll('[data-regmetric]').forEach(x => x.classList.remove('active'));
-  b.classList.add('active'); regMetric = b.dataset.regmetric; renderReg();
+  document.querySelectorAll('[data-regmetric]').forEach(x => x.classList.remove('on'));
+  b.classList.add('on'); regMetric = b.dataset.regmetric; renderReg();
 }));
 document.querySelectorAll('[data-clfmetric]').forEach(b => b.addEventListener('click', () => {
-  document.querySelectorAll('[data-clfmetric]').forEach(x => x.classList.remove('active'));
-  b.classList.add('active'); clfMetric = b.dataset.clfmetric; renderClf();
+  document.querySelectorAll('[data-clfmetric]').forEach(x => x.classList.remove('on'));
+  b.classList.add('on'); clfMetric = b.dataset.clfmetric; renderClf();
 }));
 
 /* ============================================================
@@ -1314,6 +1560,7 @@ function renderAll() {
   renderHist();
   renderProteins(document.getElementById('search-proteins').value);
   updatePinChip();
+  if (typeof reportHeight === 'function') reportHeight();
 }
 renderAll();
 
@@ -1328,6 +1575,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
 </script>
 </body>
 </html>

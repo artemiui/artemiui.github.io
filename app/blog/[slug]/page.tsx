@@ -8,6 +8,7 @@ import { siteConfig } from "@/lib/siteConfig";
 import TableOfContents from "@/components/TableOfContents";
 import AudioPlayer from "@/components/AudioPlayer";
 import InteractiveDiagram from "@/components/InteractiveDiagram";
+import InteractivePost from "@/components/InteractivePost";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 
@@ -129,16 +130,36 @@ export default async function BlogPost({ params }: Props) {
     notFound();
   }
 
+  const backLink = (
+    <Link
+      href="/"
+      className="inline-flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 hover:text-foreground mb-6 transition-colors group"
+    >
+      <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+      <span>Back</span>
+    </Link>
+  );
+
+  // An interactive post IS the rendition: the standalone document under
+  // /public carries the title block, the prose, the figures and the
+  // references, so the route adds no header, no table of contents and no
+  // prose wrapper of its own.
+  if (post.frontmatter.layout === "interactive" && post.frontmatter.interactive) {
+    return (
+      <article id="article-root" className="relative w-full">
+        {backLink}
+        <InteractivePost
+          src={post.frontmatter.interactive}
+          title={post.frontmatter.title}
+        />
+      </article>
+    );
+  }
+
   return (
     <article id="article-root" className="relative w-full">
       {/* Back to Home/Blog */}
-      <Link
-        href="/"
-        className="inline-flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 hover:text-foreground mb-6 transition-colors group"
-      >
-        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
-        <span>Back</span>
-      </Link>
+      {backLink}
 
       {/* Anthropic-Style Table of Contents (Desktop Sticky/Locking Sidebar + Mobile Pill Drawer) */}
       <TableOfContents content={post.content} />
