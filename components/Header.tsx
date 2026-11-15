@@ -2,8 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Github, Linkedin, Instagram } from "lucide-react";
+import { Github, Linkedin, Instagram, Mail } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
+
+// Contact address, stored encoded (reversed, XOR 23) so it never appears in the
+// prerendered HTML or as a plain string in the JS bundle. Decoded only on click.
+const ENCODED_CONTACT = [127, 103, 57, 98, 115, 114, 57, 103, 98, 87, 118, 112, 114, 116, 101, 118, 100, 118];
+const decodeContact = () =>
+  ENCODED_CONTACT.map((c) => String.fromCharCode(c ^ 23)).reverse().join("");
 
 export default function Header() {
   const pathname = usePathname();
@@ -64,6 +70,17 @@ export default function Header() {
           >
             <Instagram className="w-5 h-5" />
           </a>
+          <button
+            type="button"
+            onClick={() => {
+              window.location.href = "mailto:" + decodeContact();
+            }}
+            className="inline-flex items-center justify-center p-1 rounded-md text-zinc-500 hover:text-foreground dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 cursor-pointer"
+            title="Email"
+            aria-label="Send an email"
+          >
+            <Mail className="w-5 h-5" />
+          </button>
         </div>
       </div>
       <nav className="w-full flex flex-wrap items-center justify-start gap-x-3 sm:gap-x-5 gap-y-2 text-xs sm:text-sm font-mono leading-relaxed">
