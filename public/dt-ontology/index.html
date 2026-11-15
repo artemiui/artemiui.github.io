@@ -394,9 +394,6 @@ table.mx td.rowh { cursor: pointer; }
     <a href="#supplementary"><span class="n">7</span>Supplementary</a>
     <a href="#discussion"><span class="n">8</span>Discussion</a>
   </nav>
-  <button id="btn-theme" aria-label="Toggle theme">
-    <svg id="theme-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
-  </button>
 </div>
 
 <div class="col">
@@ -1004,40 +1001,24 @@ table.mx td.rowh { cursor: pointer; }
 
 <script>
 /* ============================================================
-   THEME — synced with artemiui.github.io through shared
-   localStorage (same origin) and postMessage from the host page.
+   THEME — the rendition has no control of its own. It follows
+   the site: shared localStorage (same origin) on load, a storage
+   event when the site's own toggle writes, and a postMessage
+   from the host for the immediate case.
    ============================================================ */
-function updateThemeIcon() {
-  const dark = document.documentElement.classList.contains('dark');
-  const i = document.getElementById('theme-icon');
-  if (i) i.innerHTML = dark
-    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
-    : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
-}
 function initTheme() {
   try {
     const saved = localStorage.getItem('theme');
     const prefers = window.matchMedia('(prefers-color-scheme: dark)').matches;
     document.documentElement.classList.toggle('dark', saved === 'dark' || (!saved && prefers));
   } catch (e) {}
-  updateThemeIcon();
 }
 initTheme();
-
-document.getElementById('btn-theme').addEventListener('click', () => {
-  const dark = document.documentElement.classList.toggle('dark');
-  try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (e) {}
-  updateThemeIcon();
-  renderAll();
-  // tell the host so its own chrome follows
-  try { parent.postMessage({ type: 'rendition-theme', theme: dark ? 'dark' : 'light' }, '*'); } catch (e) {}
-});
 
 window.addEventListener('storage', e => { if (e.key === 'theme') { initTheme(); renderAll(); } });
 window.addEventListener('message', e => {
   if (e.data && e.data.theme) {
     document.documentElement.classList.toggle('dark', e.data.theme === 'dark');
-    updateThemeIcon();
     renderAll();
   }
 });

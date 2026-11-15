@@ -242,8 +242,9 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
 .tip .t-note { margin-top: 7px; font-size: 11.5px; color: var(--muted); font-style: italic; }
 
 /* ---------- tables ---------- */
-.tablewrap { display: none; padding-top: 16px; max-height: 360px; overflow: auto; }
-.tablewrap.on { display: block; }
+/* Tables sit under their figure permanently — there is no control to reveal
+   them, so they are part of the figure rather than an alternate view of it. */
+.tablewrap { display: block; padding-top: 16px; max-height: 360px; overflow: auto; }
 table.data { width: 100%; border-collapse: collapse; font-size: 13px; }
 table.data th, table.data td { text-align: left; padding: 7px 10px 7px 0; border-bottom: 1px solid var(--rule); }
 table.data th {
@@ -313,10 +314,6 @@ footer p { font-size: 13.5px; color: var(--muted); margin-bottom: 12px; }
     <a href="#distribution"><span class="n">6</span>Distribution</a>
     <a href="#limits"><span class="n">7</span>Limits</a>
   </nav>
-  <button id="btn-tables" aria-pressed="false">Tables</button>
-  <button id="btn-theme" aria-label="Toggle theme">
-    <svg id="theme-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
-  </button>
 </div>
 
 <div class="col">
@@ -350,7 +347,7 @@ footer p { font-size: 13.5px; color: var(--muted); margin-bottom: 12px; }
     <p>
       The notebook this came from is 37 pages of static figures. This version is the same analysis
       rebuilt so you can reach into it — hover any mark for the numbers behind it, re-sort the
-      distributions, switch the axes, and open the data tables from the bar above.
+      distributions, switch the axes, and read the figures off the data tables underneath them.
     </p>
 
     <div class="facts" id="tiles"></div>
@@ -451,7 +448,7 @@ footer p { font-size: 13.5px; color: var(--muted); margin-bottom: 12px; }
       molecular weight, a second channel that shows the frontier is not simply a matter of bigger
       molecules binding harder.
     </figcaption>
-    <div class="tablewrap" id="table-frontier"></div>
+      <div class="tablewrap" id="table-frontier"></div>
   </figure>
 
   <div class="col">
@@ -502,7 +499,7 @@ footer p { font-size: 13.5px; color: var(--muted); margin-bottom: 12px; }
       4 kcal/mol, which is wide. It is also a reminder that a hallmark's median says as much about
       which proteins I picked to represent it as it does about the chemistry.
     </figcaption>
-    <div class="tablewrap" id="table-hallmarks"></div>
+      <div class="tablewrap" id="table-hallmarks"></div>
   </figure>
 </section>
 
@@ -573,7 +570,7 @@ footer p { font-size: 13.5px; color: var(--muted); margin-bottom: 12px; }
       the panel, CYP3A4 inhibition against toxicity at r = 0.77, is close to circular, since CYP
       inhibition is itself one of the endpoints rolled into the composite score.
     </figcaption>
-    <div class="tablewrap" id="table-corr"></div>
+      <div class="tablewrap" id="table-corr"></div>
   </figure>
 
   <div class="col">
@@ -624,7 +621,7 @@ footer p { font-size: 13.5px; color: var(--muted); margin-bottom: 12px; }
       which correlates with the target at r = −0.97, so the models are largely reading the answer
       off an adjacent column.
     </figcaption>
-    <div class="tablewrap" id="table-reg"></div>
+      <div class="tablewrap" id="table-reg"></div>
   </figure>
 
   <figure class="bleed">
@@ -647,7 +644,7 @@ footer p { font-size: 13.5px; color: var(--muted); margin-bottom: 12px; }
       in absolute terms, but roughly seven times a uniform-random baseline of 0.029. Weak signal,
       not no signal.
     </figcaption>
-    <div class="tablewrap" id="table-clf"></div>
+      <div class="tablewrap" id="table-clf"></div>
   </figure>
 
   <div class="col">
@@ -720,7 +717,7 @@ footer p { font-size: 13.5px; color: var(--muted); margin-bottom: 12px; }
         <input class="search" id="search-proteins" type="search" placeholder="Filter targets" aria-label="Filter protein targets">
       </div>
     </div>
-    <div class="tablewrap on" id="table-proteins" style="max-height:440px"></div>
+    <div class="tablewrap" id="table-proteins" style="max-height:440px"></div>
   </figure>
 </section>
 
@@ -804,40 +801,24 @@ const DATA = {"meta":{"rows":7619,"cols":118,"ligands":33,"proteins":90,"hallmar
 </script>
 <script>
 /* ============================================================
-   THEME — synced with artemiui.github.io through shared
-   localStorage (same origin) and postMessage from the host page.
+   THEME — the rendition has no control of its own. It follows
+   the site: shared localStorage (same origin) on load, a storage
+   event when the site's own toggle writes, and a postMessage
+   from the host for the immediate case.
    ============================================================ */
-function updateThemeIcon() {
-  const dark = document.documentElement.classList.contains('dark');
-  const i = document.getElementById('theme-icon');
-  if (i) i.innerHTML = dark
-    ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
-    : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
-}
 function initTheme() {
   try {
     const saved = localStorage.getItem('theme');
     const prefers = window.matchMedia('(prefers-color-scheme: dark)').matches;
     document.documentElement.classList.toggle('dark', saved === 'dark' || (!saved && prefers));
   } catch (e) {}
-  updateThemeIcon();
 }
 initTheme();
-
-document.getElementById('btn-theme').addEventListener('click', () => {
-  const dark = document.documentElement.classList.toggle('dark');
-  try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (e) {}
-  updateThemeIcon();
-  renderAll();
-  // tell the host so its own chrome follows
-  try { parent.postMessage({ type: 'rendition-theme', theme: dark ? 'dark' : 'light' }, '*'); } catch (e) {}
-});
 
 window.addEventListener('storage', e => { if (e.key === 'theme') { initTheme(); renderAll(); } });
 window.addEventListener('message', e => {
   if (e.data && e.data.theme) {
     document.documentElement.classList.toggle('dark', e.data.theme === 'dark');
-    updateThemeIcon();
     renderAll();
   }
 });
@@ -1533,18 +1514,6 @@ function renderProteins(filter = '') {
 }
 document.getElementById('search-proteins')
   .addEventListener('input', e => renderProteins(e.target.value));
-
-/* ============================================================
-   DATA TABLES TOGGLE
-   ============================================================ */
-const btnTables = document.getElementById('btn-tables');
-btnTables.addEventListener('click', () => {
-  const on = btnTables.getAttribute('aria-pressed') !== 'true';
-  btnTables.setAttribute('aria-pressed', String(on));
-  document.querySelectorAll('.tablewrap').forEach(t => {
-    if (t.id !== 'table-proteins') t.classList.toggle('on', on);
-  });
-});
 
 /* ============================================================
    RENDER

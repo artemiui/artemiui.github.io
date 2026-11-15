@@ -40,7 +40,7 @@ The host↔rendition contract in full-article mode is two messages:
 | Message | Direction | Purpose |
 | :--- | :--- | :--- |
 | `{type:"rendition-height", height}` | child → host | Host sizes the frame so the page scrolls as one document |
-| `{type:"rendition-theme", theme}` | child → host | Rendition's own theme control moves the site with it |
+| `{type:"rendition-theme", theme}` | child → host | Optional. Only if a rendition ships its own theme control; the house renditions do not — they follow the site |
 | `{theme}` | host → child | Site's theme toggle reaches the rendition immediately |
 
 The child must ship a `ResizeObserver` on `documentElement` posting its `scrollHeight`, plus
@@ -225,8 +225,13 @@ window.addEventListener('message', e => {
 - **Prose between the figures.** Each figure gets a lede above it explaining what it shows, and a
   `Reading it:` note below explaining *how to read it and what is suspicious about it*. The notes
   are the paper's voice; without them the page is a dashboard, not a rendition.
-- **A `Data tables` toggle** in the top bar revealing a `<table>` under each figure. This is the
-  accessibility fallback and the honesty check in one.
+- **A bar that holds section navigation and nothing else.** No theme toggle — the rendition follows
+  the site through shared `localStorage` and the host's postMessage, and a second theme control is a
+  duplicate of one the site already has. No data-tables toggle either.
+- **A data table under every figure, always visible**, inside the figure and below its caption,
+  capped with `max-height` and its own scroll. It is the accessibility fallback and the honesty
+  check in one, and it should not be hidden behind a control: a reader who wants the numbers should
+  not have to discover a button to get them.
 - **A limitations section.** Non-negotiable. A rendition that only shows what worked is marketing.
 
 Keep the data inline. Build the file from a template with a `__DATA__` placeholder and substitute
