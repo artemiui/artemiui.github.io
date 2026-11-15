@@ -73,6 +73,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const postDescription =
     post.frontmatter.description ||
     `${postTitle} - Article by ${siteConfig.author}`;
+  const articleImage = new URL(`/share/articles/${encodeURIComponent(slug)}.jpg`, siteConfig.url).href;
   const canonicalUrl = `${siteConfig.url}/blog/${slug}`;
 
   return {
@@ -92,12 +93,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       tags: post.frontmatter.tags,
       images: [
         {
-          url: siteConfig.ogImage,
-          secureUrl: siteConfig.ogImage,
+          url: articleImage,
+          secureUrl: articleImage,
           width: 1200,
           height: 630,
           type: "image/jpeg",
-          alt: `${postTitle} - ${siteConfig.ogImageAlt}`,
+          alt: postTitle,
         },
       ],
     },
@@ -107,8 +108,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: postDescription,
       images: [
         {
-          url: siteConfig.ogImage,
-          alt: `${postTitle} - ${siteConfig.ogImageAlt}`,
+          url: articleImage,
+          alt: postTitle,
         },
       ],
     },
