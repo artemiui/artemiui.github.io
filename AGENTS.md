@@ -4,6 +4,20 @@ Welcome to Artem's personal website and digital portfolio workspace (`artemiui.g
 
 ## Dedicated Subagents & Skills
 
+### Paper → Interactive Rendition (`paper-to-interactive`)
+When asked to turn a research paper, notebook, or project into an interactive page with data
+visualization, use the **Paper → Interactive Rendition** skill:
+
+- **Workspace Skill**: `.agents/skills/paper-to-interactive/SKILL.md`
+- **Interactive pages**: `public/<slug>/index.html` (standalone, self-contained, D3 from CDN)
+- **Embed component**: `components/InteractiveDiagram.tsx`
+- **Article**: `content/posts/articleN.mdx` with `category: "Papers"`
+
+Core rules: recompute every number from the raw dataset (never transcribe values off a rendered
+figure), verify the extraction against the paper's reported statistics, load the `dataviz` skill
+before writing any chart code, screenshot the result in both themes before calling it done, and
+keep raw research data in a gitignored directory (`.ds102/`).
+
 ### Media Logger Agent (`media_logger`)
 When logging, updating, or managing media entries (movies, anime, games, manga, books), act as or delegate to the **Media Logger**:
 

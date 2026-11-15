@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phytochemical Multi-objective Optimization — Interactive Rendition</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --plane: #fafafa;
+  --fg: #0b0b0b;
+  --fg-2: #52514e;
+  --muted: #898781;
+  --border: #e4e4e7;
+  --grid: #ededea;
+  --axis: #c3c2b7;
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --neutral-mark: #a1a1aa;
+  --pos: #2a78d6;
+  --neg: #d03b3b;
+  --mid: #f0efec;
+  --seq-0: #e7f0fc;
+  --seq-1: #cde2fb;
+  --seq-2: #9ec5f4;
+  --seq-3: #6da7ec;
+  --seq-4: #3987e5;
+  --seq-5: #256abf;
+  --seq-6: #184f95;
+  --seq-7: #0d366b;
+  --chip: #f4f4f5;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+html.dark, :root.dark {
+  color-scheme: dark;
+  --bg: #09090b;
+  --surface: #0f0f12;
+  --plane: #09090b;
+  --fg: #f4f4f5;
+  --fg-2: #c3c2b7;
+  --muted: #898781;
+  --border: #27272a;
+  --grid: #1f1f23;
+  --axis: #383835;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --neutral-mark: #52525b;
+  --pos: #3987e5;
+  --neg: #d03b3b;
+  --mid: #383835;
+  --seq-0: #11203a;
+  --seq-1: #0d366b;
+  --seq-2: #104281;
+  --seq-3: #184f95;
+  --seq-4: #256abf;
+  --seq-5: #3987e5;
+  --seq-6: #6da7ec;
+  --seq-7: #9ec5f4;
+  --chip: #18181b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-sans);
+  font-size: 15px; line-height: 1.6;
+  transition: background-color .2s ease, color .2s ease;
+}
+.wrap { max-width: 1040px; margin: 0 auto; padding: 28px 20px 96px; }
+
+/* ---------- top bar ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 60;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 10px 0 10px; margin-bottom: 26px;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.navlinks { display: flex; gap: 2px; flex-wrap: wrap; flex: 1 1 auto; }
+.navlinks a {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .02em;
+  color: var(--fg-2); text-decoration: none; padding: 4px 8px; border-radius: 4px;
+  white-space: nowrap;
+}
+.navlinks a:hover { background: var(--chip); color: var(--fg); }
+.btn {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+  background: var(--surface); color: var(--fg-2);
+  border: 1px solid var(--border); border-radius: 5px;
+  padding: 5px 10px; cursor: pointer; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 5px;
+  transition: background .12s ease, color .12s ease, border-color .12s ease;
+}
+.btn:hover { background: var(--chip); color: var(--fg); }
+.btn[aria-pressed="true"], .btn.active {
+  background: var(--fg); color: var(--bg); border-color: var(--fg);
+}
+
+/* ---------- header ---------- */
+header.doc { margin-bottom: 36px; }
+.eyebrow {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+}
+h1 { font-size: clamp(26px, 4.4vw, 40px); line-height: 1.14; font-weight: 600; letter-spacing: -.02em; margin-bottom: 14px; }
+.byline { font-size: 14px; color: var(--fg-2); margin-bottom: 16px; }
+.pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.pill {
+  font-family: var(--font-mono); font-size: 11px; color: var(--fg-2);
+  background: var(--chip); border: 1px solid var(--border);
+  border-radius: 999px; padding: 3px 10px;
+}
+.lede { font-size: 16px; color: var(--fg-2); margin-top: 20px; max-width: 70ch; }
+
+/* ---------- sections ---------- */
+section { margin-top: 56px; scroll-margin-top: 70px; }
+.sec-num { font-family: var(--font-mono); font-size: 11px; color: var(--muted); letter-spacing: .08em; }
+h2 { font-size: 22px; font-weight: 600; letter-spacing: -.01em; margin: 4px 0 10px; }
+h3 { font-size: 15px; font-weight: 600; margin: 24px 0 8px; }
+p { max-width: 70ch; color: var(--fg-2); margin-bottom: 12px; }
+p strong, li strong { color: var(--fg); font-weight: 600; }
+ul, ol { max-width: 70ch; color: var(--fg-2); margin: 0 0 14px 20px; }
+li { margin-bottom: 5px; }
+code, .mono { font-family: var(--font-mono); font-size: .88em; }
+code { background: var(--chip); padding: 1px 5px; border-radius: 4px; color: var(--fg); }
+
+/* ---------- stat tiles ---------- */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 22px 0 8px; }
+.tile { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; background: var(--surface); }
+.tile .v { font-size: 26px; font-weight: 600; letter-spacing: -.02em; line-height: 1.1; }
+.tile .k { font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-top: 6px; }
+.tile .s { font-size: 12px; color: var(--fg-2); margin-top: 4px; }
+
+/* ---------- figure shell ---------- */
+figure {
+  margin: 22px 0 10px; border: 1px solid var(--border); border-radius: 12px;
+  background: var(--surface); overflow: hidden;
+}
+figcaption {
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.fig-title { font-size: 13.5px; font-weight: 600; color: var(--fg); }
+.fig-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.ctl { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.ctl-label { font-family: var(--font-mono); font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-right: 2px; }
+.plot { padding: 14px 10px 10px; position: relative; }
+.note { padding: 0 16px 14px; font-size: 12.5px; color: var(--muted); max-width: 78ch; }
+.note b { color: var(--fg-2); font-weight: 600; }
+
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+.grid line { stroke: var(--grid); stroke-width: 1; shape-rendering: crispEdges; }
+.axis path, .axis line { stroke: var(--axis); shape-rendering: crispEdges; }
+.axis text { fill: var(--muted); font-family: var(--font-mono); font-size: 10px; font-variant-numeric: tabular-nums; }
+.axis-title { fill: var(--fg-2); font-family: var(--font-sans); font-size: 11.5px; font-weight: 500; }
+.ref-line { stroke: var(--axis); stroke-width: 1; stroke-dasharray: 3 3; }
+.ref-text { fill: var(--muted); font-family: var(--font-mono); font-size: 10px; }
+.dlabel { fill: var(--fg); font-family: var(--font-sans); font-size: 11px; font-weight: 600; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; }
+
+/* ---------- legend ---------- */
+.legend { display: flex; gap: 16px; flex-wrap: wrap; padding: 2px 16px 12px; }
+.legend .item { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--fg-2); }
+.swatch { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+.swatch.line { height: 2px; border-radius: 1px; width: 16px; }
+
+/* ---------- tooltip ---------- */
+.tip {
+  position: absolute; pointer-events: none; opacity: 0; z-index: 40;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 9px 11px; font-size: 12px; color: var(--fg-2);
+  box-shadow: 0 6px 20px rgba(0,0,0,.14); min-width: 150px; max-width: 260px;
+  transition: opacity .1s ease;
+}
+.tip .t-title { font-weight: 600; color: var(--fg); font-size: 12.5px; margin-bottom: 5px; }
+.tip .t-row { display: flex; justify-content: space-between; gap: 14px; font-family: var(--font-mono); font-size: 11px; }
+.tip .t-row span:last-child { color: var(--fg); font-variant-numeric: tabular-nums; }
+.tip .t-note { margin-top: 6px; font-size: 11px; color: var(--muted); font-style: italic; }
+
+/* ---------- tables ---------- */
+.tablewrap { display: none; padding: 0 16px 16px; max-height: 340px; overflow: auto; }
+.tablewrap.on { display: block; }
+table.data { width: 100%; border-collapse: collapse; font-size: 12px; }
+table.data th, table.data td { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--border); }
+table.data th {
+  position: sticky; top: 0; background: var(--surface);
+  font-family: var(--font-mono); font-size: 10px; text-transform: uppercase;
+  letter-spacing: .05em; color: var(--muted); font-weight: 500;
+}
+table.data td { color: var(--fg-2); font-variant-numeric: tabular-nums; }
+table.data td.num { text-align: right; font-family: var(--font-mono); }
+table.data tr:hover td { background: var(--chip); }
+
+.search {
+  font-family: var(--font-mono); font-size: 11px; padding: 5px 9px;
+  border: 1px solid var(--border); border-radius: 5px;
+  background: var(--bg); color: var(--fg); width: 150px;
+}
+.search:focus { outline: none; border-color: var(--series-1); }
+
+/* ---------- callout ---------- */
+.callout {
+  border-left: 3px solid var(--series-2); background: var(--chip);
+  padding: 13px 16px; border-radius: 0 8px 8px 0; margin: 18px 0; max-width: 72ch;
+}
+.callout .ct { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--series-2); margin-bottom: 5px; font-weight: 700; }
+.callout p { margin: 0; font-size: 13.5px; }
+
+footer.doc { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--border); font-size: 12.5px; color: var(--muted); }
+footer.doc a { color: var(--fg-2); }
+footer.doc p { font-size: 12.5px; color: var(--muted); }
+
+.selected-chip {
+  display: none; align-items: center; gap: 8px; font-family: var(--font-mono);
+  font-size: 11px; color: var(--fg); background: var(--chip);
+  border: 1px solid var(--border); border-radius: 5px; padding: 4px 8px;
+}
+.selected-chip.on { display: inline-flex; }
+
+@media (max-width: 640px) {
+  .wrap { padding: 20px 14px 72px; }
+  .navlinks { display: none; }
+  .plot { padding: 10px 4px 6px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="topbar">
+  <nav class="navlinks">
+    <a href="#frontier">01 · Frontier</a>
+    <a href="#hallmarks">02 · Hallmarks</a>
+    <a href="#heatmap">03 · Ligand × target</a>
+    <a href="#correlates">04 · Correlates</a>
+    <a href="#models">05 · Models</a>
+    <a href="#reference">06 · Reference</a>
+  </nav>
+  <button class="btn" id="btn-tables" aria-pressed="false">Data tables</button>
+  <button class="btn" id="btn-theme" title="Toggle theme">
+    <svg id="theme-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></svg>
+    <span>Theme</span>
+  </button>
+</div>
+
+<header class="doc">
+  <div class="eyebrow">DS 102 · Final project · Computational biology</div>
+  <h1>ML-based phytochemical analysis for multi-objective optimization with efficacy and toxicity metrics</h1>
+  <div class="byline">Artemio S. Arcega III · UP Data Science Society Bootcamp · April 2026</div>
+  <div class="pills">
+    <span class="pill">molecular docking</span>
+    <span class="pill">ADMET</span>
+    <span class="pill">multi-objective optimization</span>
+    <span class="pill">AutoDock Vina</span>
+    <span class="pill">P2Rank</span>
+  </div>
+  <p class="lede">
+    A self-curated screen of 33 plant-derived compounds against 90 protein targets, scored for
+    binding strength and predicted toxicity at once. This page is the interactive rendition of the
+    notebook: every figure below is drawn from the same 7,619-row dataset the paper reports on, and
+    every mark is yours to interrogate.
+  </p>
+
+  <div class="tiles" id="tiles"></div>
+</header>
+
+<section id="setup">
+  <div class="sec-num">00</div>
+  <h2>What was measured</h2>
+  <p>
+    Binding sites were located with <b>P2Rank</b>, each ligand docked into the top three pockets of
+    every protein with <b>AutoDock Vina</b>, and toxicity plus pharmacokinetics predicted with
+    <b>ADMET-AI</b>. Two numbers drive everything that follows:
+  </p>
+  <ul>
+    <li><strong>best_affinity</strong> — the strongest Vina pose for a ligand–pocket pair, in kcal/mol.
+      More negative means tighter binding.</li>
+    <li><strong>Composite_Tox_Score</strong> — a weighted roll-up of 20-odd ADMET toxicity endpoints.
+      Lower means safer.</li>
+  </ul>
+  <p>
+    The objective is a <em>frontier</em>: compounds that bind hard <em>and</em> score clean. Neither
+    metric alone is a drug candidate, which is exactly why the two have to be read on one plane.
+  </p>
+</section>
+
+<section id="frontier">
+  <div class="sec-num">01</div>
+  <h2>The efficacy–toxicity frontier</h2>
+  <p>
+    Each dot is one of the 33 phytochemicals, placed by its average binding affinity across all 90
+    targets and its composite toxicity score. The dashed lines are the medians of each axis; the
+    shaded quadrant is the one worth caring about — stronger than median binding, safer than median
+    toxicity. Hover any dot for its full profile; click to pin it.
+  </p>
+
+  <figure>
+    <figcaption>
+      <div>
+        <div class="fig-title">Binding affinity against predicted toxicity, per compound</div>
+        <div class="fig-sub">33 compounds · dot size encodes molecular weight</div>
+      </div>
+      <div class="ctl">
+        <span class="ctl-label">y-axis</span>
+        <button class="btn active" data-ymetric="tox">Composite toxicity</button>
+        <button class="btn" data-ymetric="ld50">LD50 (Zhu)</button>
+        <span class="selected-chip" id="pin-chip"></span>
+      </div>
+    </figcaption>
+    <div class="plot" id="plot-frontier"></div>
+    <div class="legend" id="legend-frontier"></div>
+    <div class="note">
+      <b>Reading it:</b> the bottom-right quadrant is the target region — strong binding, low toxicity.
+      Four compounds land there with margin and are named on the plot. Dot size is molecular weight,
+      a second channel that shows the frontier is not simply "bigger molecule binds harder."
+    </div>
+    <div class="tablewrap" id="table-frontier"></div>
+  </figure>
+
+  <div class="callout">
+    <div class="ct">What the frontier finds</div>
+    <p>
+      <strong>Rutin</strong> (CID 5280805), <strong>(−)-epigallocatechin</strong> (CID 72277),
+      <strong>α-amyrin</strong> (CID 73170) and <strong>paeoniflorin</strong> (CID 442534) clear both
+      medians. Rutin is the standout: the strongest mean affinity in the set at −6.58 kcal/mol with
+      the second-lowest toxicity score — though its molecular weight of 610 Da and single Lipinski
+      pass are a real liability for oral bioavailability.
+    </p>
+  </div>
+</section>
+
+<section id="hallmarks">
+  <div class="sec-num">02</div>
+  <h2>Which biology binds hardest</h2>
+  <p>
+    Every protein in the set carries a hallmark label — the biological process it stands in for.
+    Grouping all 7,619 docking scores by hallmark shows where this chemical library has leverage and
+    where it does not. Boxes are the interquartile range, the line is the median, whiskers run to
+    1.5× IQR.
+  </p>
+
+  <figure>
+    <figcaption>
+      <div>
+        <div class="fig-title">Binding affinity distribution by biological hallmark</div>
+        <div class="fig-sub">hallmarks with ≥ 20 docking runs · stronger binding to the left</div>
+      </div>
+      <div class="ctl">
+        <span class="ctl-label">sort</span>
+        <button class="btn active" data-hsort="med">Median</button>
+        <button class="btn" data-hsort="spread">Spread</button>
+        <button class="btn" data-hsort="n">Sample size</button>
+      </div>
+    </figcaption>
+    <div class="plot" id="plot-hallmarks"></div>
+    <div class="note">
+      <b>Reading it:</b> the spread between the strongest and weakest hallmark medians is roughly
+      4 kcal/mol — a wide gap, and a reminder that a hallmark's median says as much about which
+      proteins were chosen to represent it as about the chemistry.
+    </div>
+    <div class="tablewrap" id="table-hallmarks"></div>
+  </figure>
+</section>
+
+<section id="heatmap">
+  <div class="sec-num">03</div>
+  <h2>Every compound against every target</h2>
+  <p>
+    The full 33 × 90 matrix of mean binding affinity. Rows are compounds ordered by overall strength,
+    columns are protein targets; the colour ramp runs from weak binding to strong, clamped at the
+    2nd and 98th percentiles so the bulk of the matrix is legible. Hover any cell for the pair.
+  </p>
+
+  <figure>
+    <figcaption>
+      <div>
+        <div class="fig-title">Mean best affinity, compound × protein target</div>
+        <div class="fig-sub">2,970 ligand–target pairs · kcal/mol · rows labelled by PubChem CID</div>
+      </div>
+      <div class="ctl">
+        <span class="ctl-label">columns</span>
+        <button class="btn active" data-hmsort="strength">By target strength</button>
+        <button class="btn" data-hmsort="id">By PDB ID</button>
+      </div>
+    </figcaption>
+    <div class="plot" id="plot-heatmap"></div>
+    <div class="legend" id="legend-heatmap"></div>
+    <div class="note">
+      <b>Reading it:</b> the horizontal banding is the real signal — a compound that binds well tends
+      to bind well everywhere, which is promiscuity, not selectivity. Vertical banding marks targets
+      with pockets that accommodate almost anything.
+    </div>
+  </figure>
+</section>
+
+<section id="correlates">
+  <div class="sec-num">04</div>
+  <h2>What actually predicts affinity</h2>
+  <p>
+    If a cheap molecular descriptor predicted binding affinity, screening would be free. This is the
+    correlation of eleven physicochemical and ADMET descriptors against the two scaled objectives.
+    Bars run right for positive correlation, left for negative.
+  </p>
+
+  <figure>
+    <figcaption>
+      <div>
+        <div class="fig-title">Descriptor correlation with scaled affinity and scaled toxicity</div>
+        <div class="fig-sub">Pearson r across 7,619 docking runs</div>
+      </div>
+      <div class="ctl">
+        <span class="ctl-label">against</span>
+        <button class="btn active" data-corr="both">Both</button>
+        <button class="btn" data-corr="aff">Affinity</button>
+        <button class="btn" data-corr="tox">Toxicity</button>
+      </div>
+    </figcaption>
+    <div class="plot" id="plot-corr"></div>
+    <div class="legend" id="legend-corr"></div>
+    <div class="note">
+      <b>Reading it:</b> nothing clears r = 0.4 against affinity. The one strong relationship in the
+      panel — CYP3A4 inhibition against toxicity at r = 0.77 — is close to circular, since CYP
+      inhibition is itself one of the endpoints rolled into the composite score.
+    </div>
+    <div class="tablewrap" id="table-corr"></div>
+  </figure>
+
+  <p>
+    This is the paper's quiet finding. <b>logP</b>, the descriptor most often assumed to track binding,
+    sits at r = 0.02. Multi-parameter modelling is not a stylistic preference here; no single
+    descriptor carries the signal.
+  </p>
+</section>
+
+<section id="models">
+  <div class="sec-num">05</div>
+  <h2>Where the models succeed, and where they do not</h2>
+  <p>
+    Two learning tasks were run on the same feature matrix: regress the binding affinity, and classify
+    the biological hallmark. The results split so sharply that the gap is the result.
+  </p>
+
+  <figure>
+    <figcaption>
+      <div>
+        <div class="fig-title">Regression — predicting binding affinity</div>
+        <div class="fig-sub">80/20 split · GridSearchCV, 3-fold · tuned estimators</div>
+      </div>
+      <div class="ctl">
+        <span class="ctl-label">metric</span>
+        <button class="btn active" data-regmetric="r2">R²</button>
+        <button class="btn" data-regmetric="rmse">RMSE</button>
+        <button class="btn" data-regmetric="mae">MAE</button>
+      </div>
+    </figcaption>
+    <div class="plot" id="plot-reg"></div>
+    <div class="legend" id="legend-reg"></div>
+    <div class="note">
+      <b>Reading it:</b> tuned XGBoost and SVR reach R² ≈ 0.999 with RMSE under 0.04. That is not a
+      good result — it is a warning. The feature matrix still contained <code>mean_affinity</code>,
+      which is near-collinear with the target (r = −0.97), so the models are largely reading the
+      answer off an adjacent column.
+    </div>
+    <div class="tablewrap" id="table-reg"></div>
+  </figure>
+
+  <figure>
+    <figcaption>
+      <div>
+        <div class="fig-title">Classification — predicting the biological hallmark</div>
+        <div class="fig-sub">35 classes · weighted F1</div>
+      </div>
+      <div class="ctl">
+        <span class="ctl-label">metric</span>
+        <button class="btn active" data-clfmetric="acc">Accuracy</button>
+        <button class="btn" data-clfmetric="f1">Weighted F1</button>
+      </div>
+    </figcaption>
+    <div class="plot" id="plot-clf"></div>
+    <div class="legend" id="legend-clf"></div>
+    <div class="note">
+      <b>Reading it:</b> the best classifier reaches 0.21 accuracy across 35 hallmark classes. Low in
+      absolute terms, but roughly seven times a uniform-random baseline of 0.029 — weak signal, not
+      no signal.
+    </div>
+    <div class="tablewrap" id="table-clf"></div>
+  </figure>
+
+  <div class="callout">
+    <div class="ct">The honest version</div>
+    <p>
+      A clean-featured gradient-boosting run on physicochemical and ADMET descriptors alone reaches
+      <strong>R² = 0.188</strong> — and a refined random forest, 0.188 as well. That number, not the
+      0.999, is what 2D descriptors are worth for binding affinity. Resolving the rest needs 3D
+      structural or graph representations.
+    </p>
+  </div>
+</section>
+
+<section id="reference">
+  <div class="sec-num">06</div>
+  <h2>The underlying distribution</h2>
+  <p>
+    All 7,619 binding scores, binned. The distribution is close to normal and centred near
+    −5.7 kcal/mol, which is roughly what a non-optimised natural-product library docked against
+    arbitrary pockets should look like.
+  </p>
+
+  <figure>
+    <figcaption>
+      <div>
+        <div class="fig-title">Distribution of best binding affinity</div>
+        <div class="fig-sub">7,619 docking runs · 36 bins</div>
+      </div>
+    </figcaption>
+    <div class="plot" id="plot-hist"></div>
+    <div class="note">
+      <b>Reading it:</b> the left tail past −9 kcal/mol is where the interesting chemistry lives. It
+      is thin: strong poses are rare, which is the whole argument for screening computationally
+      before committing anything to a bench.
+    </div>
+  </figure>
+
+  <h3>Protein target reference</h3>
+  <p>All 90 targets, their hallmark assignment and their median binding affinity across the library.</p>
+  <figure>
+    <figcaption>
+      <div>
+        <div class="fig-title">Targets</div>
+        <div class="fig-sub">RCSB PDB identifiers</div>
+      </div>
+      <div class="ctl">
+        <input class="search" id="search-proteins" type="search" placeholder="filter targets…" aria-label="Filter protein targets">
+      </div>
+    </figcaption>
+    <div class="tablewrap on" id="table-proteins" style="max-height:420px"></div>
+  </figure>
+</section>
+
+<section id="limits">
+  <div class="sec-num">07</div>
+  <h2>Limits worth stating</h2>
+  <ul>
+    <li><strong>Static docking only.</strong> No molecular dynamics, so no entropy, no solvent, no
+      induced fit. Vina scores are a pre-screen, not binding free energies.</li>
+    <li><strong>Toxicity is predicted, not measured.</strong> Composite_Tox_Score is a roll-up of
+      model outputs; its discrete banding is visible in the frontier plot as horizontal stripes.</li>
+    <li><strong>Hallmark labels are assignments.</strong> Each protein stands in for a process by
+      editorial choice, so hallmark-level medians inherit that choice.</li>
+    <li><strong>One pose per pocket.</strong> Only the best of ten poses per pocket is carried
+      forward, which discards the ensemble a dynamics run would use.</li>
+  </ul>
+  <p>
+    None of this sinks the pipeline. It sets what the pipeline is for: narrowing 33 × 90 pairs to a
+    handful worth the expensive simulation.
+  </p>
+</section>
+
+<footer class="doc">
+  <p>
+    Interactive rendition of <em>ML-based phytochemical analysis for multi-objective optimization with
+    efficacy and toxicity metrics</em> (DS 102 final project, April 2026). All figures are computed
+    from the project's own 7,619-row docking dataset.
+  </p>
+  <p style="margin-top:8px">
+    Tools: AutoDock Vina 1.2.7 · P2Rank · ADMET-AI · RDKit · scikit-learn · XGBoost.
+    Ligand set follows Fatma, Jameel &amp; Siddique (2023), <span class="mono">doi:10.3390/chemistry5010017</span>.
+    Protein structures from the RCSB Protein Data Bank.
+  </p>
+</footer>
+
+</div>
+
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+<script>
+const DATA = {"meta":{"rows":7619,"cols":118,"ligands":33,"proteins":90,"hallmarks":35,"affinity":{"mean":-5.731,"std":1.423,"min":-10.964,"max":-0.016,"median":-5.712,"q1":-6.652,"q3":-4.874}},"ligands":[{"cid":"128861","id":"CID_128861","name":null,"aff":-6.169,"strongest":-8.683,"tox":0.4621,"mw":287.25,"logp":2.909,"qed":0.347,"tpsa":112.45,"hbd":5.0,"hba":5.0,"ld50":1.987,"lipinski":4.0,"n":234},{"cid":"1548943","id":"CID_1548943","name":null,"aff":-5.278,"strongest":-8.551,"tox":0.2202,"mw":305.42,"logp":3.79,"qed":0.539,"tpsa":58.56,"hbd":2.0,"hba":3.0,"ld50":2.048,"lipinski":4.0,"n":237},{"cid":"159287","id":"CID_159287","name":null,"aff":-5.819,"strongest":-8.655,"tox":0.4446,"mw":331.3,"logp":3.221,"qed":0.545,"tpsa":110.68,"hbd":4.0,"hba":6.0,"ld50":1.933,"lipinski":4.0,"n":229},{"cid":"2519","id":"CID_2519","name":null,"aff":-4.571,"strongest":-6.726,"tox":0.1277,"mw":194.19,"logp":-1.029,"qed":0.538,"tpsa":61.82,"hbd":0.0,"hba":3.0,"ld50":2.42,"lipinski":4.0,"n":240},{"cid":"259846","id":"CID_259846","name":null,"aff":-5.741,"strongest":-9.983,"tox":0.1716,"mw":426.73,"logp":8.025,"qed":0.421,"tpsa":20.23,"hbd":1.0,"hba":1.0,"ld50":1.826,"lipinski":3.0,"n":202},{"cid":"439246","id":"CID_439246","name":null,"aff":-6.124,"strongest":-9.017,"tox":0.3871,"mw":272.26,"logp":2.51,"qed":0.742,"tpsa":86.99,"hbd":3.0,"hba":5.0,"ld50":2.263,"lipinski":4.0,"n":234},{"cid":"439533","id":"CID_439533","name":null,"aff":-6.263,"strongest":-8.977,"tox":0.3385,"mw":304.25,"logp":1.186,"qed":0.501,"tpsa":127.45,"hbd":5.0,"hba":7.0,"ld50":2.2,"lipinski":4.0,"n":234},{"cid":"440832","id":"CID_440832","name":null,"aff":-5.973,"strongest":-8.699,"tox":0.4576,"mw":271.25,"logp":3.203,"qed":0.51,"tpsa":92.22,"hbd":4.0,"hba":4.0,"ld50":1.928,"lipinski":4.0,"n":234},{"cid":"442495","id":"CID_442495","name":null,"aff":-4.55,"strongest":-7.919,"tox":0.1152,"mw":152.24,"logp":2.712,"qed":0.488,"tpsa":17.07,"hbd":0.0,"hba":1.0,"ld50":1.967,"lipinski":4.0,"n":243},{"cid":"442534","id":"CID_442534","name":"Paeoniflorin","aff":-6.15,"strongest":-9.586,"tox":0.1433,"mw":480.47,"logp":-1.357,"qed":0.306,"tpsa":164.37,"hbd":5.0,"hba":11.0,"ld50":3.558,"lipinski":3.0,"n":224},{"cid":"445070","id":"CID_445070","name":null,"aff":-4.823,"strongest":-8.735,"tox":0.176,"mw":222.37,"logp":4.398,"qed":0.633,"tpsa":20.23,"hbd":1.0,"hba":1.0,"ld50":1.352,"lipinski":4.0,"n":241},{"cid":"5191","id":"CID_5191","name":null,"aff":-4.53,"strongest":-6.398,"tox":0.2253,"mw":300.79,"logp":2.429,"qed":0.619,"tpsa":64.79,"hbd":1.0,"hba":5.0,"ld50":2.3,"lipinski":4.0,"n":237},{"cid":"5280343","id":"CID_5280343","name":null,"aff":-6.313,"strongest":-8.842,"tox":0.4694,"mw":302.24,"logp":1.988,"qed":0.434,"tpsa":131.36,"hbd":5.0,"hba":7.0,"ld50":2.386,"lipinski":4.0,"n":233},{"cid":"5280442","id":"CID_5280442","name":null,"aff":-6.075,"strongest":-9.125,"tox":0.4724,"mw":284.27,"logp":2.88,"qed":0.756,"tpsa":79.9,"hbd":2.0,"hba":5.0,"ld50":2.379,"lipinski":4.0,"n":233},{"cid":"5280443","id":"CID_5280443","name":null,"aff":-6.177,"strongest":-8.764,"tox":0.4702,"mw":270.24,"logp":2.577,"qed":0.632,"tpsa":90.9,"hbd":3.0,"hba":5.0,"ld50":2.285,"lipinski":4.0,"n":234},{"cid":"5280445","id":"CID_5280445","name":null,"aff":-6.321,"strongest":-8.923,"tox":0.4745,"mw":286.24,"logp":2.282,"qed":0.511,"tpsa":111.13,"hbd":4.0,"hba":6.0,"ld50":2.336,"lipinski":4.0,"n":235},{"cid":"5280805","id":"CID_5280805","name":"Rutin","aff":-6.577,"strongest":-10.939,"tox":0.2346,"mw":610.52,"logp":-1.687,"qed":0.14,"tpsa":269.43,"hbd":10.0,"hba":16.0,"ld50":2.355,"lipinski":1.0,"n":212},{"cid":"5280863","id":"CID_5280863","name":null,"aff":-6.113,"strongest":-8.9,"tox":0.4582,"mw":286.24,"logp":2.282,"qed":0.546,"tpsa":111.13,"hbd":4.0,"hba":6.0,"ld50":2.295,"lipinski":4.0,"n":233},{"cid":"5280961","id":"CID_5280961","name":null,"aff":-5.998,"strongest":-9.153,"tox":0.4559,"mw":270.24,"logp":2.577,"qed":0.632,"tpsa":90.9,"hbd":3.0,"hba":5.0,"ld50":2.379,"lipinski":4.0,"n":234},{"cid":"5281607","id":"CID_5281607","name":null,"aff":-6.111,"strongest":-8.966,"tox":0.4539,"mw":254.24,"logp":2.871,"qed":0.7,"tpsa":70.67,"hbd":2.0,"hba":4.0,"ld50":2.35,"lipinski":4.0,"n":236},{"cid":"5281672","id":"CID_5281672","name":null,"aff":-6.221,"strongest":-8.845,"tox":0.446,"mw":318.24,"logp":1.694,"qed":0.371,"tpsa":151.59,"hbd":6.0,"hba":8.0,"ld50":2.341,"lipinski":3.0,"n":233},{"cid":"5281708","id":"CID_5281708","name":null,"aff":-5.852,"strongest":-8.888,"tox":0.4655,"mw":254.24,"logp":2.871,"qed":0.7,"tpsa":70.67,"hbd":2.0,"hba":4.0,"ld50":2.288,"lipinski":4.0,"n":235},{"cid":"5281814","id":"CID_5281814","name":null,"aff":-6.162,"strongest":-9.755,"tox":0.4648,"mw":338.36,"logp":4.086,"qed":0.626,"tpsa":90.9,"hbd":3.0,"hba":5.0,"ld50":3.041,"lipinski":4.0,"n":229},{"cid":"5318517","id":"CID_5318517","name":null,"aff":-5.787,"strongest":-9.095,"tox":0.1854,"mw":350.46,"logp":1.963,"qed":0.411,"tpsa":86.99,"hbd":3.0,"hba":5.0,"ld50":2.644,"lipinski":4.0,"n":227},{"cid":"5944","id":"CID_5944","name":null,"aff":-4.849,"strongest":-7.391,"tox":0.1445,"mw":196.2,"logp":0.644,"qed":0.421,"tpsa":52.6,"hbd":0.0,"hba":4.0,"ld50":2.028,"lipinski":4.0,"n":237},{"cid":"637775","id":"CID_637775","name":null,"aff":-4.883,"strongest":-6.804,"tox":0.1482,"mw":224.21,"logp":1.507,"qed":0.758,"tpsa":75.99,"hbd":2.0,"hba":4.0,"ld50":1.818,"lipinski":4.0,"n":240},{"cid":"638024","id":"CID_638024","name":null,"aff":-5.815,"strongest":-8.695,"tox":0.3366,"mw":285.34,"logp":2.997,"qed":0.633,"tpsa":38.77,"hbd":0.0,"hba":3.0,"ld50":2.545,"lipinski":4.0,"n":233},{"cid":"64971","id":"CID_64971","name":null,"aff":-5.647,"strongest":-10.727,"tox":0.1872,"mw":456.71,"logp":7.09,"qed":0.436,"tpsa":57.53,"hbd":2.0,"hba":2.0,"ld50":2.307,"lipinski":3.0,"n":202},{"cid":"65064","id":"CID_65064","name":null,"aff":-6.537,"strongest":-10.411,"tox":0.3733,"mw":458.38,"logp":2.233,"qed":0.212,"tpsa":197.37,"hbd":8.0,"hba":11.0,"ld50":2.168,"lipinski":2.0,"n":224},{"cid":"689043","id":"CID_689043","name":null,"aff":-5.162,"strongest":-7.227,"tox":0.176,"mw":180.16,"logp":1.196,"qed":0.472,"tpsa":77.76,"hbd":3.0,"hba":3.0,"ld50":1.767,"lipinski":4.0,"n":245},{"cid":"72277","id":"CID_72277","name":"(-)-Epigallocatechin","aff":-6.185,"strongest":-8.748,"tox":0.2696,"mw":306.27,"logp":1.252,"qed":0.437,"tpsa":130.61,"hbd":6.0,"hba":7.0,"ld50":2.401,"lipinski":3.0,"n":230},{"cid":"73170","id":"CID_73170","name":"alpha-Amyrin","aff":-6.034,"strongest":-10.964,"tox":0.1709,"mw":426.73,"logp":8.025,"qed":0.389,"tpsa":20.23,"hbd":1.0,"hba":1.0,"ld50":1.872,"lipinski":3.0,"n":200},{"cid":"8468","id":"CID_8468","name":null,"aff":-4.728,"strongest":-6.647,"tox":0.1372,"mw":168.15,"logp":1.099,"qed":0.693,"tpsa":66.76,"hbd":2.0,"hba":3.0,"ld50":1.901,"lipinski":4.0,"n":245}],"medians":{"aff":-5.998,"tox":0.3366},"hallmarks":[{"label":"Model for phytochemical","n":99,"min":-9.73,"q1":-8.162,"med":-7.671,"q3":-6.96,"max":-5.213,"mean":-7.481},{"label":"Activating Invasion & Metastasis","n":99,"min":-9.586,"q1":-8.029,"med":-7.404,"q3":-6.128,"max":-4.117,"mean":-7.163},{"label":"Model for exploring","n":99,"min":-10.097,"q1":-8.093,"med":-7.377,"q3":-6.223,"max":-4.565,"mean":-7.09},{"label":"Target for evaluating","n":165,"min":-8.662,"q1":-7.158,"med":-6.587,"q3":-5.776,"max":-3.883,"mean":-6.475},{"label":"Model for natural","n":99,"min":-8.977,"q1":-7.288,"med":-6.486,"q3":-5.834,"max":-4.847,"mean":-6.499},{"label":"Target for alkaloid-based","n":99,"min":-9.495,"q1":-7.293,"med":-6.317,"q3":-5.764,"max":-4.305,"mean":-6.633},{"label":"Model for methyl","n":99,"min":-8.1,"q1":-6.842,"med":-6.293,"q3":-5.851,"max":-4.449,"mean":-6.373},{"label":"Target for multi-strain","n":99,"min":-8.344,"q1":-6.829,"med":-6.286,"q3":-5.733,"max":-4.338,"mean":-6.26},{"label":"Assessment of phytochemicals","n":99,"min":-7.966,"q1":-6.634,"med":-6.231,"q3":-5.529,"max":-4.363,"mean":-6.12},{"label":"Hallmark for plant-based","n":99,"min":-8.124,"q1":-6.959,"med":-6.115,"q3":-5.374,"max":-3.85,"mean":-6.089},{"label":"Evaluation of phytochemical-based","n":99,"min":-8.812,"q1":-6.639,"med":-6.064,"q3":-4.96,"max":-3.492,"mean":-5.912},{"label":"Molecular interaction study","n":1526,"min":-9.761,"q1":-7.02,"med":-6.015,"q3":-5.167,"max":-2.613,"mean":-6.09},{"label":"Assessment of natural","n":359,"min":-9.909,"q1":-6.869,"med":-5.977,"q3":-4.811,"max":-2.197,"mean":-5.97},{"label":"Inward-open conformation for","n":97,"min":-7.981,"q1":-6.476,"med":-5.818,"q3":-5.365,"max":-3.945,"mean":-5.92},{"label":"Cell signaling modulation","n":885,"min":-8.33,"q1":-6.589,"med":-5.737,"q3":-4.83,"max":-2.387,"mean":-5.58},{"label":"Oncological drug target","n":99,"min":-7.857,"q1":-6.365,"med":-5.728,"q3":-5.226,"max":-3.709,"mean":-5.751},{"label":"Assessment of mitochondrial","n":99,"min":-8.346,"q1":-6.367,"med":-5.706,"q3":-4.903,"max":-3.371,"mean":-5.627},{"label":"Target for phytochemical-based","n":292,"min":-9.51,"q1":-6.877,"med":-5.625,"q3":-4.981,"max":-2.76,"mean":-5.815},{"label":"Resisting Cell Death","n":95,"min":-6.766,"q1":-5.897,"med":-5.529,"q3":-4.331,"max":-2.885,"mean":-5.195},{"label":"Target for meroterpenoid-based","n":99,"min":-7.082,"q1":-5.845,"med":-5.525,"q3":-5.018,"max":-3.995,"mean":-5.482},{"label":"Regulatory site for","n":99,"min":-8.423,"q1":-6.208,"med":-5.521,"q3":-4.723,"max":-2.645,"mean":-5.543},{"label":"Enzyme activity modulation","n":759,"min":-8.919,"q1":-6.503,"med":-5.508,"q3":-4.755,"max":-2.168,"mean":-5.505},{"label":"Target for natural","n":1093,"min":-8.716,"q1":-6.263,"med":-5.453,"q3":-4.561,"max":-2.172,"mean":-5.382},{"label":"Assessment of glucose","n":66,"min":-8.526,"q1":-6.893,"med":-5.405,"q3":-4.905,"max":-3.609,"mean":-5.774},{"label":"Tumor Promoting Inflammation","n":96,"min":-8.551,"q1":-6.578,"med":-5.375,"q3":-4.733,"max":-2.216,"mean":-5.65},{"label":"Hallmark for multi-site","n":99,"min":-7.244,"q1":-5.899,"med":-5.328,"q3":-4.888,"max":-3.433,"mean":-5.334},{"label":"Model for phytochemical-induced","n":99,"min":-7.471,"q1":-5.844,"med":-5.082,"q3":-4.496,"max":-3.109,"mean":-5.129},{"label":"Target for exploring","n":99,"min":-6.947,"q1":-5.913,"med":-5.016,"q3":-4.34,"max":-3.191,"mean":-5.06},{"label":"Model for phytochemical-based","n":66,"min":-6.262,"q1":-5.357,"med":-5.011,"q3":-4.481,"max":-3.327,"mean":-4.898},{"label":"Model for enzymatic","n":75,"min":-7.417,"q1":-5.664,"med":-4.99,"q3":-4.308,"max":-2.622,"mean":-4.897},{"label":"Model for deconstruction","n":99,"min":-7.182,"q1":-5.671,"med":-4.889,"q3":-4.553,"max":-3.143,"mean":-5.035},{"label":"Genome Instability & Mutation","n":54,"min":-7.795,"q1":-6.208,"med":-4.374,"q3":-2.684,"max":-0.284,"mean":-4.391},{"label":"Target for anti-angiogenic","n":88,"min":-7.143,"q1":-5.129,"med":-4.239,"q3":-3.087,"max":-1.073,"mean":-4.228},{"label":"Target for plant-derived","n":56,"min":-4.825,"q1":-4.059,"med":-3.74,"q3":-3.405,"max":-2.671,"mean":-3.62},{"label":"Target for quinone","n":65,"min":-5.127,"q1":-3.864,"med":-3.463,"q3":-2.998,"max":-1.796,"mean":-3.374}],"heatmap":{"ligands":["5280805","65064","5280445","5280343","439533","5281672","72277","5280443","128861","5281814","442534","439246","5280863","5281607","5280442","73170","5280961","440832","5281708","159287","638024","5318517","259846","64971","1548943","689043","637775","5944","445070","8468","2519","442495","5191"],"proteins":["1NW9","1QTN","1RRJ","1T15","1ZXM","2I0E","2J32","2MJV","2R7G","2XIR","2YCF","2YIQ","2YUU","2ZOQ","2ZVV","3AYU","3UEC","3VA4","3VO3","3W5K","4AJY","4ELL","4H6J","4J44","4RA4","4S0O","4Y6O","4ZIE","5C5A","5CIR","5E0U","5EQG","5EQH","5F19","5F1A","5HG1","5IKR","5MER","5MHC","5UG9","5VQP","5W60","5WBH","6C9F","6C9G","6C9H","6NJS","6NV2","6OM2","6P0Z","6P8E","6Q9L","6Q9O","6QHD","6QHL","6S14","6S17","6THA","6TLC","6UDV","6YIF","7AAC","7AFW","7L1C","7MYX","7OTW","7OTY","7SIC","7SID","7XJO","7YAA","8ABX","8AZZ","8F59","8GF9","8GFA","8HTR","8JYR","8K5Y","8ONV","8OXQ","8SE3","8SE4","8UDZ","8W59","8X94","9DQ3","9JU1","9KKU","9UGP"],"values":[[-7.35,-6.38,-7.78,-6.52,-7.24,-5.81,-5.53,-7.09,-6.36,-6.58,-6.54,-6.55,-7.21,-3.73,-6.71,-5.5,-4.8,-6.6,-4.06,-8.48,-6.97,-7.07,-5.82,-6.82,-6.96,-7.05,-6.99,-7.73,-5.24,-9.6,-7.21,-6.05,-5.26,-5.15,-7.6,-8.03,null,-6.58,-6.38,-5.26,-6.42,-6.23,-6.85,-6.4,-4.1,-6.43,-7.58,-6.07,-7.95,-6.11,-6.41,-1.91,-7.37,-8.14,-5.35,-5.61,-6.41,-5.55,-7.45,-3.4,-6.15,-6.26,-5.93,-6.86,-6.83,-8.97,-8.74,-3.44,-4.36,-5.95,-7.33,-7.26,-4.47,-6.48,null,-5.86,-6.93,-7.07,-6.73,-5.35,-4.76,-8.74,-8.37,-7.52,-8.24,-10.38,-6.63,-5.6,-6.64,-6.3],[-6.95,-5.64,-5.31,-6.38,-7.79,-6.46,-5.38,-6.63,-7.84,-6.43,-6.4,-6.05,-7.12,-4.35,-6.69,-5.75,-5.35,-6.49,-5.87,-8.59,-6.38,-6.98,-4.15,-6.59,-6.8,-7.39,-7.06,-7.35,-5.55,-9.08,-7.67,-6.14,-5.32,-6.08,-5.29,-7.96,-6.04,-7.06,-5.86,-4.74,-6.2,-6.22,-6.88,-6.77,-6.27,-5.34,-7.47,-5.96,-7.29,-6.33,-6.28,-3.38,-7.15,-7.4,-5.78,-5.02,-5.45,-6.0,-6.91,-4.02,-6.05,-6.92,-6.04,-6.94,-6.09,-8.73,-8.37,-5.1,-5.98,-6.3,-6.99,-6.75,-3.8,-6.54,null,-7.84,-6.78,-6.69,-5.71,-5.12,-6.43,-8.66,-8.15,-7.97,-8.52,-10.06,-6.49,-5.32,-6.79,-6.48],[-7.06,-6.04,-6.11,-5.51,-4.41,-6.44,-5.33,-6.41,-6.87,-5.78,-6.37,-6.37,-6.91,-5.61,-5.82,-5.37,-5.27,-6.84,-5.16,-8.25,-5.85,-6.32,-4.25,-6.47,-7.36,-6.88,-6.34,-7.12,-5.76,-8.16,-6.59,-6.13,-6.07,-6.13,-6.25,-7.13,-4.8,-7.07,-5.76,-5.76,-6.7,-6.64,-6.61,-6.77,-6.54,-7.45,-6.96,-5.25,-7.2,-6.11,-5.75,-4.09,-6.83,-7.03,-5.28,-5.38,-6.23,-6.12,-6.62,-5.42,-5.5,-6.5,-5.86,-6.31,-5.55,-7.9,-8.28,-7.61,-7.51,-5.98,-6.58,-4.42,-4.67,-5.26,-0.68,-6.24,-6.86,-6.55,-6.61,-4.02,-7.09,-7.67,-7.95,-7.32,-8.37,-8.49,-6.0,-5.52,-6.29,-5.88],[-6.83,-6.17,-6.21,-5.67,-4.53,-6.26,-5.14,-6.31,-6.94,-5.86,-6.25,-6.23,-7.06,-5.63,-6.1,-5.3,-5.12,-6.85,-5.19,-8.12,-5.68,-6.78,-4.67,-6.32,-7.22,-6.93,-6.37,-6.84,-5.56,-8.08,-6.35,-5.84,-5.77,-6.16,-5.76,-7.14,-4.07,-7.48,-5.98,-5.61,-6.56,-6.62,-6.35,-6.72,-6.22,-7.05,-7.11,-5.08,-7.16,-5.92,-5.66,-4.22,-6.83,-7.12,-5.4,-5.38,-6.21,-5.91,-6.62,-4.8,-5.43,-6.6,-5.81,-6.28,-5.74,-8.06,-8.32,-7.7,-7.14,-5.51,-6.54,-6.26,-4.63,-6.66,-1.13,-6.6,-6.54,-6.83,-6.33,-4.34,-6.98,-7.71,-7.7,-7.25,-8.09,-8.6,-5.98,-5.16,-6.23,-5.98],[-6.94,-6.09,-6.45,-5.55,-4.64,-6.46,-5.08,-6.16,-6.84,-6.08,-6.05,-6.24,-6.93,-5.66,-5.97,-5.26,-5.29,-6.8,-5.24,-8.17,-5.67,-6.39,-5.73,-6.34,-7.04,-6.84,-6.45,-6.64,-5.51,-8.13,-6.49,-5.93,-5.68,-6.12,-5.5,-7.14,-4.24,-7.45,-6.04,-5.83,-6.53,-6.55,-6.16,-6.74,-6.48,-7.07,-7.09,-5.21,-7.27,-6.11,-5.64,-3.48,-6.84,-7.02,-5.4,-5.22,-6.09,-5.86,-6.53,-5.12,-5.42,-6.49,-5.74,-6.24,-5.72,-8.07,-8.22,-7.68,-6.65,-5.38,-6.51,-5.74,-4.63,-4.88,-1.28,-6.47,-6.62,-6.73,-6.29,-3.65,-6.82,-7.96,-7.71,-7.2,-8.07,-8.65,-5.89,-5.46,-6.21,-5.77],[-6.68,-6.33,-6.09,-5.61,-3.69,-6.2,-5.02,-6.34,-7.27,-5.96,-6.37,-6.1,-6.9,-4.97,-6.02,-5.13,-4.79,-6.96,-4.58,-8.17,-5.61,-6.49,-4.74,-6.18,-7.11,-6.83,-6.4,-6.8,-5.43,-8.1,-6.58,-5.52,-5.26,-5.92,-5.72,-7.28,-4.17,-7.49,-5.57,-5.81,-5.87,-6.7,-6.51,-6.72,-6.52,-6.88,-7.33,-5.23,-7.08,-5.9,-5.69,-3.87,-6.74,-7.11,-5.34,-5.44,-6.57,-3.63,-6.62,-4.7,-5.46,-6.9,-5.84,-6.47,-5.54,-8.13,-8.45,-6.9,-6.62,-5.55,-6.48,-6.61,-4.66,-5.52,-0.14,-6.42,-6.88,-6.7,-6.07,-3.8,-6.67,-7.63,-7.78,-6.97,-7.76,-8.56,-6.17,-5.41,-6.28,-5.87],[-6.85,-6.01,-5.88,-5.23,-6.56,-6.13,-5.29,-6.13,-6.98,-5.87,-6.19,-5.97,-6.27,-5.09,-6.07,-5.53,-4.91,-6.68,-4.65,-7.6,-5.73,-6.12,-5.63,-6.04,-7.17,-6.64,-6.02,-6.91,-5.38,-7.91,-6.92,-5.7,-5.23,-5.88,-5.58,-6.94,-4.86,-7.06,-5.81,-5.59,-5.88,-6.11,-6.22,-6.53,-6.33,-7.21,-6.83,-5.15,-6.69,-5.81,-5.81,-3.83,-6.48,-6.75,-5.49,-5.16,-6.51,-5.62,-6.47,-4.84,-5.26,-6.85,-5.48,-6.34,-5.36,-7.82,-8.22,-6.81,-7.01,-5.4,-6.18,-6.1,-4.95,-3.49,null,-6.51,-6.84,-6.55,-5.88,-3.94,-6.46,-7.32,-7.82,-7.03,-7.92,-8.38,-5.94,-5.47,-6.07,-5.78],[-6.98,-5.61,-6.08,-5.37,-3.85,-6.2,-5.05,-6.29,-6.25,-5.45,-6.27,-6.29,-6.83,-5.4,-5.63,-5.1,-5.13,-6.63,-4.49,-7.95,-5.56,-5.77,-4.4,-6.28,-7.15,-6.64,-5.98,-7.12,-5.78,-7.77,-6.43,-6.48,-6.14,-6.2,-6.18,-7.01,-4.66,-7.21,-5.44,-5.39,-6.45,-6.32,-6.54,-6.59,-6.17,-7.21,-6.75,-5.07,-6.97,-5.79,-5.69,-3.9,-6.85,-6.78,-4.73,-5.16,-6.07,-6.01,-6.35,-5.42,-5.08,-6.23,-5.7,-6.0,-5.73,-7.6,-8.07,-7.53,-7.48,-5.38,-6.35,-6.42,-4.44,-6.74,-3.67,-6.4,-6.68,-6.21,-6.36,-3.85,-6.83,-7.39,-7.77,-7.2,-8.43,-8.35,-5.77,-5.06,-5.94,-5.63],[-6.76,-6.07,-5.95,-5.47,-4.58,-6.24,-4.94,-5.95,-6.66,-5.73,-6.06,-6.1,-6.9,-5.47,-5.81,-5.05,-5.1,-6.69,-5.2,-7.96,-5.6,-6.14,-5.38,-6.45,-6.96,-6.79,-6.32,-6.99,-5.43,-7.63,-6.35,-5.74,-4.45,-6.23,-6.6,-6.92,-4.83,-6.63,-5.75,-5.52,-6.57,-6.17,-6.29,-6.42,-6.0,-7.23,-6.85,-5.21,-7.38,-5.78,-5.61,-4.1,-6.65,-6.89,-5.38,-5.31,-6.26,-5.95,-6.42,-4.77,-5.48,-6.44,-5.65,-6.23,-5.56,-7.75,-8.13,-7.25,-7.18,-5.54,-6.37,-5.78,-4.68,-4.93,-2.18,-6.35,-6.4,-6.63,-5.7,-4.03,-6.56,-7.55,-7.73,-7.05,-7.89,-8.34,-6.06,-5.48,-6.17,-5.62],[-6.84,-5.13,-5.05,-5.4,-5.99,-6.13,-4.77,-6.46,-6.07,-5.21,-5.96,-6.1,-6.63,-5.44,-5.88,-4.78,-4.92,-5.64,-4.44,-8.02,-5.58,-5.88,-4.1,-6.19,-6.84,-6.53,-5.89,-7.91,-5.71,-8.28,-6.3,-6.34,-6.08,-6.41,-6.2,-7.31,-5.72,-6.72,-5.43,-5.25,-6.49,-6.18,-6.48,-6.96,-6.34,-6.94,-6.86,-4.46,-6.72,-5.5,-5.82,-3.32,-6.52,-6.86,-4.98,-4.96,-5.75,-5.27,-6.37,-5.44,-4.91,-6.15,-6.29,-5.63,-6.03,-7.96,-8.4,-7.27,-7.37,-5.62,-6.3,-5.83,-4.54,-4.75,null,-6.73,-6.4,-6.37,-5.29,-3.75,-6.42,-7.56,-7.73,-7.34,-8.46,-9.03,-5.97,-5.51,-6.32,-5.61],[-6.55,-5.29,-6.91,-5.42,-6.41,-6.17,-5.07,-6.48,-6.66,-5.73,-6.41,-6.2,-7.21,-4.29,-5.96,-5.36,-4.39,-6.03,-4.36,-8.52,-6.02,-6.74,-5.8,-6.59,-6.53,-6.71,-6.13,-6.82,-5.04,-8.32,-6.23,-6.13,-6.24,-6.26,-4.07,-7.65,-5.69,-7.45,-5.9,-4.18,-6.67,-5.71,-6.66,-6.6,-5.46,-5.02,-6.53,-4.52,-7.45,-5.73,-5.96,-3.42,-6.73,-7.45,-5.07,-4.65,-6.32,-5.24,-7.18,-2.07,-5.51,-6.33,-5.97,-6.09,-5.83,-8.48,-8.1,-6.45,-6.98,-5.48,-6.22,-6.12,-3.79,-6.82,null,-5.53,-6.29,-6.51,-3.97,-4.31,-4.4,-7.81,-7.35,-7.49,-7.53,-9.02,-6.37,-5.26,-6.27,-5.92],[-6.85,-5.6,-6.17,-5.35,-3.97,-6.21,-5.08,-6.25,-6.3,-5.55,-6.06,-6.43,-6.78,-5.33,-5.6,-4.99,-5.29,-6.56,-3.79,-7.83,-5.5,-5.69,-5.51,-6.48,-6.76,-6.61,-6.03,-7.09,-5.55,-7.73,-6.39,-6.37,-6.1,-6.14,-5.97,-7.0,-4.5,-7.13,-5.37,-5.4,-6.44,-6.22,-6.39,-6.54,-6.19,-6.99,-6.63,-4.98,-7.12,-5.77,-5.67,-3.5,-6.79,-6.87,-4.62,-5.21,-6.19,-5.98,-6.29,-5.21,-5.03,-6.17,-5.62,-5.96,-5.67,-7.58,-7.95,-7.58,-7.2,-5.13,-6.41,-6.51,-4.39,-5.65,-3.49,-6.24,-6.65,-6.15,-6.41,-3.94,-6.88,-7.39,-7.63,-7.05,-8.45,-8.38,-5.71,-5.16,-5.8,-5.63],[-6.6,-5.63,-6.27,-5.46,-4.37,-5.92,-4.92,-5.99,-6.56,-5.7,-6.16,-6.21,-7.0,-5.45,-5.85,-4.95,-4.99,-6.58,-4.64,-7.86,-5.59,-5.63,-5.57,-6.19,-7.16,-6.75,-6.19,-6.93,-5.29,-7.72,-6.2,-5.88,-5.9,-6.04,-5.55,-6.9,-4.46,-7.37,-5.7,-5.34,-6.67,-6.32,-6.3,-6.53,-6.15,-6.9,-6.91,-4.92,-6.97,-5.74,-5.64,-3.98,-6.76,-6.8,-5.01,-5.13,-6.15,-5.74,-6.29,-4.86,-5.04,-6.44,-5.47,-5.94,-5.61,-7.62,-7.95,-7.64,-7.23,-5.22,-6.29,-6.32,-4.3,-5.34,-0.6,-6.34,-6.56,-6.36,-6.02,-3.87,-6.74,-7.43,-7.32,-7.19,-8.08,-8.64,-5.87,-5.04,-5.96,-5.67],[-7.23,-5.61,-6.2,-5.3,-4.47,-6.16,-4.93,-6.31,-6.09,-5.55,-6.31,-6.15,-7.07,-5.23,-5.3,-4.92,-5.32,-6.55,-4.51,-7.66,-5.63,-5.72,-4.2,-6.2,-7.15,-6.51,-5.9,-7.19,-5.73,-7.43,-3.41,-6.85,-6.52,-6.12,-6.49,-7.11,-5.18,-6.78,-5.29,-5.4,-6.53,-6.2,-6.46,-6.67,-5.92,-7.08,-6.61,-4.96,-6.63,-5.88,-5.72,-4.24,-6.71,-6.84,-4.68,-5.36,-5.95,-6.25,-6.41,-5.43,-5.09,-6.08,-5.83,-5.83,-5.58,-7.52,-7.97,-7.56,-7.31,-5.12,-6.44,-6.37,-4.24,-4.11,-3.59,-6.66,-6.59,-6.19,-6.31,-3.74,-6.91,-7.28,-7.64,-7.1,-7.86,-8.34,-5.86,-5.08,-5.77,-5.63],[-6.93,-5.5,-5.97,-5.14,-6.04,-5.73,-5.04,-6.36,-6.11,-5.31,-5.97,-6.18,-6.82,-5.37,-5.68,-5.08,-5.24,-6.51,-4.03,-7.98,-5.52,-5.48,-5.3,-6.24,-7.14,-6.47,-5.7,-7.29,-5.3,-7.82,-5.95,-6.38,-6.23,-6.23,-5.87,-7.09,-4.6,-6.92,-5.2,-5.41,-6.54,-6.17,-6.46,-6.58,-6.09,-6.67,-6.33,-5.08,-6.33,-5.4,-5.64,-3.53,-6.85,-6.79,-4.69,-5.0,-5.67,-5.89,-6.41,-5.45,-5.04,-6.21,-5.69,-5.79,-5.32,-7.61,-8.0,-7.61,-7.43,-5.06,-6.44,-6.33,-4.24,-5.14,-3.79,-6.15,-6.5,-6.07,-6.37,-3.65,-6.85,-7.46,-7.64,-6.78,-7.36,-8.31,-5.75,-5.16,-5.82,-5.65],[-6.94,-5.75,-6.82,-5.11,-4.61,-6.34,-4.93,-7.15,-6.21,-5.58,-5.68,-7.02,-6.79,-5.3,-5.53,-5.1,-5.03,-5.88,-4.79,-5.3,-6.03,-7.04,-5.3,-5.75,-6.66,-7.09,-5.06,-8.06,-5.32,-8.83,-5.87,-8.04,-8.02,-7.05,-7.12,-7.86,-2.19,-4.94,-5.41,-3.6,-6.75,-6.86,-7.34,-7.5,-2.44,-6.36,-6.29,-4.28,-7.11,-4.25,-6.57,-2.09,-7.72,-6.66,-4.02,-4.39,-5.37,-7.25,-7.15,null,-5.42,-3.62,-6.15,-6.18,-6.41,-7.99,-7.54,-2.34,-4.12,-5.05,-6.92,-6.4,-4.22,-8.33,null,null,-6.13,-6.23,-4.31,-3.44,-9.68,-8.23,-6.75,-7.79,-8.73,-4.26,-5.48,-5.53,-6.85,-5.67],[-6.72,-5.46,-5.91,-5.15,-3.96,-5.99,-4.91,-6.06,-6.25,-5.24,-5.92,-5.77,-6.57,-5.79,-5.42,-4.69,-4.92,-6.15,-4.45,-7.64,-5.66,-5.71,-4.1,-6.19,-6.68,-6.77,-5.93,-7.18,-5.54,-7.41,-6.08,-6.38,-5.89,-6.09,-6.45,-6.78,-4.66,-7.05,-5.65,-5.03,-6.08,-5.85,-5.97,-6.42,-5.96,-7.62,-6.52,-4.83,-7.0,-5.58,-5.68,-3.62,-6.69,-6.5,-4.96,-4.93,-5.79,-5.73,-6.15,-4.98,-5.07,-6.28,-5.53,-5.93,-5.29,-7.6,-7.85,-7.02,-6.8,-5.12,-6.36,-5.84,-4.26,-5.39,-1.71,-6.26,-6.45,-6.2,-5.97,-3.44,-6.35,-7.03,-7.21,-7.5,-7.97,-8.46,-5.59,-5.28,-5.88,-5.83],[-6.61,-5.78,-5.98,-5.25,-6.21,-5.85,-4.67,-5.74,-6.18,-5.46,-5.74,-6.02,-6.75,-5.21,-5.62,-5.1,-5.07,-6.59,-4.65,-7.62,-5.62,-5.49,-4.09,-6.25,-6.77,-6.77,-5.86,-7.04,-5.31,-7.26,-6.21,-5.82,-5.98,-6.15,-6.4,-6.59,-4.42,-6.93,-5.27,-5.25,-6.43,-5.83,-6.15,-6.34,-6.02,-7.24,-6.45,-4.85,-7.18,-5.64,-5.48,-3.72,-6.65,-6.68,-4.77,-5.05,-6.05,-5.75,-5.98,-4.85,-5.24,-6.11,-5.33,-5.81,-5.6,-7.37,-7.73,-7.01,-7.08,-5.18,-5.97,-6.43,-4.11,-4.64,-1.32,-5.68,-6.18,-6.25,-5.84,-4.35,-6.44,-7.4,-7.44,-6.91,-7.81,-8.32,-5.93,-5.08,-5.9,-5.25],[-6.93,-5.25,-5.6,-5.2,-4.48,-6.05,-4.59,-6.13,-5.73,-5.3,-5.41,-5.75,-6.35,-4.31,-5.24,-4.58,-5.65,-6.04,-4.18,-7.49,-5.44,-5.33,-5.54,-5.96,-6.35,-6.6,-5.93,-7.51,-5.26,-7.39,-3.11,-6.45,-6.32,-6.08,-6.94,-6.71,-4.74,-7.09,-5.26,-4.93,-6.23,-5.5,-5.98,-6.42,-5.68,-7.42,-6.45,-4.56,-6.78,-5.31,-5.71,-3.86,-6.72,-6.31,-4.62,-4.81,-5.6,-5.82,-5.85,-5.17,-4.83,-5.71,-5.5,-5.66,-5.23,-7.33,-7.5,-7.11,-6.72,-5.39,-6.21,-6.08,-3.99,-5.26,-0.74,-6.34,-6.18,-5.88,-5.93,-3.49,-6.16,-6.98,-7.17,-7.31,-7.95,-8.25,-5.47,-4.71,-5.89,-5.37],[-6.4,-5.65,-5.68,-4.98,-6.24,-5.47,-4.69,-5.91,-6.21,-5.5,-5.72,-5.56,-6.72,-4.55,-5.67,-4.87,-4.7,-5.82,-3.21,-7.6,-5.39,-5.55,-4.94,-6.09,-6.69,-6.42,-6.01,-6.71,-4.93,-7.39,-6.3,-5.45,-5.25,-5.89,-5.47,-6.75,-3.44,-6.12,-5.29,-5.15,-5.96,-5.34,-6.33,-6.43,-6.31,-6.39,-6.71,-4.67,-6.9,-5.09,-5.44,-3.56,-6.05,-6.49,-4.62,-4.89,-5.8,-4.81,-6.04,-4.29,-5.39,-6.18,-5.43,-5.75,-5.03,-7.7,-7.62,-6.43,-6.87,-5.19,-5.82,-5.82,-4.56,-6.18,null,-5.58,-6.07,-5.95,-5.12,-2.59,-6.29,-7.08,-7.58,-6.72,-7.45,-8.27,-5.87,-5.54,-6.01,-5.4],[-6.48,-4.26,-5.46,-4.99,-4.36,-5.47,-4.69,-6.25,-5.36,-4.96,-5.22,-6.08,-6.35,-5.15,-5.25,-4.78,-5.54,-5.76,-3.74,-7.76,-5.3,-6.13,-3.01,-5.83,-6.62,-6.24,-5.6,-7.72,-5.02,-7.56,-5.33,-6.89,-6.81,-6.49,-5.98,-6.7,-4.69,-6.62,-5.11,-5.17,-6.66,-5.53,-6.65,-6.58,-6.21,-6.83,-5.65,-4.49,-6.61,-4.79,-5.31,-3.19,-6.42,-6.52,-4.54,-4.53,-5.31,-5.51,-6.33,-5.08,-4.64,-6.04,-6.08,-5.52,-4.94,-7.7,-8.03,-7.78,-7.23,-5.02,-5.94,-5.89,-4.03,-6.06,-0.95,-6.53,-6.13,-5.6,-4.55,-2.31,-7.15,-6.95,-7.78,-6.97,-6.81,-7.91,-5.42,-4.68,-5.67,-5.1],[-6.07,-5.03,-5.63,-5.42,-6.52,-5.43,-4.86,-5.98,-6.14,-5.22,-5.45,-6.02,-6.46,-4.55,-5.36,-4.64,-4.8,-6.08,-3.43,-7.89,-5.41,-5.85,-4.84,-5.91,-6.21,-6.45,-5.41,-6.74,-5.12,-7.85,-5.44,-6.11,-4.89,-6.32,-6.53,-6.89,-4.24,-6.73,-4.83,-4.86,-6.23,-5.84,-6.52,-6.39,-5.18,-5.56,-6.72,-4.64,-6.14,-5.48,-5.64,-2.62,-6.11,-6.77,-4.2,-3.83,-5.42,-5.55,-6.61,-4.61,-4.77,-5.6,-5.94,-5.27,-4.9,-7.8,-7.92,-6.21,-6.43,-4.91,-6.22,-5.67,-2.98,-6.12,null,-5.66,-6.06,-6.07,-4.92,-3.38,-6.49,-7.25,-7.55,-7.15,-7.77,-8.01,-5.23,-4.92,-6.03,-5.26],[-6.51,-5.62,-6.57,-5.01,-4.39,-5.57,-4.67,-6.72,-5.99,-5.05,-5.45,-6.32,-6.44,-4.6,-5.0,-4.6,-4.31,-5.39,-4.58,-5.28,-5.4,-6.26,-5.29,-5.59,-6.56,-6.38,-4.55,-7.75,-5.29,-8.96,-5.48,-7.34,-7.81,-5.93,-7.21,-7.49,-5.54,-7.74,-5.09,-5.83,-6.37,-6.34,-6.53,-6.91,-3.92,-6.85,-6.07,-3.52,-6.48,-3.92,-6.04,-1.45,-6.09,-7.1,-3.79,-4.16,-4.8,-6.7,-7.04,null,-4.88,-4.03,-5.9,-5.51,-5.61,-7.78,-6.76,-2.65,-4.14,-5.05,-6.33,-5.83,-3.75,-7.27,null,-1.6,-5.99,-6.17,-3.7,-3.42,-8.63,-7.57,-6.7,-7.13,-8.49,-6.77,-4.83,-5.3,-6.33,-5.83],[-6.46,-5.49,-6.78,-4.89,-4.65,-6.17,-4.72,-6.8,-5.86,-5.05,-5.48,-5.96,-6.56,-3.82,-5.06,-4.48,-4.27,-5.49,-4.34,-5.71,-5.77,-6.38,-5.21,-5.52,-6.52,-6.96,-4.54,-7.05,-5.29,-9.23,-5.31,-4.76,-7.21,-5.81,-6.86,-7.26,-6.11,-8.33,-4.94,-4.45,-5.93,-5.74,-6.89,-6.84,-2.06,-5.33,-6.38,-3.35,-6.66,-4.16,-5.99,-1.57,-6.97,-7.03,-3.71,-3.85,-4.7,-6.28,-6.22,-1.61,-5.17,-3.65,-5.92,-5.6,-5.86,-8.15,-6.67,-3.86,-7.56,-4.65,-6.14,-5.94,-3.99,-6.79,null,-0.11,-5.57,-6.07,-3.14,-3.41,-8.78,-7.68,-6.23,-7.13,-8.69,-6.77,-4.83,-5.34,-6.25,-5.55],[-5.84,-3.94,-4.92,-4.14,-4.14,-4.84,-3.52,-5.16,-4.97,-3.81,-5.22,-5.7,-4.82,-4.6,-5.05,-4.44,-5.5,-5.09,-3.15,-6.77,-4.89,-5.48,-3.34,-5.48,-5.77,-5.77,-5.26,-7.28,-4.67,-6.99,-4.91,-5.92,-5.59,-5.98,-6.38,-5.79,-4.95,-6.29,-4.01,-4.51,-6.04,-5.06,-5.98,-5.96,-5.84,-6.49,-5.41,-4.07,-6.04,-4.78,-4.89,-3.6,-6.08,-5.84,-3.73,-4.24,-4.95,-5.43,-5.46,-4.81,-4.05,-5.49,-5.17,-4.99,-4.3,-6.89,-7.0,-6.77,-8.11,-4.73,-5.56,-4.87,-3.28,-4.85,-2.23,-6.31,-6.0,-5.13,-5.17,-2.6,-5.66,-6.23,-6.98,-6.13,-6.97,-7.78,-5.01,-3.83,-4.59,-4.1],[-5.95,-4.69,-5.26,-4.87,-3.3,-5.06,-4.4,-5.02,-5.17,-4.56,-5.27,-4.91,-5.41,-4.31,-4.82,-4.44,-4.76,-5.58,-4.56,-6.01,-4.59,-5.57,-4.02,-5.28,-5.7,-5.62,-5.42,-6.19,-4.48,-5.86,-4.02,-5.6,-5.29,-5.07,-5.86,-5.46,-5.05,-6.45,-4.63,-4.81,-5.76,-5.14,-5.58,-5.37,-5.39,-5.91,-5.29,-4.4,-6.5,-5.04,-4.9,-4.02,-2.51,-5.56,-4.45,-4.53,-4.98,-4.79,-5.07,-4.1,-4.51,-5.03,-4.7,-5.2,-4.38,-6.01,-6.51,-6.07,-6.34,-4.87,-5.2,-5.48,-4.18,-5.02,-4.94,-4.61,-5.68,-5.49,-5.16,-4.29,-5.81,-5.74,-6.23,-5.72,-5.83,-6.7,-5.32,-4.73,-4.77,-4.65],[-5.94,-4.43,-5.17,-4.22,-3.36,-4.62,-3.77,-4.81,-4.81,-3.57,-4.74,-4.89,-5.34,-4.52,-4.54,-4.28,-4.53,-4.93,-3.85,-5.99,-4.26,-5.07,-2.85,-4.62,-5.39,-5.33,-5.2,-5.54,-4.31,-6.02,-2.35,-5.06,-4.86,-5.11,-5.55,-5.44,-4.61,-6.01,-4.59,-4.33,-5.0,-4.74,-5.34,-5.2,-5.33,-5.93,-5.32,-3.92,-5.91,-4.34,-4.73,-3.44,-5.74,-5.37,-3.96,-4.25,-4.72,-4.45,-5.31,-4.14,-4.12,-4.88,-4.49,-4.77,-4.33,-5.89,-6.14,-6.08,-6.21,-4.28,-5.31,-5.24,-3.93,-3.63,-3.65,-5.56,-5.19,-4.84,-5.07,-3.77,-5.81,-5.53,-5.94,-5.77,-5.86,-6.05,-4.82,-4.21,-4.61,-4.66],[-5.0,-3.94,-5.06,-4.79,-4.29,-4.83,-3.57,-4.66,-4.56,-3.87,-5.01,-4.97,-5.28,-4.72,-4.54,-3.65,-4.5,-5.15,-3.37,-6.1,-4.35,-4.54,-3.03,-4.62,-5.56,-5.73,-4.21,-5.61,-3.94,-6.72,-4.71,-5.49,-5.31,-5.46,-4.95,-5.69,-4.55,-5.53,-3.94,-4.43,-4.89,-4.79,-4.72,-4.82,-5.17,-5.73,-5.31,-4.27,-5.71,-4.38,-5.13,-2.91,-3.48,-5.41,-3.3,-3.76,-4.93,-4.91,-5.36,-3.65,-3.87,-4.47,-4.71,-4.84,-3.95,-5.95,-6.5,-6.35,-5.54,-4.1,-4.81,-4.84,-3.19,-4.89,-6.25,-5.15,-4.37,-4.95,-4.64,-3.61,-5.56,-5.63,-5.88,-6.14,-5.83,-6.87,-4.67,-3.55,-4.35,-4.4],[-5.27,-4.07,-4.66,-3.92,-3.19,-4.45,-3.84,-4.75,-4.34,-3.73,-4.57,-4.6,-5.2,-3.03,-3.99,-4.11,-5.14,-4.84,-3.41,-5.74,-4.54,-4.37,-3.77,-5.05,-4.89,-5.53,-4.89,-7.25,-4.3,-5.54,-4.24,-5.73,-5.94,-5.42,-5.97,-5.43,-4.99,-5.72,-3.96,-3.82,-5.88,-4.75,-5.37,-5.53,-5.06,-5.9,-4.79,-3.68,-5.53,-4.11,-4.71,-3.76,-3.03,-5.14,-3.54,-4.17,-4.74,-5.0,-5.28,-4.21,-3.84,-4.46,-4.63,-4.48,-3.55,-5.43,-5.69,-6.1,-7.79,-3.91,-5.29,-5.28,-3.36,-4.57,-4.76,-5.11,-5.18,-4.59,-4.71,-2.76,-5.49,-5.43,-5.93,-5.78,-6.32,-6.44,-4.5,-3.94,-4.25,-3.99],[-5.53,-4.11,-4.7,-4.3,-3.34,-4.46,-3.64,-4.5,-4.61,-4.36,-4.57,-4.63,-5.0,-4.52,-4.6,-3.97,-4.48,-4.9,-4.24,-5.51,-4.41,-4.9,-4.02,-4.66,-5.32,-5.24,-4.98,-5.1,-3.87,-5.25,-3.02,-5.15,-4.99,-4.8,-5.45,-5.12,-4.42,-5.67,-4.28,-4.48,-5.08,-4.45,-4.8,-4.98,-5.26,-5.65,-4.75,-3.98,-5.69,-4.49,-4.56,-3.22,-4.3,-5.26,-3.82,-4.16,-4.7,-4.39,-4.73,-3.69,-3.82,-4.62,-4.3,-4.84,-4.16,-5.5,-6.0,-5.79,-5.51,-4.28,-4.65,-5.48,-3.47,-4.15,-5.06,-4.51,-5.32,-4.76,-4.68,-3.75,-5.23,-4.99,-5.47,-5.46,-5.52,-5.93,-5.04,-3.86,-4.42,-4.42],[-5.56,-4.13,-4.9,-4.35,-4.03,-4.6,-3.32,-4.47,-4.58,-3.31,-4.33,-4.32,-5.06,-4.04,-4.43,-3.74,-4.04,-4.46,-3.84,-5.87,-3.97,-4.49,-3.31,-4.64,-5.37,-5.08,-4.69,-5.3,-4.0,-5.57,-5.04,-4.29,-4.58,-4.69,-4.63,-4.96,-3.65,-5.74,-4.03,-4.08,-4.86,-4.53,-4.85,-5.06,-5.16,-5.55,-5.01,-3.7,-5.69,-4.28,-4.49,-3.04,-1.95,-5.6,-3.62,-3.95,-4.3,-4.18,-4.82,-3.75,-4.13,-5.03,-4.19,-4.79,-3.8,-5.73,-6.0,-5.57,-4.94,-3.96,-4.22,-4.76,-3.3,-4.22,-2.53,-5.28,-4.87,-5.08,-4.65,-3.74,-5.28,-5.34,-5.54,-5.38,-5.37,-5.52,-4.49,-3.89,-4.53,-4.49],[-5.61,-3.54,-4.23,-4.09,-3.67,-4.58,-3.68,-4.59,-3.99,-3.1,-4.29,-4.36,-4.97,-4.22,-4.06,-3.52,-4.84,-4.41,-3.16,-5.13,-4.04,-4.05,-3.32,-4.29,-5.09,-5.42,-4.6,-5.78,-4.05,-5.41,-2.99,-5.73,-5.78,-5.07,-5.09,-5.04,-4.38,-5.41,-3.49,-3.98,-5.23,-4.53,-5.15,-4.79,-4.86,-5.5,-4.62,-3.51,-5.33,-3.93,-4.39,-3.58,-3.86,-5.15,-3.2,-3.92,-4.38,-4.86,-4.72,-4.14,-3.88,-4.14,-4.67,-4.22,-3.84,-5.37,-5.75,-6.06,-6.18,-3.73,-4.63,-4.72,-3.22,-3.51,-3.99,-4.84,-5.25,-4.3,-4.52,-3.72,-5.32,-5.16,-5.62,-5.49,-5.58,-6.35,-4.3,-3.52,-4.23,-3.79],[-5.63,-4.02,-4.53,-3.89,-2.52,-4.51,-3.48,-4.45,-4.33,-2.69,-4.24,-4.47,-4.88,-3.88,-3.95,-3.66,-3.97,-4.39,-3.16,-5.78,-4.06,-4.4,-2.93,-4.61,-4.96,-5.3,-4.57,-5.58,-4.05,-5.89,-4.9,-4.83,-4.6,-4.66,-4.88,-5.23,-4.1,-5.55,-4.0,-3.95,-5.05,-4.46,-4.65,-5.08,-4.77,-5.5,-5.03,-3.64,-5.44,-4.04,-4.26,-2.62,-5.48,-5.23,-3.43,-3.79,-4.56,-4.24,-4.9,-3.7,-3.53,-4.57,-4.14,-4.44,-3.92,-5.8,-5.77,-5.6,-5.83,-4.15,-4.56,-3.89,-3.17,-2.68,-3.5,-5.11,-4.82,-4.82,-4.71,-2.19,-5.59,-5.36,-5.69,-5.51,-5.71,-6.23,-4.54,-3.79,-4.3,-4.16]]},"correlations":[{"label":"logP","aff":0.02,"tox":0.08},{"label":"Solubility_AqSolDB_drugbank_approved_percentile","aff":-0.11,"tox":-0.14},{"label":"tpsa","aff":0.28,"tox":0.31},{"label":"hydrogen_bond_donors","aff":0.31,"tox":0.36},{"label":"hydrogen_bond_acceptors","aff":0.26,"tox":0.26},{"label":"QED","aff":-0.14,"tox":0.2},{"label":"HIA_Hou","aff":0.04,"tox":0.33},{"label":"VDss_Lombardo_drugbank_approved_percentile","aff":0.13,"tox":0.12},{"label":"CYP3A4_Veith","aff":0.29,"tox":0.77},{"label":"Clearance_Microsome_AZ_drugbank_approved_percentile","aff":0.11,"tox":0.24},{"label":"LD50_Zhu_drugbank_approved_percentile","aff":0.18,"tox":0.22}],"histogram":{"counts":[6,2,4,8,15,16,39,73,119,152,232,310,405,438,539,609,674,721,718,622,455,427,342,232,135,80,61,46,28,24,20,16,17,10,10,14],"edges":[-10.96,-10.66,-10.36,-10.05,-9.75,-9.44,-9.14,-8.84,-8.53,-8.23,-7.92,-7.62,-7.31,-7.01,-6.71,-6.4,-6.1,-5.79,-5.49,-5.19,-4.88,-4.58,-4.27,-3.97,-3.67,-3.36,-3.06,-2.75,-2.45,-2.14,-1.84,-1.54,-1.23,-0.93,-0.62,-0.32,-0.02]},"toxLevels":[0.1152,0.1277,0.1372,0.1433,0.1445,0.1482,0.1709,0.1716,0.176,0.1854,0.1872,0.2202,0.2253,0.2346,0.2696,0.3366,0.3385,0.3733,0.3871,0.4446,0.446,0.4539,0.4559,0.4576,0.4582,0.4621,0.4648,0.4655,0.4694,0.4702,0.4724,0.4745],"proteins":[{"id":"1NW9","hallmark":"Cell signaling modulation","name":"H-Ras (GppNHp bound)","med":-6.469},{"id":"1QTN","hallmark":"Resisting Cell Death","name":"Caspase-8 (CASP8)","med":-5.529},{"id":"1RRJ","hallmark":"Enzyme activity modulation","name":"Reductase","med":-5.772},{"id":"1T15","hallmark":"Enzyme activity modulation","name":"TPP-dependent enzyme","med":-5.157},{"id":"1ZXM","hallmark":"Genome Instability & Mutation","name":"Topoisomerase II\u03b1","med":-4.374},{"id":"2I0E","hallmark":"Tumor Promoting Inflammation","name":"PKC-\u03b2","med":-5.375},{"id":"2J32","hallmark":"Cell signaling modulation","name":"Janus Kinase 2","med":-4.618},{"id":"2MJV","hallmark":"Molecular interaction study","name":"Morphinone reductase","med":-6.119},{"id":"2R7G","hallmark":"Evaluation of phytochemical-based","name":"Ribonucleotide reductase","med":-6.064},{"id":"2XIR","hallmark":"Model for enzymatic","name":"Xylanase","med":-4.99},{"id":"2YCF","hallmark":"Assessment of mitochondrial","name":"Cytochrome c oxidase","med":-5.706},{"id":"2YIQ","hallmark":"Assessment of glucose","name":"Hexokinase","med":-5.405},{"id":"2YUU","hallmark":"Cell signaling modulation","name":"Ubiquitin-like protein","med":-6.498},{"id":"2ZOQ","hallmark":"Molecular interaction study","name":"Zinc finger protein","med":-4.919},{"id":"2ZVV","hallmark":"Molecular interaction study","name":"Zinc finger protein","med":-5.375},{"id":"3AYU","hallmark":"Enzyme activity modulation","name":"Alpha-amylase","med":-4.828},{"id":"3UEC","hallmark":"Target for phytochemical-based","name":"Urate oxidase","med":-5.048},{"id":"3VA4","hallmark":"Assessment of natural","name":"Vacuolar protein sorting","med":-6.284},{"id":"3VO3","hallmark":"Target for anti-angiogenic","name":"VEGFR","med":-4.239},{"id":"3W5K","hallmark":"Activating Invasion & Metastasis","name":"Snail (SNAI1)","med":-7.404},{"id":"4AJY","hallmark":"Hallmark for multi-site","name":"Acetylcholinesterase","med":-5.328},{"id":"4ELL","hallmark":"Oncological drug target","name":"Estrogen receptor","med":-5.728},{"id":"4H6J","hallmark":"Enzyme activity modulation","name":"Histone deacetylase","med":-4.837},{"id":"4J44","hallmark":"Enzyme activity modulation","name":"Janus kinase","med":-5.821},{"id":"4RA4","hallmark":"Target for natural","name":"Retinoic acid receptor","med":-6.511},{"id":"4S0O","hallmark":"Model for methyl","name":"SAM synthetase","med":-6.293},{"id":"4Y6O","hallmark":"Molecular interaction study","name":"Tyrosine kinase","med":-5.579},{"id":"4ZIE","hallmark":"Enzyme activity modulation","name":"Zinc-dependent HDAC","med":-6.995},{"id":"5C5A","hallmark":"Target for exploring","name":"CDK","med":-5.016},{"id":"5CIR","hallmark":"Model for phytochemical","name":"Circadian clock protein","med":-7.671},{"id":"5E0U","hallmark":"Target for natural","name":"Epoxide hydrolase","med":-5.436},{"id":"5EQG","hallmark":"Inward-open conformation for","name":"Human GLUT1","med":-5.818},{"id":"5EQH","hallmark":"Molecular interaction study","name":"Human GLUT1","med":-5.796},{"id":"5F19","hallmark":"Enzyme activity modulation","name":"Farnesyltransferase","med":-5.593},{"id":"5F1A","hallmark":"Cell signaling modulation","name":"Farnesyltransferase","med":-6.113},{"id":"5HG1","hallmark":"Target for natural","name":"Hemoglobin","med":-6.767},{"id":"5IKR","hallmark":"Enzyme activity modulation","name":"IKK kinase","med":-4.565},{"id":"5MER","hallmark":"Molecular interaction study","name":"Myosin","med":-6.574},{"id":"5MHC","hallmark":"Model for phytochemical-induced","name":"MHC","med":-5.082},{"id":"5UG9","hallmark":"Cell signaling modulation","name":"Uroporphyrinogen decarboxylase","med":-4.992},{"id":"5VQP","hallmark":"Target for natural","name":"Vitamin D receptor","med":-6.047},{"id":"5W60","hallmark":"Cell signaling modulation","name":"Wnt signaling protein","med":-5.734},{"id":"5WBH","hallmark":"Molecular interaction study","name":"Wnt ligand","med":-6.058},{"id":"6C9F","hallmark":"Molecular interaction study","name":"Casein kinase","med":-6.073},{"id":"6C9G","hallmark":"Cell signaling modulation","name":"Casein kinase","med":-5.641},{"id":"6C9H","hallmark":"Molecular interaction study","name":"Casein kinase","med":-6.432},{"id":"6NJS","hallmark":"Target for multi-strain","name":"Neuraminidase","med":-6.286},{"id":"6NV2","hallmark":"Target for natural","name":"Nav1.7 channel","med":-4.577},{"id":"6OM2","hallmark":"Target for alkaloid-based","name":"Opioid receptor","med":-6.317},{"id":"6P0Z","hallmark":"Assessment of natural","name":"P2Y receptor","med":-4.977},{"id":"6P8E","hallmark":"Target for meroterpenoid-based","name":"PDE4 phosphodiesterase","med":-5.525},{"id":"6Q9L","hallmark":"Target for quinone","name":"Quinone reductase","med":-3.463},{"id":"6Q9O","hallmark":"Cell signaling modulation","name":"Quinone reductase","med":-6.106},{"id":"6QHD","hallmark":"Model for natural","name":"Quorum sensing protein","med":-6.486},{"id":"6QHL","hallmark":"Molecular interaction study","name":"Quorum sensing protein","med":-4.448},{"id":"6S14","hallmark":"Target for natural","name":"Sirtuin","med":-4.81},{"id":"6S17","hallmark":"Regulatory site for","name":"Sirtuin","med":-5.521},{"id":"6THA","hallmark":"Target for natural","name":"Thrombin","med":-5.435},{"id":"6TLC","hallmark":"Assessment of phytochemicals","name":"Toll-like receptor","med":-6.231},{"id":"6UDV","hallmark":"Target for phytochemical-based","name":"Ubiquitin ligase","med":-4.769},{"id":"6YIF","hallmark":"Model for phytochemical-based","name":"Yeast RNA polymerase","med":-5.011},{"id":"7AAC","hallmark":"Enzyme activity modulation","name":"Alpha-amylase","med":-5.88},{"id":"7AFW","hallmark":"Molecular interaction study","name":"Aurora kinase","med":-5.43},{"id":"7L1C","hallmark":"Target for phytochemical-based","name":"Lck kinase","med":-5.727},{"id":"7MYX","hallmark":"Molecular interaction study","name":"AKT1 kinase","med":-5.545},{"id":"7OTW","hallmark":"Assessment of natural","name":"Oxytocin receptor","med":-7.607},{"id":"7OTY","hallmark":"Molecular interaction study","name":"Oxytocin receptor","med":-7.784},{"id":"7SIC","hallmark":"Molecular interaction study","name":"Subtilisin complex","med":-6.591},{"id":"7SID","hallmark":"Molecular interaction study","name":"Subtilisin complex","med":-6.839},{"id":"7XJO","hallmark":"Model for deconstruction","name":"Xylanase","med":-4.889},{"id":"7YAA","hallmark":"Target for evaluating","name":"Yeast RNA Polymerase","med":-6.245},{"id":"8ABX","hallmark":"Target for natural","name":"Aurora kinase","med":-5.608},{"id":"8AZZ","hallmark":"Target for natural","name":"Amyloid-beta","med":-4.261},{"id":"8F59","hallmark":"Cell signaling modulation","name":"FGFR","med":-5.173},{"id":"8GF9","hallmark":"Target for natural","name":"Glucagon receptor","med":-3.122},{"id":"8GFA","hallmark":"Cell signaling modulation","name":"Glucagon receptor","med":-6.109},{"id":"8HTR","hallmark":"Hallmark for plant-based","name":"Histamine H3 Receptor","med":-6.115},{"id":"8JYR","hallmark":"Cell signaling modulation","name":"Jak kinase","med":-6.12},{"id":"8K5Y","hallmark":"Assessment of natural","name":"K+ channel","med":-5.694},{"id":"8ONV","hallmark":"Target for plant-derived","name":"Opioid receptor","med":-3.74},{"id":"8OXQ","hallmark":"Molecular interaction study","name":"Oxytocin receptor","med":-6.328},{"id":"8SE3","hallmark":"Target for phytochemical-based","name":"Sirtuin","med":-7.194},{"id":"8SE4","hallmark":"Model for exploring","name":"Sirtuin","med":-7.377},{"id":"8UDZ","hallmark":"Target for evaluating","name":"Urate oxidase","med":-6.878},{"id":"8W59","hallmark":"Enzyme activity modulation","name":"Wnt pathway protein","med":-7.859},{"id":"8X94","hallmark":"Molecular interaction study","name":"Protein X","med":-8.266},{"id":"9DQ3","hallmark":"Target for natural","name":"DNA polymerase","med":-5.642},{"id":"9JU1","hallmark":"Enzyme activity modulation","name":"Jak kinase","med":-5.157},{"id":"9KKU","hallmark":"Target for natural","name":"K+ channel","med":-5.721},{"id":"9UGP","hallmark":"Target for natural","name":"Ubiquitin protease","med":-5.561}],"models":{"regression":[{"model":"Linear","rmse":3.5e-05,"mae":2.1e-05,"r2":1.0},{"model":"XGBoost (tuned)","rmse":0.03564,"mae":0.011826,"r2":0.999363},{"model":"SVR (tuned)","rmse":0.026426,"mae":0.014027,"r2":0.99965}],"classification":[{"model":"Logistic","acc":0.194226,"f1":0.102107},{"model":"RandomForest","acc":0.176509,"f1":0.108681},{"model":"XGBoost","acc":0.208005,"f1":0.149403},{"model":"SVC","acc":0.201444,"f1":0.092293}],"gbrAffinity":{"r2":0.1883,"mae":0.0876},"refinedRF":{"r2":0.1879}}};
+</script>
+<script>
+/* ============================================================
+   THEME — synced with artemiui.github.io via localStorage
+   ============================================================ */
+function updateThemeIcon() {
+  const dark = document.documentElement.classList.contains('dark');
+  const i = document.getElementById('theme-icon');
+  if (i) i.innerHTML = dark
+    ? '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>'
+    : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+}
+function initTheme() {
+  try {
+    const saved = localStorage.getItem('theme');
+    const prefers = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.classList.toggle('dark', saved === 'dark' || (!saved && prefers));
+  } catch (e) {}
+  updateThemeIcon();
+}
+initTheme();
+document.getElementById('btn-theme').addEventListener('click', () => {
+  const dark = document.documentElement.classList.toggle('dark');
+  try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (e) {}
+  updateThemeIcon(); renderAll();
+});
+window.addEventListener('storage', e => { if (e.key === 'theme') { initTheme(); renderAll(); } });
+window.addEventListener('message', e => {
+  if (e.data && e.data.theme) {
+    document.documentElement.classList.toggle('dark', e.data.theme === 'dark');
+    updateThemeIcon(); renderAll();
+  }
+});
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const tip = document.getElementById('tip');
+const fmt = (v, d = 2) => v === null || v === undefined || Number.isNaN(v) ? '—' : (+v).toFixed(d);
+
+function showTip(html, evt) {
+  tip.innerHTML = html;
+  tip.style.opacity = 1;
+  moveTip(evt);
+}
+function moveTip(evt) {
+  const pad = 14, w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = evt.pageX + pad, y = evt.pageY - h - pad;
+  if (x + w > window.scrollX + document.documentElement.clientWidth - 8)
+    x = evt.pageX - w - pad;
+  if (y < window.scrollY + 8) y = evt.pageY + pad;
+  tip.style.left = x + 'px';
+  tip.style.top = y + 'px';
+}
+function hideTip() { tip.style.opacity = 0; }
+
+function svgIn(sel, w, h) {
+  const el = d3.select(sel);
+  el.selectAll('svg').remove();
+  return el.append('svg')
+    .attr('viewBox', `0 0 ${w} ${h}`)
+    .attr('preserveAspectRatio', 'xMidYMid meet')
+    .style('max-height', h + 'px');
+}
+function widthOf(sel, fallback) {
+  const n = document.querySelector(sel);
+  const w = n ? n.clientWidth : 0;
+  return Math.max(320, w || fallback);
+}
+function legend(sel, items) {
+  const el = d3.select(sel);
+  el.selectAll('*').remove();
+  items.forEach(it => {
+    const d = el.append('div').attr('class', 'item');
+    d.append('span').attr('class', 'swatch' + (it.line ? ' line' : ''))
+      .style('background', it.color)
+      .style('border', it.outline ? `1.5px solid ${it.outline}` : null);
+    d.append('span').text(it.label);
+  });
+}
+function table(sel, cols, rows) {
+  const wrap = d3.select(sel);
+  wrap.selectAll('*').remove();
+  const t = wrap.append('table').attr('class', 'data');
+  t.append('thead').append('tr').selectAll('th').data(cols).join('th').text(d => d.label);
+  const tb = t.append('tbody');
+  tb.selectAll('tr').data(rows).join('tr')
+    .selectAll('td').data(r => cols.map(c => ({ v: c.get(r), num: !!c.num })))
+    .join('td').attr('class', d => d.num ? 'num' : null).text(d => d.v);
+}
+const seqRamp = () => [cssv('--seq-0'), cssv('--seq-1'), cssv('--seq-2'), cssv('--seq-3'),
+                       cssv('--seq-4'), cssv('--seq-5'), cssv('--seq-6'), cssv('--seq-7')];
+
+/* ============================================================
+   TILES
+   ============================================================ */
+function renderTiles() {
+  const m = DATA.meta;
+  const items = [
+    { v: m.rows.toLocaleString(), k: 'docking runs', s: 'ligand × pocket pairs scored' },
+    { v: m.ligands, k: 'phytochemicals', s: 'from Fatma & Siddique (2023)' },
+    { v: m.proteins, k: 'protein targets', s: `across ${m.hallmarks} hallmarks` },
+    { v: fmt(m.affinity.mean) + ' ', k: 'mean affinity kcal/mol', s: `σ = ${fmt(m.affinity.std)}` },
+  ];
+  const el = d3.select('#tiles');
+  el.selectAll('*').remove();
+  const t = el.selectAll('div.tile').data(items).join('div').attr('class', 'tile');
+  t.append('div').attr('class', 'v').text(d => d.v);
+  t.append('div').attr('class', 'k').text(d => d.k);
+  t.append('div').attr('class', 's').text(d => d.s);
+}
+
+/* ============================================================
+   01 — FRONTIER SCATTER
+   ============================================================ */
+let yMetric = 'tox', pinned = null;
+
+function renderFrontier() {
+  const sel = '#plot-frontier';
+  const W = widthOf(sel, 900), H = Math.min(520, Math.max(380, W * 0.56));
+  const m = { t: 18, r: 24, b: 48, l: 64 };
+  const svg = svgIn(sel, W, H);
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
+
+  const data = DATA.ligands.filter(d => yMetric === 'tox' ? d.tox != null : d.ld50 != null);
+  const yAcc = d => yMetric === 'tox' ? d.tox : d.ld50;
+  const yLab = yMetric === 'tox'
+    ? 'composite toxicity score (lower is safer)'
+    : 'LD50 (Zhu), log mol/kg — higher is safer';
+
+  // x reversed: stronger binding to the right
+  const xExt = d3.extent(data, d => d.aff);
+  const x = d3.scaleLinear().domain([xExt[1] + 0.12, xExt[0] - 0.12]).range([0, iw]);
+  const yExt = d3.extent(data, yAcc);
+  const ypad = (yExt[1] - yExt[0]) * 0.12;
+  const y = d3.scaleLinear().domain([yExt[0] - ypad, yExt[1] + ypad]).nice().range([ih, 0]);
+  const r = d3.scaleSqrt().domain(d3.extent(data, d => d.mw)).range([5, 17]);
+
+  const medX = DATA.medians.aff;
+  const medY = yMetric === 'tox' ? DATA.medians.tox : d3.median(data, yAcc);
+
+  // quadrant wash: strong binding + safe
+  const safeTop = yMetric === 'tox';   // tox: safe = below median; ld50: safe = above median
+  g.append('rect')
+    .attr('x', x(medX)).attr('width', Math.max(0, iw - x(medX)))
+    .attr('y', safeTop ? y(medY) : 0)
+    .attr('height', safeTop ? Math.max(0, ih - y(medY)) : Math.max(0, y(medY)))
+    .attr('fill', cssv('--series-1')).attr('opacity', 0.06);
+
+  g.append('g').attr('class', 'grid')
+    .selectAll('line').data(y.ticks(6)).join('line')
+    .attr('x1', 0).attr('x2', iw).attr('y1', y).attr('y2', y);
+
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ih})`)
+    .call(d3.axisBottom(x).ticks(7));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(6));
+
+  svg.append('text').attr('class', 'axis-title')
+    .attr('x', m.l + iw / 2).attr('y', H - 8).attr('text-anchor', 'middle')
+    .text('avg best affinity (kcal/mol) — stronger binding →');
+  svg.append('text').attr('class', 'axis-title')
+    .attr('transform', `translate(14,${m.t + ih / 2}) rotate(-90)`).attr('text-anchor', 'middle')
+    .text(yLab);
+
+  // median reference lines
+  g.append('line').attr('class', 'ref-line').attr('x1', x(medX)).attr('x2', x(medX)).attr('y1', 0).attr('y2', ih);
+  g.append('line').attr('class', 'ref-line').attr('x1', 0).attr('x2', iw).attr('y1', y(medY)).attr('y2', y(medY));
+  g.append('text').attr('class', 'ref-text').attr('x', x(medX) + 5).attr('y', 11)
+    .text(`median ${fmt(medX)}`);
+  g.append('text').attr('class', 'ref-text').attr('x', 4).attr('y', y(medY) - 5)
+    .text(`median ${fmt(medY, yMetric === 'tox' ? 2 : 2)}`);
+
+  const isLead = d => !!d.name;
+  const inFrontier = d => d.aff < medX && (safeTop ? yAcc(d) < medY : yAcc(d) > medY);
+
+  const dots = g.selectAll('circle.dot').data(data).join('circle')
+    .attr('class', 'dot')
+    .attr('cx', d => x(d.aff)).attr('cy', d => y(yAcc(d))).attr('r', d => r(d.mw))
+    .attr('fill', d => isLead(d) ? cssv('--series-1') : cssv('--neutral-mark'))
+    .attr('fill-opacity', d => isLead(d) ? 0.9 : 0.55)
+    .attr('stroke', cssv('--surface')).attr('stroke-width', 2)
+    .style('cursor', 'pointer');
+
+  function paint() {
+    dots.attr('stroke', d => pinned === d.id ? cssv('--fg') : cssv('--surface'))
+        .attr('stroke-width', d => pinned === d.id ? 2.5 : 2)
+        .attr('fill-opacity', d => pinned && pinned !== d.id ? 0.22
+          : (isLead(d) ? 0.9 : 0.55));
+  }
+  paint();
+
+  const body = d => `
+    <div class="t-title">${d.name ? d.name : 'CID ' + d.cid}</div>
+    ${d.name ? `<div class="t-row"><span>PubChem CID</span><span>${d.cid}</span></div>` : ''}
+    <div class="t-row"><span>avg affinity</span><span>${fmt(d.aff)} kcal/mol</span></div>
+    <div class="t-row"><span>strongest pose</span><span>${fmt(d.strongest)} kcal/mol</span></div>
+    <div class="t-row"><span>composite tox</span><span>${fmt(d.tox, 3)}</span></div>
+    <div class="t-row"><span>LD50 (Zhu)</span><span>${fmt(d.ld50)}</span></div>
+    <div class="t-row"><span>mol. weight</span><span>${fmt(d.mw, 1)} Da</span></div>
+    <div class="t-row"><span>logP</span><span>${fmt(d.logp)}</span></div>
+    <div class="t-row"><span>QED</span><span>${fmt(d.qed)}</span></div>
+    <div class="t-row"><span>TPSA</span><span>${fmt(d.tpsa, 1)} Å²</span></div>
+    <div class="t-row"><span>Lipinski passes</span><span>${fmt(d.lipinski, 0)}/4</span></div>
+    ${inFrontier(d) ? '<div class="t-note">inside the target quadrant</div>' : ''}`;
+
+  dots.on('mouseenter', (e, d) => showTip(body(d), e))
+      .on('mousemove', moveTip)
+      .on('mouseleave', hideTip)
+      .on('click', (e, d) => {
+        pinned = pinned === d.id ? null : d.id;
+        paint(); updatePinChip();
+      });
+
+  // direct labels for the named leads
+  g.selectAll('text.dlabel').data(data.filter(isLead)).join('text')
+    .attr('class', 'dlabel')
+    .attr('x', d => x(d.aff) + r(d.mw) + 6)
+    .attr('y', d => y(yAcc(d)) + 4)
+    .attr('text-anchor', d => x(d.aff) > iw - 90 ? 'end' : 'start')
+    .each(function (d) {
+      if (x(d.aff) > iw - 90)
+        d3.select(this).attr('x', x(d.aff) - r(d.mw) - 6);
+    })
+    .text(d => d.name);
+
+  legend('#legend-frontier', [
+    { color: cssv('--series-1'), label: 'named lead candidate' },
+    { color: cssv('--neutral-mark'), label: 'other phytochemical' },
+    { color: 'transparent', outline: cssv('--axis'), label: 'target quadrant: strong + safe' },
+  ]);
+
+  table('#table-frontier', [
+    { label: 'Compound', get: d => d.name || ('CID ' + d.cid) },
+    { label: 'CID', get: d => d.cid, num: true },
+    { label: 'Avg affinity', get: d => fmt(d.aff), num: true },
+    { label: 'Strongest', get: d => fmt(d.strongest), num: true },
+    { label: 'Composite tox', get: d => fmt(d.tox, 3), num: true },
+    { label: 'MW (Da)', get: d => fmt(d.mw, 1), num: true },
+    { label: 'logP', get: d => fmt(d.logp), num: true },
+    { label: 'QED', get: d => fmt(d.qed), num: true },
+  ], [...DATA.ligands].sort((a, b) => a.aff - b.aff));
+}
+
+function updatePinChip() {
+  const chip = document.getElementById('pin-chip');
+  if (!pinned) { chip.classList.remove('on'); chip.innerHTML = ''; return; }
+  const d = DATA.ligands.find(l => l.id === pinned);
+  chip.classList.add('on');
+  chip.innerHTML = `pinned: ${d.name || 'CID ' + d.cid} <span style="color:var(--muted)">✕</span>`;
+  chip.onclick = () => { pinned = null; renderFrontier(); updatePinChip(); };
+}
+
+document.querySelectorAll('[data-ymetric]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('[data-ymetric]').forEach(x => x.classList.remove('active'));
+  b.classList.add('active'); yMetric = b.dataset.ymetric; renderFrontier();
+}));
+
+/* ============================================================
+   02 — HALLMARK BOX PLOT
+   ============================================================ */
+let hSort = 'med';
+
+function renderHallmarks() {
+  const sel = '#plot-hallmarks';
+  const rows = [...DATA.hallmarks];
+  if (hSort === 'med') rows.sort((a, b) => a.med - b.med);
+  if (hSort === 'spread') rows.sort((a, b) => (b.q3 - b.q1) - (a.q3 - a.q1));
+  if (hSort === 'n') rows.sort((a, b) => b.n - a.n);
+
+  const W = widthOf(sel, 900);
+  const rowH = 20, m = { t: 14, r: 20, b: 46, l: Math.min(230, Math.max(140, W * 0.28)) };
+  const ih = rows.length * rowH, H = ih + m.t + m.b;
+  const svg = svgIn(sel, W, H);
+  const iw = W - m.l - m.r;
+  const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
+
+  const x = d3.scaleLinear()
+    .domain([d3.min(rows, d => d.min) - 0.3, d3.max(rows, d => d.max) + 0.3])
+    .range([0, iw]);
+  const y = d3.scaleBand().domain(rows.map(d => d.label)).range([0, ih]).padding(0.25);
+
+  g.append('g').attr('class', 'grid').selectAll('line').data(x.ticks(8)).join('line')
+    .attr('x1', x).attr('x2', x).attr('y1', 0).attr('y2', ih);
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ih})`)
+    .call(d3.axisBottom(x).ticks(8));
+  svg.append('text').attr('class', 'axis-title')
+    .attr('x', m.l + iw / 2).attr('y', H - 8).attr('text-anchor', 'middle')
+    .text('best affinity (kcal/mol) — stronger binding to the left');
+
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y).tickSize(0))
+    .call(s => s.select('.domain').remove())
+    .selectAll('text')
+    .style('font-family', 'var(--font-sans)').style('font-size', '11px')
+    .text(d => d.length > 34 ? d.slice(0, 32) + '…' : d);
+
+  const band = y.bandwidth();
+  const rowG = g.selectAll('g.box').data(rows).join('g').attr('class', 'box')
+    .attr('transform', d => `translate(0,${y(d.label)})`)
+    .style('cursor', 'default');
+
+  rowG.append('rect').attr('x', 0).attr('width', iw).attr('y', -y.step() * 0.12)
+    .attr('height', y.step()).attr('fill', 'transparent');
+  rowG.append('line').attr('class', 'whisker')
+    .attr('x1', d => x(d.min)).attr('x2', d => x(d.max))
+    .attr('y1', band / 2).attr('y2', band / 2)
+    .attr('stroke', cssv('--axis')).attr('stroke-width', 1.5);
+  rowG.append('rect')
+    .attr('x', d => x(d.q1)).attr('width', d => Math.max(2, x(d.q3) - x(d.q1)))
+    .attr('y', 0).attr('height', band).attr('rx', 3)
+    .attr('fill', cssv('--series-1')).attr('fill-opacity', 0.85)
+    .attr('stroke', cssv('--surface')).attr('stroke-width', 1);
+  rowG.append('line')
+    .attr('x1', d => x(d.med)).attr('x2', d => x(d.med))
+    .attr('y1', 0).attr('y2', band)
+    .attr('stroke', cssv('--surface')).attr('stroke-width', 2);
+
+  rowG.on('mouseenter', (e, d) => showTip(`
+      <div class="t-title">${d.label}</div>
+      <div class="t-row"><span>median</span><span>${fmt(d.med)}</span></div>
+      <div class="t-row"><span>mean</span><span>${fmt(d.mean)}</span></div>
+      <div class="t-row"><span>IQR</span><span>${fmt(d.q1)} … ${fmt(d.q3)}</span></div>
+      <div class="t-row"><span>whiskers</span><span>${fmt(d.min)} … ${fmt(d.max)}</span></div>
+      <div class="t-row"><span>docking runs</span><span>${d.n}</span></div>`, e))
+    .on('mousemove', moveTip).on('mouseleave', hideTip);
+
+  table('#table-hallmarks', [
+    { label: 'Hallmark', get: d => d.label },
+    { label: 'n', get: d => d.n, num: true },
+    { label: 'Median', get: d => fmt(d.med), num: true },
+    { label: 'Mean', get: d => fmt(d.mean), num: true },
+    { label: 'Q1', get: d => fmt(d.q1), num: true },
+    { label: 'Q3', get: d => fmt(d.q3), num: true },
+  ], rows);
+}
+document.querySelectorAll('[data-hsort]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('[data-hsort]').forEach(x => x.classList.remove('active'));
+  b.classList.add('active'); hSort = b.dataset.hsort; renderHallmarks();
+}));
+
+/* ============================================================
+   03 — HEATMAP
+   ============================================================ */
+let hmSort = 'strength';
+
+function renderHeatmap() {
+  const sel = '#plot-heatmap';
+  const hm = DATA.heatmap;
+  let order = d3.range(hm.proteins.length);
+  if (hmSort === 'strength') {
+    const colMean = order.map(j => d3.mean(hm.values, row => row[j]));
+    order.sort((a, b) => colMean[a] - colMean[b]);
+  } else {
+    order.sort((a, b) => d3.ascending(hm.proteins[a], hm.proteins[b]));
+  }
+
+  const W = widthOf(sel, 900);
+  const m = { t: 10, r: 14, b: 54, l: 62 };
+  const iw = W - m.l - m.r;
+  const cw = iw / hm.proteins.length;
+  const ch = Math.max(8, Math.min(14, cw * 1.25));
+  const ih = hm.ligands.length * ch;
+  const H = ih + m.t + m.b;
+  const svg = svgIn(sel, W, H);
+  const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
+
+  const flat = hm.values.flat().filter(v => v != null).sort(d3.ascending);
+  // clamp the ramp to the 2nd–98th percentile so the bulk of the matrix
+  // spans the full ramp instead of compressing against two rare extremes
+  const lo = d3.quantileSorted(flat, 0.02), hi = d3.quantileSorted(flat, 0.98);
+  const color = d3.scaleSequential()
+    .domain([hi, lo]).clamp(true)
+    .interpolator(d3.interpolateRgbBasis(seqRamp()));
+
+  const cells = [];
+  hm.values.forEach((row, i) => order.forEach((j, jj) => {
+    if (row[j] != null) cells.push({ i, jj, v: row[j], lig: hm.ligands[i], prot: hm.proteins[j] });
+  }));
+
+  g.selectAll('rect.cell').data(cells).join('rect').attr('class', 'cell')
+    .attr('x', d => d.jj * cw).attr('y', d => d.i * ch)
+    .attr('width', Math.max(1, cw - 0.6)).attr('height', Math.max(1, ch - 0.6))
+    .attr('fill', d => color(d.v))
+    .on('mouseenter', function (e, d) {
+      d3.select(this).attr('stroke', cssv('--fg')).attr('stroke-width', 1.5).raise();
+      const p = DATA.proteins.find(p => p.id === d.prot);
+      const l = DATA.ligands.find(l => l.cid === d.lig);
+      showTip(`
+        <div class="t-title">${l && l.name ? l.name : 'CID ' + d.lig} × ${d.prot}</div>
+        <div class="t-row"><span>affinity</span><span>${fmt(d.v)} kcal/mol</span></div>
+        <div class="t-row"><span>target</span><span>${p ? p.name : '—'}</span></div>
+        ${p ? `<div class="t-note">${p.hallmark}</div>` : ''}`, e);
+    })
+    .on('mousemove', moveTip)
+    .on('mouseleave', function () { d3.select(this).attr('stroke', null); hideTip(); });
+
+  // ligand labels
+  g.append('g').selectAll('text').data(hm.ligands).join('text')
+    .attr('x', -8).attr('y', (d, i) => i * ch + ch / 2 + 3)
+    .attr('text-anchor', 'end')
+    .style('font-family', 'var(--font-mono)').style('font-size', Math.min(9, ch - 2) + 'px')
+    .style('fill', d => {
+      const l = DATA.ligands.find(l => l.cid === d);
+      return l && l.name ? cssv('--fg') : cssv('--muted');
+    })
+    .text(d => d);
+
+  // protein ticks (every nth)
+  const step = Math.max(1, Math.round(hm.proteins.length / (iw / 34)));
+  g.append('g').selectAll('text').data(order.filter((d, i) => i % step === 0))
+    .join('text')
+    .attr('transform', (d, i) => `translate(${(order.indexOf(d)) * cw + cw / 2},${ih + 8}) rotate(60)`)
+    .style('font-family', 'var(--font-mono)').style('font-size', '9px')
+    .style('fill', cssv('--muted'))
+    .text(d => hm.proteins[d]);
+
+  // sequential legend
+  const le = d3.select('#legend-heatmap');
+  le.selectAll('*').remove();
+  const lw = 190, lh = 9;
+  const lsvg = le.append('div').attr('class', 'item')
+    .style('gap', '9px').append('svg')
+    .attr('width', lw + 92).attr('height', 26).style('width', (lw + 92) + 'px');
+  const defs = lsvg.append('defs');
+  const grad = defs.append('linearGradient').attr('id', 'hm-grad');
+  seqRamp().forEach((c, i, a) => grad.append('stop')
+    .attr('offset', (i / (a.length - 1) * 100) + '%').attr('stop-color', c));
+  lsvg.append('text').attr('x', 0).attr('y', 15)
+    .style('font-family', 'var(--font-mono)').style('font-size', '10px')
+    .style('fill', cssv('--muted')).text('≥ ' + fmt(hi, 1));
+  lsvg.append('rect').attr('x', 32).attr('y', 6).attr('width', lw).attr('height', lh)
+    .attr('rx', 2).attr('fill', 'url(#hm-grad)');
+  lsvg.append('text').attr('x', lw + 38).attr('y', 15)
+    .style('font-family', 'var(--font-mono)').style('font-size', '10px')
+    .style('fill', cssv('--muted')).text('≤ ' + fmt(lo, 1));
+  lsvg.append('text').attr('x', 32).attr('y', 25)
+    .style('font-family', 'var(--font-sans)').style('font-size', '10.5px')
+    .style('fill', cssv('--muted')).text('weaker ← mean best affinity (kcal/mol) → stronger');
+}
+document.querySelectorAll('[data-hmsort]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('[data-hmsort]').forEach(x => x.classList.remove('active'));
+  b.classList.add('active'); hmSort = b.dataset.hmsort; renderHeatmap();
+}));
+
+/* ============================================================
+   04 — CORRELATION DIVERGING BARS
+   ============================================================ */
+let corrMode = 'both';
+const prettyVar = s => s
+  .replace(/_drugbank_approved_percentile/, ' (percentile)')
+  .replace(/_/g, ' ')
+  .replace('tpsa', 'TPSA').replace('logP', 'logP');
+
+function renderCorr() {
+  const sel = '#plot-corr';
+  const rows = [...DATA.correlations].sort((a, b) =>
+    Math.abs(corrMode === 'tox' ? b.tox : b.aff) - Math.abs(corrMode === 'tox' ? a.tox : a.aff));
+
+  const W = widthOf(sel, 900);
+  const rowH = corrMode === 'both' ? 34 : 24;
+  const m = { t: 16, r: 44, b: 44, l: Math.min(250, Math.max(150, W * 0.3)) };
+  const ih = rows.length * rowH, H = ih + m.t + m.b;
+  const svg = svgIn(sel, W, H);
+  const iw = W - m.l - m.r;
+  const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
+
+  const x = d3.scaleLinear().domain([-0.85, 0.85]).range([0, iw]);
+  const y = d3.scaleBand().domain(rows.map(d => d.label)).range([0, ih]).padding(0.18);
+
+  g.append('g').attr('class', 'grid').selectAll('line').data(x.ticks(7)).join('line')
+    .attr('x1', x).attr('x2', x).attr('y1', 0).attr('y2', ih);
+  g.append('line').attr('x1', x(0)).attr('x2', x(0)).attr('y1', 0).attr('y2', ih)
+    .attr('stroke', cssv('--axis')).attr('stroke-width', 1);
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ih})`)
+    .call(d3.axisBottom(x).ticks(7).tickFormat(d3.format('+.1f')));
+  svg.append('text').attr('class', 'axis-title')
+    .attr('x', m.l + iw / 2).attr('y', H - 8).attr('text-anchor', 'middle')
+    .text('Pearson correlation coefficient');
+
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y).tickSize(0))
+    .call(s => s.select('.domain').remove())
+    .selectAll('text').style('font-family', 'var(--font-sans)').style('font-size', '11px')
+    .text(d => { const p = prettyVar(d); return p.length > 32 ? p.slice(0, 30) + '…' : p; });
+
+  const series = corrMode === 'both' ? ['aff', 'tox'] : [corrMode];
+  const sub = d3.scaleBand().domain(series).range([0, y.bandwidth()]).padding(0.18);
+  const sName = { aff: 'vs. scaled affinity', tox: 'vs. scaled toxicity' };
+
+  series.forEach(k => {
+    const gg = g.append('g');
+    gg.selectAll('rect').data(rows).join('rect')
+      .attr('x', d => Math.min(x(0), x(d[k])))
+      .attr('width', d => Math.max(2, Math.abs(x(d[k]) - x(0))))
+      .attr('y', d => y(d.label) + sub(k))
+      .attr('height', sub.bandwidth())
+      .attr('rx', 3)
+      .attr('fill', d => d[k] >= 0 ? cssv('--pos') : cssv('--neg'))
+      .attr('fill-opacity', k === 'tox' && corrMode === 'both' ? 0.55 : 0.95)
+      .attr('stroke', cssv('--surface')).attr('stroke-width', 1)
+      .on('mouseenter', (e, d) => showTip(`
+          <div class="t-title">${prettyVar(d.label)}</div>
+          <div class="t-row"><span>vs. affinity</span><span>${d3.format('+.2f')(d.aff)}</span></div>
+          <div class="t-row"><span>vs. toxicity</span><span>${d3.format('+.2f')(d.tox)}</span></div>`, e))
+      .on('mousemove', moveTip).on('mouseleave', hideTip);
+
+    gg.selectAll('text').data(rows).join('text')
+      .attr('x', d => d[k] >= 0 ? x(d[k]) + 5 : x(d[k]) - 5)
+      .attr('y', d => y(d.label) + sub(k) + sub.bandwidth() / 2 + 3.5)
+      .attr('text-anchor', d => d[k] >= 0 ? 'start' : 'end')
+      .style('font-family', 'var(--font-mono)').style('font-size', '10px')
+      .style('fill', cssv('--fg-2'))
+      .text(d => d3.format('+.2f')(d[k]));
+  });
+
+  const items = [
+    { color: cssv('--pos'), label: 'positive correlation' },
+    { color: cssv('--neg'), label: 'negative correlation' },
+  ];
+  if (corrMode === 'both') {
+    items.push({ color: cssv('--pos'), label: 'upper bar: vs. affinity' });
+    items.push({ color: `color-mix(in srgb, ${cssv('--pos')} 55%, transparent)`, label: 'lower bar: vs. toxicity' });
+  }
+  legend('#legend-corr', items);
+
+  table('#table-corr', [
+    { label: 'Descriptor', get: d => prettyVar(d.label) },
+    { label: 'r vs. affinity', get: d => d3.format('+.2f')(d.aff), num: true },
+    { label: 'r vs. toxicity', get: d => d3.format('+.2f')(d.tox), num: true },
+  ], rows);
+}
+document.querySelectorAll('[data-corr]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('[data-corr]').forEach(x => x.classList.remove('active'));
+  b.classList.add('active'); corrMode = b.dataset.corr; renderCorr();
+}));
+
+/* ============================================================
+   05 — MODEL BARS
+   ============================================================ */
+let regMetric = 'r2', clfMetric = 'acc';
+
+function groupedBars(sel, legendSel, rows, series, valueOf, axisLabel, fmtD) {
+  const W = widthOf(sel, 900);
+  const m = { t: 16, r: 20, b: 52, l: 62 };
+  const H = Math.min(300, Math.max(210, W * 0.3));
+  const svg = svgIn(sel, W, H);
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
+
+  const x0 = d3.scaleBand().domain(rows.map(d => d.model)).range([0, iw]).padding(0.28);
+  const x1 = d3.scaleBand().domain(series.map(s => s.key)).range([0, x0.bandwidth()]).padding(0.16);
+  const maxV = d3.max(rows, d => d3.max(series, s => valueOf(d, s.key) ?? 0));
+  const yd = d3.scaleLinear().domain([0, maxV * 1.16 || 1]).nice().range([ih, 0]);
+
+  g.append('g').attr('class', 'grid').selectAll('line').data(yd.ticks(5)).join('line')
+    .attr('x1', 0).attr('x2', iw).attr('y1', yd).attr('y2', yd);
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ih})`)
+    .call(d3.axisBottom(x0).tickSize(0))
+    .selectAll('text').style('font-family', 'var(--font-sans)').style('font-size', '11.5px')
+    .style('fill', cssv('--fg-2'));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(yd).ticks(5).tickFormat(fmtD));
+  svg.append('text').attr('class', 'axis-title')
+    .attr('transform', `translate(14,${m.t + ih / 2}) rotate(-90)`).attr('text-anchor', 'middle')
+    .text(axisLabel);
+
+  const grp = g.selectAll('g.grp').data(rows).join('g').attr('class', 'grp')
+    .attr('transform', d => `translate(${x0(d.model)},0)`);
+
+  series.forEach(s => {
+    grp.append('rect')
+      .attr('x', x1(s.key)).attr('width', x1.bandwidth())
+      .attr('y', d => yd(valueOf(d, s.key) ?? 0))
+      .attr('height', d => Math.max(1, ih - yd(valueOf(d, s.key) ?? 0)))
+      .attr('rx', 4)
+      .attr('fill', s.color())
+      .attr('stroke', cssv('--surface')).attr('stroke-width', 1)
+      .on('mouseenter', (e, d) => showTip(`
+          <div class="t-title">${d.model}</div>
+          ${series.map(ss => `<div class="t-row"><span>${ss.label}</span><span>${fmtD(valueOf(d, ss.key) ?? 0)}</span></div>`).join('')}`, e))
+      .on('mousemove', moveTip).on('mouseleave', hideTip);
+
+    grp.append('text')
+      .attr('x', x1(s.key) + x1.bandwidth() / 2)
+      .attr('y', d => yd(valueOf(d, s.key) ?? 0) - 6)
+      .attr('text-anchor', 'middle')
+      .style('font-family', 'var(--font-mono)').style('font-size', '10px')
+      .style('fill', cssv('--fg-2'))
+      .text(d => fmtD(valueOf(d, s.key) ?? 0));
+  });
+
+  // a single series needs no legend box — the title names it
+  if (series.length > 1) legend(legendSel, series.map(s => ({ color: s.color(), label: s.label })));
+  else d3.select(legendSel).selectAll('*').remove();
+}
+
+function renderReg() {
+  const rows = DATA.models.regression.map(t => ({
+    model: t.model.replace(' (tuned)', ''),
+    v: t[regMetric],
+  }));
+  const axis = regMetric === 'r2' ? 'R² (higher is better)'
+    : regMetric === 'rmse' ? 'RMSE (lower is better)' : 'MAE (lower is better)';
+  groupedBars('#plot-reg', '#legend-reg', rows,
+    [{ key: 'v', label: axis, color: () => cssv('--series-1') }],
+    (d, k) => d[k], axis, regMetric === 'r2' ? d3.format('.4f') : d3.format('.4f'));
+
+  table('#table-reg', [
+    { label: 'Model', get: d => d.model.replace(' (tuned)', '') },
+    { label: 'R²', get: d => fmt(d.r2, 6), num: true },
+    { label: 'RMSE', get: d => fmt(d.rmse, 6), num: true },
+    { label: 'MAE', get: d => fmt(d.mae, 6), num: true },
+  ], DATA.models.regression);
+}
+function renderClf() {
+  const rows = DATA.models.classification.map(c => ({
+    model: c.model,
+    v: clfMetric === 'acc' ? c.acc : c.f1,
+  }));
+  const axis = clfMetric === 'acc' ? 'accuracy' : 'weighted F1';
+  groupedBars('#plot-clf', '#legend-clf', rows,
+    [{ key: 'v', label: axis, color: () => cssv('--series-1') }],
+    (d, k) => d[k], axis, d3.format('.3f'));
+
+  table('#table-clf', [
+    { label: 'Model', get: d => d.model },
+    { label: 'Accuracy', get: d => fmt(d.acc, 4), num: true },
+    { label: 'Weighted F1', get: d => fmt(d.f1, 4), num: true },
+  ], DATA.models.classification);
+}
+document.querySelectorAll('[data-regmetric]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('[data-regmetric]').forEach(x => x.classList.remove('active'));
+  b.classList.add('active'); regMetric = b.dataset.regmetric; renderReg();
+}));
+document.querySelectorAll('[data-clfmetric]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('[data-clfmetric]').forEach(x => x.classList.remove('active'));
+  b.classList.add('active'); clfMetric = b.dataset.clfmetric; renderClf();
+}));
+
+/* ============================================================
+   06 — HISTOGRAM
+   ============================================================ */
+function renderHist() {
+  const sel = '#plot-hist';
+  const h = DATA.histogram;
+  const W = widthOf(sel, 900), H = Math.min(300, Math.max(210, W * 0.3));
+  const m = { t: 16, r: 20, b: 48, l: 56 };
+  const svg = svgIn(sel, W, H);
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
+
+  const x = d3.scaleLinear().domain([h.edges[0], h.edges[h.edges.length - 1]]).range([0, iw]);
+  const y = d3.scaleLinear().domain([0, d3.max(h.counts) * 1.1]).nice().range([ih, 0]);
+
+  g.append('g').attr('class', 'grid').selectAll('line').data(y.ticks(5)).join('line')
+    .attr('x1', 0).attr('x2', iw).attr('y1', y).attr('y2', y);
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ih})`).call(d3.axisBottom(x).ticks(8));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(5));
+  svg.append('text').attr('class', 'axis-title')
+    .attr('x', m.l + iw / 2).attr('y', H - 8).attr('text-anchor', 'middle')
+    .text('best affinity (kcal/mol)');
+  svg.append('text').attr('class', 'axis-title')
+    .attr('transform', `translate(12,${m.t + ih / 2}) rotate(-90)`).attr('text-anchor', 'middle')
+    .text('docking runs');
+
+  const bins = h.counts.map((c, i) => ({ c, lo: h.edges[i], hi: h.edges[i + 1] }));
+  const bw = Math.max(1, (x(h.edges[1]) - x(h.edges[0])) - 2);
+  g.selectAll('rect').data(bins).join('rect')
+    .attr('x', d => x(d.lo) + 1)
+    .attr('y', d => y(d.c)).attr('width', bw)
+    .attr('height', d => Math.max(0, ih - y(d.c)))
+    .attr('rx', 3)
+    .attr('fill', cssv('--series-1')).attr('fill-opacity', 0.82)
+    .on('mouseenter', (e, d) => showTip(
+      `<div class="t-title">${fmt(d.lo, 1)} … ${fmt(d.hi, 1)} kcal/mol</div>
+       <div class="t-row"><span>docking runs</span><span>${d.c}</span></div>
+       <div class="t-row"><span>share</span><span>${(d.c / DATA.meta.rows * 100).toFixed(1)}%</span></div>`, e))
+    .on('mousemove', moveTip).on('mouseleave', hideTip);
+
+  const med = DATA.meta.affinity.median;
+  g.append('line').attr('class', 'ref-line')
+    .attr('x1', x(med)).attr('x2', x(med)).attr('y1', 0).attr('y2', ih);
+  g.append('text').attr('class', 'ref-text')
+    .attr('x', x(med) + 5).attr('y', 11).text(`median ${fmt(med)}`);
+}
+
+/* ============================================================
+   PROTEIN TABLE
+   ============================================================ */
+function renderProteins(filter = '') {
+  const f = filter.trim().toLowerCase();
+  const rows = DATA.proteins
+    .filter(p => !f || p.id.toLowerCase().includes(f) || (p.name || '').toLowerCase().includes(f)
+      || (p.hallmark || '').toLowerCase().includes(f))
+    .sort((a, b) => a.med - b.med);
+  table('#table-proteins', [
+    { label: 'PDB ID', get: d => d.id },
+    { label: 'Target', get: d => d.name },
+    { label: 'Hallmark', get: d => d.hallmark },
+    { label: 'Median affinity', get: d => fmt(d.med), num: true },
+  ], rows);
+}
+document.getElementById('search-proteins')
+  .addEventListener('input', e => renderProteins(e.target.value));
+
+/* ============================================================
+   DATA TABLES TOGGLE
+   ============================================================ */
+const btnTables = document.getElementById('btn-tables');
+btnTables.addEventListener('click', () => {
+  const on = btnTables.getAttribute('aria-pressed') !== 'true';
+  btnTables.setAttribute('aria-pressed', String(on));
+  document.querySelectorAll('.tablewrap').forEach(t => {
+    if (t.id !== 'table-proteins') t.classList.toggle('on', on);
+  });
+});
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function renderAll() {
+  renderTiles();
+  renderFrontier();
+  renderHallmarks();
+  renderHeatmap();
+  renderCorr();
+  renderReg();
+  renderClf();
+  renderHist();
+  renderProteins(document.getElementById('search-proteins').value);
+  updatePinChip();
+}
+renderAll();
+
+let rt;
+window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(renderAll, 180); });
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }],
+      throwOnError: false,
+    });
+  }
+});
+</script>
+</body>
+</html>

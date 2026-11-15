@@ -1,0 +1,81 @@
+---
+title: "ML-Based Phytochemical Analysis for Multi-objective Optimization with Efficacy and Toxicity Metrics"
+date: "2026-04-25"
+category: "Papers"
+tags: ["Computational"]
+description: "An interactive rendition of my DS102 final project — docking 33 phytochemicals against 90 protein targets and screening them on binding affinity and predicted toxicity at once."
+---
+
+*Final project for the UP Data Science Society Bootcamp: Data Science 102, April 2026. Every figure on this page is computed from the project's own 7,619-row docking dataset.*
+
+## Abstract
+
+Static molecular docking is cheap. Molecular dynamics is not. The gap between them is where a pre-screen earns its keep: if you can narrow a library of candidate compounds down to a handful before committing anything to an expensive simulation — or a bench — you have saved the part of the pipeline that actually costs money.
+
+This project builds that pre-screen for **phytochemicals**, plant-derived compounds of the sort found in fruit, tea, and medicinal plants. 33 ligands drawn from Fatma, Jameel & Siddique (2023) were docked against 90 protein targets spanning 35 biological hallmarks, producing 7,619 scored ligand–pocket pairs. Each compound carries both a binding affinity and a composite toxicity score, so candidates can be ranked on the two objectives jointly rather than one at a time.
+
+Four compounds clear both medians with margin: **rutin**, **(−)-epigallocatechin**, **α-amyrin**, and **paeoniflorin**.
+
+## The interactive rendition
+
+The notebook this paper came from is 37 pages of static figures. What follows is the same analysis rebuilt as something you can interrogate — hover any mark for its underlying numbers, re-sort the distributions, switch the axes, and read the data tables directly.
+
+<InteractiveDiagram src="/ds102-phytochemical/index.html" title="Phytochemical multi-objective optimization — interactive rendition" />
+
+## Method
+
+The pipeline runs in five stages, all reproducible from public tools:
+
+1. **Binding site detection.** [P2Rank](https://github.com/rdk/p2rank) ranks candidate pockets across each protein structure, which avoids having to hand-specify a docking box per target.
+2. **Docking.** Each ligand is docked into the top three pockets of every protein with [AutoDock Vina](https://vina.scripps.edu/) 1.2.7, ten poses per pocket, with only the best pose carried forward.
+3. **Toxicity and pharmacokinetics.** [ADMET-AI](https://doi.org/10.1093/bioinformatics/btae416) predicts roughly 40 endpoints per compound, rolled into a weighted `Composite_Tox_Score`.
+4. **Hallmark annotation.** Each protein is assigned the biological process it stands in for, so results can be read at the level of biology rather than individual PDB entries.
+5. **Analysis.** Exploratory statistics, frontier search, and supervised models in scikit-learn and XGBoost.
+
+The dataset was self-curated over roughly two days and is not drawn from any existing public benchmark.
+
+### The scoring function
+
+Vina's affinity score is an empirically weighted sum of five interaction terms with a torsional penalty:
+
+$$
+E_{\text{vina}} = w_1\,\text{gauss}_1 + w_2\,\text{gauss}_2 + w_3\,\text{repulsion} + w_4\,\text{hydrophobic} + w_5\,\text{Hbond} + w_6 \cdot N_{\text{rot}}
+$$
+
+where $N_{\text{rot}}$ is the number of rotatable bonds and the $w_i$ are fitted weights. The result approximates binding free energy in kcal/mol, with more negative meaning tighter binding.
+
+## Results
+
+**The frontier holds.** Four compounds sit below both the median affinity (−6.00 kcal/mol) and the median composite toxicity (0.34). Rutin has the strongest mean affinity in the set at −6.58 kcal/mol alongside the second-lowest toxicity score — though at 610 Da with a single Lipinski pass, its oral bioavailability is a genuine problem that the docking score alone will not tell you about.
+
+**No single descriptor predicts affinity.** Across eleven physicochemical and ADMET descriptors, nothing clears $r = 0.4$ against binding affinity. `logP` — the descriptor most often assumed to track binding — sits at $r = 0.02$. The one strong relationship in the panel, CYP3A4 inhibition against toxicity at $r = 0.77$, is close to circular: CYP inhibition is itself one of the endpoints rolled into the composite score.
+
+**The models split.** Tuned XGBoost and SVR reach $R^2 \approx 0.999$ on binding affinity with $\text{RMSE} < 0.04$. That is not a result to celebrate — it is leakage. The feature matrix still contained `mean_affinity`, which correlates with the target at $r = -0.97$, so the models are largely reading the answer off an adjacent column. A clean-featured gradient-boosting run on physicochemical and ADMET descriptors alone reaches $R^2 = 0.188$, and a refined random forest the same. **That** number is what 2D descriptors are worth for binding affinity.
+
+Classifying the biological hallmark from molecular properties reaches 0.21 accuracy across 35 classes. Low in absolute terms, but roughly seven times a uniform-random baseline of 0.029 — weak signal rather than no signal. Molecular properties dictate binding thermodynamics; they are only a fraction of what maps a molecule to a broad biological process.
+
+## Limitations
+
+- **Static docking only.** No dynamics, so no entropy, no solvent, no induced fit. Vina scores are a pre-screen, not binding free energies.
+- **Toxicity is predicted, not measured.** The composite score is a roll-up of model outputs, and its discrete banding is visible as horizontal striping in the frontier plot.
+- **Hallmark labels are editorial.** Each protein stands in for a process by assignment, so hallmark-level medians inherit that choice as much as they reflect chemistry.
+- **One pose per pocket.** Only the best of ten poses is carried forward, discarding the ensemble a dynamics run would use.
+
+None of this sinks the pipeline — it sets what the pipeline is for.
+
+## Future work
+
+Neural approaches and reinforcement learning for the prediction layer, as ADMET-AI and ProTox-II themselves use. And the elephant in the room: molecular dynamics. A DS103 project, I presume.
+
+## Acknowledgements
+
+To my research team from the original capstone — Kelly, Raf, Chad, Cauley, Paul, Allan — and to my teachers, Sir Jojit, Ms. Florence, and Ms. Colas. This project would not be as strong without them, and arguably would not exist.
+
+## References & software credits
+
+- Fatma, H., Jameel, M., & Siddique, H. R. (2023). An Update on Phytochemicals in Redox Homeostasis: "Virtuous or Evil" in Cancer Chemoprevention? *Chemistry, 5*(1), 201–222. [doi:10.3390/chemistry5010017](https://doi.org/10.3390/chemistry5010017)
+- Swanson, K., Walther, P., Leitz, J., Mukherjee, S., Wu, J. C., Shivnaraine, R. V., & Zou, J. (2024). ADMET-AI: a machine learning ADMET platform for evaluation of large-scale chemical libraries. *Bioinformatics, 40*(7), btae416. [doi:10.1093/bioinformatics/btae416](https://doi.org/10.1093/bioinformatics/btae416)
+- Krivák, R., & Hoksza, D. (2018). P2Rank: machine learning based tool for rapid and accurate prediction of ligand binding sites from protein structure. *Journal of Cheminformatics.*
+- Polák, L., Škoda, P., Riedlová, K., Krivák, R., Novotný, M., & Hoksza, D. (2025). PrankWeb 4: a modular web server for protein–ligand binding site prediction and downstream analysis. *Nucleic Acids Research.*
+- Burley, S. K., et al. (2022). RCSB Protein Data Bank: Tools for visualizing and understanding biological macromolecules in 3D. *Protein Science, 31*(12), e4482. [doi:10.1002/pro.4482](https://doi.org/10.1002/pro.4482)
+- Kim, S., et al. (2025). PubChem 2025 update. *Nucleic Acids Research, 53*(D1), D1516–D1525. [doi:10.1093/nar/gkae1059](https://doi.org/10.1093/nar/gkae1059)

@@ -1,3 +1,6 @@
+# local research working sets (raw datasets, notebooks, PDFs — never published)
+/.ds102/
+
 # test files
 understanding-type-systems.mdx
 

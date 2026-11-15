@@ -63,14 +63,6 @@ const externalLinks: FeedItemType[] = [
 		description: "My first published paper which is apparently being used to LGUs today. It was a tremendously difficult experience for the me at the time, but I enjoyed it a lot.",
 	},
   {
-    title: "ML-Based Phytochemical Analysis for Multi-objective Optimization of Efficacy and Toxicity Metrics",
-    date: "2026-04-25",
-    url: "https://drive.google.com/drive/u/1/folders/1aO2ewk3dSRG02Ct3vogqERu6sKifYzId",
-    category: "Papers",
-    tags: ["Computational"],
-    description: "The following notebook contains a curated collection of what I consider to be the notable findings and additional results throughout the entirety of the UP Data Science Society Bootcamp: Data Science 102.",
-  },
-  {
     title: "Aftershock Frequency and Magnitude Estimation of Philippine Earthquakes Using Omori’s Law and Bath’s Law",
     date: "2024-11-23",
     url: "https://docs.google.com/document/d/1Te7ByhbU47PxUtrkSUKDf14tvqDCkQ5p/edit?usp=sharing&ouid=108053967144609741023&rtpof=true&sd=true",
