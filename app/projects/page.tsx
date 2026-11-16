@@ -1,109 +1,82 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Mail } from "lucide-react";
-import { openEmail } from "@/lib/contact";
+import { ArrowRight } from "lucide-react";
 import { LoadingProjectImage } from "./ProjectImageFrame";
-import { devProjects, mediaPieceCount, mediaProjects, organizations } from "./data";
-import { buttonPrimary, buttonSecondary, ContactBlock, FadeIn, focusRing, Meta } from "./ui";
+import { devProjects, mediaPieceCount, mediaProjects } from "./data";
+import { ContactBlock, FadeIn, focusRing } from "./ui";
 
-const liveCount = devProjects.filter((p) => p.liveUrl).length;
-
-const doors = [
-  {
-    href: "/projects/media",
-    title: "Design and media",
-    body: "Posters, merchandise, sports graphics and sideline video",
-    meta: [`${mediaProjects.length} projects`, `${mediaPieceCount} pieces`],
-    cover: (
-      <div className="grid h-full grid-cols-2 gap-1">
-        <div className="relative overflow-hidden">
-          <LoadingProjectImage src="/images/up-evt-final-four.png" alt="UAAP Season 88 Final Four poster for the UP Fighting Maroons" />
-        </div>
-        <div className="relative overflow-hidden">
-          <LoadingProjectImage src="/images/paddock-south-1.png" alt="RUSH movie night poster for Paddock South" />
-        </div>
-      </div>
-    ),
-  },
-  {
-    href: "/projects/developer",
-    title: "Software and research",
-    body: "Websites, desktop apps, games and data research",
-    meta: [`${devProjects.length} projects`, `${liveCount} live`],
-    cover: (
-      <div className="relative h-full overflow-hidden [&_img]:object-left-top">
-        <LoadingProjectImage src="/images/pjdsc26-preview-1.png" alt="Philippine Junior Data Science Challenge 2026 website" />
-      </div>
-    ),
-  },
+const fan = [
+  { src: "/images/paddock-south-1.png", alt: "RUSH movie night poster", ratio: "1414/2000", cls: "-translate-x-[62%] -rotate-[7deg] group-hover:-translate-x-[68%] group-hover:-rotate-[9deg]" },
+  { src: "/images/poster-2.png", alt: "Ang Awit ng Mendiola poster", ratio: "2000/2500", cls: "translate-x-[62%] rotate-[7deg] group-hover:translate-x-[68%] group-hover:rotate-[9deg]" },
+  { src: "/images/up-evt-final-four.png", alt: "UAAP Season 88 Final Four poster", ratio: "2970/3713", cls: "z-10 -translate-y-1 group-hover:-translate-y-2" },
 ];
 
 export default function ProjectsPage() {
+  const live = devProjects.filter((p) => p.liveUrl).length;
+
   return (
     <div className="space-y-16">
-      <FadeIn className="space-y-12">
-        <header className="space-y-4">
-          <h1 className="font-mono text-2xl font-semibold text-zinc-900 dark:text-zinc-100">Projects</h1>
-          <p className="max-w-[60ch] text-lg leading-8 text-zinc-700 dark:text-zinc-300">
-            I design posters, merchandise and sports graphics, film sideline coverage, and build websites and data
-            tools. Clients so far include UP Diliman organizations, its varsity teams, and the Paddock South motorsport
-            community.
-          </p>
-          <div className="flex flex-wrap items-center gap-3 pt-2">
-            <button type="button" onClick={() => openEmail("Project inquiry")} className={buttonPrimary}>
-              <Mail className="size-4" strokeWidth={1.5} />
-              Email me
-            </button>
-            <Link href="/about" className={buttonSecondary}>
-              Read my CV
-            </Link>
-          </div>
-        </header>
+      <FadeIn className="space-y-8">
+        <h1 className="font-mono text-2xl font-semibold text-zinc-900 dark:text-zinc-100">Projects</h1>
 
         <nav aria-label="Portfolios" className="grid gap-4 sm:grid-cols-2">
-          {doors.map((door) => (
-            <Link
-              key={door.href}
-              href={door.href}
-              className={`group flex flex-col overflow-hidden rounded-2xl border border-zinc-900/10 bg-white transition-colors duration-150 hover:border-zinc-900/25 dark:border-white/10 dark:bg-zinc-950 dark:hover:border-white/25 ${focusRing}`}
-            >
-              <div className="aspect-[4/3] bg-zinc-100 dark:bg-zinc-900">{door.cover}</div>
-              <div className="flex items-start justify-between gap-4 p-5">
-                <div className="space-y-1">
-                  <h2 className="text-base font-medium text-zinc-900 dark:text-zinc-100">{door.title}</h2>
-                  <p className="text-sm leading-6 text-zinc-600 dark:text-zinc-400">{door.body}</p>
-                  <Meta parts={door.meta} className="pt-1" />
+          <Link
+            href="/projects/media"
+            className={`group flex flex-col overflow-hidden rounded-2xl bg-zinc-950 ring-1 ring-zinc-900/10 dark:ring-white/10 ${focusRing}`}
+          >
+            <div className="relative h-72 overflow-hidden">
+              {fan.map((p) => (
+                <div
+                  key={p.src}
+                  className={`absolute left-1/2 top-1/2 w-[38%] -ml-[19%] -mt-[25%] overflow-hidden rounded-md shadow-[0_12px_32px_rgba(0,0,0,0.55)] ring-1 ring-white/10 transition-transform duration-300 ease-out ${p.cls}`}
+                  style={{ aspectRatio: p.ratio }}
+                >
+                  <LoadingProjectImage src={p.src} alt={p.alt} width={640} />
                 </div>
-                <ArrowRight
-                  className="mt-0.5 size-4 shrink-0 text-zinc-500 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-zinc-900 dark:group-hover:text-zinc-100"
-                  strokeWidth={1.5}
-                />
+              ))}
+            </div>
+            <div className="flex items-end justify-between gap-4 px-6 pb-6 pt-2">
+              <div>
+                <h2 className="font-[family-name:var(--font-display)] text-2xl font-medium leading-none tracking-[-0.03em] text-white">
+                  Design and media
+                </h2>
+                <p className="mt-2 font-mono text-xs text-zinc-500 tabular-nums">
+                  {mediaProjects.length} projects · {mediaPieceCount} pieces
+                </p>
               </div>
-            </Link>
-          ))}
+              <ArrowRight className="mb-1 size-4 shrink-0 text-zinc-500 transition-[transform,color] duration-150 group-hover:translate-x-0.5 group-hover:text-white" strokeWidth={1.5} />
+            </div>
+          </Link>
+
+          <Link
+            href="/projects/developer"
+            className={`group flex flex-col overflow-hidden rounded-2xl bg-zinc-100 ring-1 ring-zinc-900/10 dark:bg-zinc-900 dark:ring-white/10 ${focusRing}`}
+          >
+            <div className="relative h-72 overflow-hidden">
+              <div className="absolute left-6 top-8 aspect-[4/3] w-[72%] overflow-hidden rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.18)] ring-1 ring-zinc-900/10 transition-transform duration-300 ease-out group-hover:-translate-y-1 dark:ring-white/10">
+                <LoadingProjectImage src="/images/godle-preview-1.png" alt="gödle landing screen" width={640} />
+              </div>
+              <div className="absolute right-6 top-24 aspect-[16/10] w-[72%] overflow-hidden rounded-lg shadow-[0_12px_32px_rgba(0,0,0,0.22)] ring-1 ring-zinc-900/10 transition-transform duration-300 ease-out group-hover:translate-y-1 dark:ring-white/10 [&_img]:object-left-top">
+                <LoadingProjectImage src="/images/pjdsc26-preview-1.png" alt="Philippine Junior Data Science Challenge website" width={640} />
+              </div>
+            </div>
+            <div className="flex items-end justify-between gap-4 px-6 pb-6 pt-2">
+              <div>
+                <h2 className="font-mono text-xl font-semibold leading-none text-zinc-900 dark:text-zinc-100">
+                  Software and research
+                </h2>
+                <p className="mt-2 font-mono text-xs text-zinc-500 tabular-nums">
+                  {devProjects.length} projects · {live} live
+                </p>
+              </div>
+              <ArrowRight className="mb-1 size-4 shrink-0 text-zinc-500 transition-[transform,color] duration-150 group-hover:translate-x-0.5 group-hover:text-zinc-900 dark:group-hover:text-zinc-100" strokeWidth={1.5} />
+            </div>
+          </Link>
         </nav>
       </FadeIn>
 
-      <section className="space-y-4">
-        <h2 className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Organizations I&apos;ve made work for</h2>
-        <ul className="grid border-t border-zinc-900/10 sm:grid-cols-2 sm:gap-x-8 dark:border-white/10">
-          {organizations.map((org) => (
-            <li
-              key={org}
-              className="flex h-11 items-center border-b border-zinc-900/10 font-mono text-xs text-zinc-600 dark:border-white/10 dark:text-zinc-400"
-            >
-              {org}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <ContactBlock
-        heading="Have something in mind?"
-        body="Tell me what it's for, who will see it and when you need it."
-        subject="Project inquiry"
-      />
+      <ContactBlock heading="Have something in mind?" subject="Project inquiry" />
     </div>
   );
 }

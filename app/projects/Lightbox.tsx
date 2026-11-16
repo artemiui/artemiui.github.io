@@ -89,7 +89,7 @@ export function Lightbox({
             </div>
 
             <div className="w-full space-y-2 px-4 pt-3 sm:px-6">
-              <p className="font-mono text-xs text-zinc-400 tabular-nums">
+              <p className="font-[family-name:var(--font-display-mono)] text-xs text-zinc-400 tabular-nums">
                 {state.label}
                 {many && ` · ${String(state.index + 1).padStart(2, "0")} / ${String(state.images.length).padStart(2, "0")}`}
               </p>
@@ -102,7 +102,7 @@ export function Lightbox({
                   rel="noopener noreferrer"
                   className="inline-flex h-9 items-center gap-2 rounded-lg bg-white/10 px-3 text-sm font-medium text-white ring-1 ring-white/15 transition-colors duration-150 hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
                 >
-                  Watch on Facebook
+                  View on Facebook
                   <ArrowUpRight className="size-4" strokeWidth={1.5} />
                 </a>
               )}

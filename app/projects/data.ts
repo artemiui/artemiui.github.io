@@ -60,6 +60,13 @@ export const mediaProjects: MediaProject[] = [
       "As a graphics and media volunteer for the UP Office of Athletics and Sports Development and the UP Esports Varsity Team, I created roster reveals, the UAAP Season 88 Final Four poster, matchday MVP graphics, and team postcards. The work carries the varsity's sponsors and partners, including Acer Predator, Converge FiberX, Nissin Yakisoba, Pulsar Gaming Gears, Nature's Spring, Celest, and Nowhere To Go But UP Foundation.",
     gallery: [
       {
+        src: "/images/up-oasd-reel-5.jpg",
+        title: "PMSE team schedules",
+        description:
+          "Schedule announcement for the PMSE games at the UP Diliman Varsity Training Center, September 26–27, 2026.",
+        url: "https://www.facebook.com/up.oasd/posts/pfbid0Au7gPUpgpuzB1viYCoZzzoK7CT7q8hwkGvUsNkLWMjrQ19BuXMJwpc5XK8p9p9w4l",
+      },
+      {
         src: "/images/up-evt-final-four.png",
         title: "UAAP Season 88 Esports: Final Four team poster",
         description:
@@ -93,13 +100,26 @@ export const mediaProjects: MediaProject[] = [
   },
   {
     id: "oasd-coverage",
-    title: "Sideline coverage and interviews",
+    title: "Athlete interviews",
     client: "UP OASD",
     deliverable: "Video",
     description:
       "Sideline videography, athlete interviews, and social reels produced for the UP Office for Athletics and Sports Development across UAAP Season 88 and Season 89.",
-    liveUrl: "https://www.facebook.com/reel/1406007901680381",
+    liveUrl: "https://www.facebook.com/reel/1470422805284525",
     gallery: [
+      {
+        src: "/images/up-oasd-reel-6.jpg",
+        title: "Match point for some, a #UPFight to remember for all",
+        description:
+          "Sideline interview with the UP Fighting Maroons badminton team after their matches. Filmed by Art Arcega.",
+        url: "https://www.facebook.com/reel/1470422805284525",
+      },
+      {
+        src: "/images/up-oasd-reel-7.jpg",
+        title: "Courtside with UP badminton",
+        description: "Sideline interview with a UP Fighting Maroons badminton player. Filmed by Art Arcega.",
+        url: "https://www.facebook.com/reel/1263186599355842",
+      },
       {
         src: "/images/up-oasd-reel-1.jpg",
         title: "UP Women's Football Team: road to the first Season 89 win",

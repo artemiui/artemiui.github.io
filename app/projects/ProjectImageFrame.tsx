@@ -5,11 +5,16 @@ import dimensions from "./image-dimensions.json";
 
 const sizes: Record<string, number[]> = dimensions;
 
-export function LoadingProjectImage({ src, alt, fit = "cover", delay = 0 }: {
+/** Route an image through Next's optimizer at a fixed width (must be one of Next's default sizes). */
+export const optimized = (src: string, width: 640 | 828 | 1080 | 1200 | 1920) =>
+  src.endsWith(".gif") ? src : `/_next/image?url=${encodeURIComponent(src)}&w=${width}&q=75`;
+
+export function LoadingProjectImage({ src, alt, fit = "cover", delay = 0, width }: {
   src: string;
   alt: string;
   fit?: "cover" | "contain";
   delay?: number;
+  width?: 640 | 828 | 1080 | 1200 | 1920;
 }) {
   const [requested, setRequested] = useState(delay === 0);
   const [status, setStatus] = useState<"loading" | "loaded" | "error">("loading");
@@ -36,7 +41,7 @@ export function LoadingProjectImage({ src, alt, fit = "cover", delay = 0 }: {
           ref={(image) => {
             if (image?.complete) setStatus(image.naturalWidth ? "loaded" : "error");
           }}
-          src={src}
+          src={width ? optimized(src, width) : src}
           alt={alt}
           loading="lazy"
           decoding="async"
