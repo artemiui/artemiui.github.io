@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "app/globals.css"
+        ],
+        "createdAt": "2026-11-16T10:20:19.781Z",
+        "reason": "Claude triage: L100 is the .prose blockquote left rule (conventional quotation typography, from commit f8d8896), not a card accent"
+      }
+    ]
+  }
+}

@@ -28,7 +28,7 @@ html:not(.dark) {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
-  --font-mono: "SpaceMono Nerd Font", "SpaceMono NF", var(--font-space-mono), "Space Mono", monospace;
+  --font-mono: "0xProto Nerd Font", "0xProto NF", var(--font-0xproto), "0xProto", monospace;
 }
 
 body {
@@ -187,4 +187,3 @@ body {
 .animate-logo-marquee:hover {
   animation-play-state: paused;
 }
-

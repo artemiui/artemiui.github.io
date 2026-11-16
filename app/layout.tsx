@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Inter, Space_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -16,10 +17,14 @@ const inter = Inter({
   display: "swap",
 });
 
-const spaceMono = Space_Mono({
-  weight: ["400", "700"],
-  variable: "--font-space-mono",
-  subsets: ["latin"],
+// 0xProto by 0xType (SIL OFL 1.1, see app/fonts/0xProto-LICENSE.txt)
+const proto = localFont({
+  src: [
+    { path: "./fonts/0xProto-Regular.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/0xProto-Italic.woff2", weight: "400", style: "italic" },
+    { path: "./fonts/0xProto-Bold.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-0xproto",
   display: "swap",
 });
 
@@ -74,7 +79,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${spaceMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${proto.variable}`} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{

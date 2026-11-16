@@ -74,7 +74,8 @@ export function getMediaStats() {
 // Parse date strings (e.g. DD-MM-YYYY, YYYY-MM-DD) into timestamp
 export function parseMediaDate(dateStr?: string): number {
   if (!dateStr || !dateStr.trim()) return 0;
-  const clean = dateStr.trim();
+  // Some legacy entries lost their zeros on import ("2 22- 7-31" is 2022-07-31).
+  const clean = dateStr.trim().replace(/ /g, "0");
 
   // Pattern DD-MM-YYYY (e.g. 08-07-2025)
   const ddmmyyyy = clean.match(/^(\d{2})-(\d{2})-(\d{4})$/);
@@ -84,9 +85,10 @@ export function parseMediaDate(dateStr?: string): number {
   }
 
   // Pattern YYYY-MM-DD
-  const yyyymmdd = clean.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const yyyymmdd = clean.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
   if (yyyymmdd) {
-    return new Date(clean).getTime();
+    const [, year, month, day] = yyyymmdd;
+    return new Date(parseInt(year), parseInt(month) - 1, parseInt(day)).getTime();
   }
 
   const parsed = Date.parse(clean);
@@ -118,4 +120,11 @@ export function getLatestItemSentence(type: string): { verb: string; noun: strin
   if (t === "manga") return { verb: "read", noun: "manga" };
   if (t === "light novel" || t === "book") return { verb: "read", noun: "book" };
   return { verb: "completed", noun: "entry" };
+}
+
+/** "30 Oct 2026", or the raw string when it can't be parsed. */
+export function formatMediaDate(dateStr?: string): string {
+  const time = parseMediaDate(dateStr);
+  if (!time) return dateStr?.trim() ?? "";
+  return new Date(time).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 }
